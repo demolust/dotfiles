@@ -1,0 +1,10 @@
+[MIME Cache]
+application/ogg=cmus_warpper.sh-4.desktop;
+application/x-zerosize=launch_neovim.sh-2.desktop;
+audio/aac=cmus_warpper.sh-5.desktop;
+audio/flac=cmus_warpper.sh-3.desktop;
+audio/mpeg=cmus_warpper.sh.desktop;
+audio/x-vorbis+ogg=cmus_warpper.sh-2.desktop;
+inode/directory=ranger.desktop;
+text/plain=launch_neovim.sh.desktop;
+x-scheme-handler/joplin=appimagekit-joplin.desktop;gearlever_joplin_5d737f.desktop;

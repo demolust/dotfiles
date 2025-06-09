@@ -1,0 +1,65 @@
+[Alacritty.desktop][Global Shortcuts]
+New=
+_launch=Meta+Shift+T
+
+[cmus.desktop][Global Shortcuts]
+_launch=Meta+C
+
+[lf_wezterm.desktop][Global Shortcuts]
+_launch=Meta+E
+
+[net.thunderbird.Thunderbird.desktop][Global Shortcuts]
+_launch=Meta+A
+
+[org.kde.dolphin.desktop][Global Shortcuts]
+_launch=Meta+S
+
+[org.kde.kcalc.desktop][Global Shortcuts]
+_launch=Calculator
+
+[org.kde.konsole.desktop][Global Shortcuts]
+NewTab=
+NewWindow=
+_launch=
+
+[org.kde.krunner.desktop][Global Shortcuts]
+RunClipboard=Alt+Shift+F2
+_launch=Search; Alt+F2; Meta+R
+
+[org.kde.plasma-systemmonitor.desktop][Global Shortcuts]
+_launch=Meta+Esc
+
+[org.kde.plasma.emojier.desktop][Global Shortcuts]
+_launch=Meta+.; Meta+Ctrl+Alt+Shift+Space
+
+[org.kde.spectacle.desktop][Global Shortcuts]
+ActiveWindowScreenShot=Meta+Print
+CurrentMonitorScreenShot=
+FullScreenScreenShot=Shift+Print
+OpenWithoutScreenshot=
+RecordRegion=Meta+Shift+R
+RecordScreen=Meta+Alt+R
+RecordWindow=
+RectangularRegionScreenShot=Meta+Shift+Print
+WindowUnderCursorScreenShot=Meta+Ctrl+Print
+_launch=Print; Meta+Shift+S
+
+[org.mozilla.firefox.desktop][Global Shortcuts]
+_launch=
+new-private-window=Meta+Shift+W
+new-window=Meta+W
+profile-manager-window=
+
+[org.wezfurlong.wezterm.desktop][Global Shortcuts]
+_launch=Meta+T
+
+[systemsettings.desktop][Global Shortcuts]
+_launch=Tools
+kcm-kscreen=
+kcm-lookandfeel=
+kcm-powerdevilprofilesconfig=
+kcm-screenlocker=
+kcm-users=
+
+[yazi_wezterm.desktop][Global Shortcuts]
+_launch=Meta+Shift+E

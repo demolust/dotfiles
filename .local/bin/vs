@@ -1,0 +1,57 @@
+#!/bin/bash
+
+if ! [[ "$(command -v fd)" && "$(command -v fzf)" && "$(command -v bat)" ]]; then
+  printf "Dependencies not installed\n"
+  exit 2
+fi
+
+base_fd_cmd=("fd --type f --hidden --exclude .git")
+header_msg="Select files to open in nvim: "
+fzf_cmd="fzf --tmux=center,80%,80% --multi --prompt=\"${header_msg}\" --border rounded --reverse --preview \"bat --color=always --style=numbers --line-range=:500 {}\""
+
+### Cleanup parms to not have a hypen
+if [[ "$#" -gt 0 ]]; then
+  for param in "$@"; do
+    if ! echo "$param" | grep -qP -- "-[\w]"; then
+      newparams+=("$param")
+    fi
+  done
+  ### Overwrites the original positional params
+  set -- "${newparams[@]}"
+fi
+
+### Break up arguments for directories and files, otherwise they are not used
+### Thus if want to create a new file then use nvim directly
+if [[ "$#" -gt 0 ]]; then
+  for parm in "$@"; do
+    if [[ -d "$parm" ]]; then
+      base_fd_cmd+=("--search-path $parm")
+      #newparams+=("$parm")
+    elif [[ -f "$parm" ]]; then
+      #printf "%s is a file, including it nvim command to open it\n" "$parm"
+      nv_parms+=("$parm")
+    else
+      #printf "%s is neither a file, including it nvim command to create a new file\n" "$parm"
+      nv_parms+=("$parm")
+    fi
+  done
+fi
+
+files_to_open=$(eval "${base_fd_cmd[*]}" | eval "$fzf_cmd")
+readarray -t files_to_open_arr < <(printf '%s' "$files_to_open")
+
+if [[ ${#files_to_open_arr[@]} -gt 0 && ${#nv_parms[@]} -gt 0 ]]; then
+  nvim "${files_to_open_arr[@]}" "${nv_parms[@]}"
+elif [[ ${#files_to_open_arr[@]} -gt 0 && ${#nv_parms[@]} -eq 0 ]]; then
+  nvim "${files_to_open_arr[@]}"
+elif [[ ${#nv_parms[@]} -gt 0 ]]; then
+  nvim "${nv_parms[@]}"
+#else
+#  printf "Launch nvim without a file to create?[y/n]\n"
+#  read -r Continue
+#  response=$(echo "${Continue}" | tr '[:upper:]' '[:lower:]')
+#  if [[ ${response} == "n"* ]]; then
+#    exit 0
+#  fi
+#  nvim
+fi

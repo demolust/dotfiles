@@ -1,0 +1,6 @@
+[Desktop Entry]
+Exec=sh -c "$HOME"/.local/bin/launch_neovim_tmux.sh
+MimeType=application/x-zerosize;
+Name=launch_neovim.sh
+NoDisplay=true
+Type=Application

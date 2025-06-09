@@ -1,0 +1,60 @@
+[$Version]
+update_info=dolphin_detailsmodesettings.upd:rename-leading-padding,dolphin_detailsmodesettings.upd:move-content-display
+
+[CompactMode]
+FontSize=14
+PreviewSize=32
+
+[ContentDisplay]
+UseShortRelativeDates=false
+
+[DetailsMode]
+FontSize=14
+SidePadding=0
+
+[General]
+ConfirmClosingMultipleTabs=false
+LockPanels=false
+OpenExternallyCalledFolderInNewTab=false
+RememberOpenedTabs=false
+ShowFullPath=true
+Version=202
+ViewPropsTimestamp=2022,6,14,23,26,23.171
+
+[KFileDialog Settings]
+Places Icons Auto-resize=false
+Places Icons Static Size=22
+Recent Files[$e]=launch_neovim.sh,file:$HOME/.local/bin/launch_neovim.sh
+Recent URLs[$e]=file:$HOME/.local/bin/
+detailViewIconSize=16
+
+[KPropertiesDialog]
+1477x831 screen: Height=504
+1477x831 screen: Width=462
+1536x864 screen: Height=458
+1536x864 screen: Width=398
+1920x1080 screen: Height=645
+1920x1080 screen: Width=558
+eDP-1 Height 1920x1080=521
+eDP-1 Height 1920x1080 eDP-1=557
+eDP-1 Width 1920x1080=432
+eDP-1 Width 1920x1080 eDP-1=506
+
+[MainWindow]
+eDP-1 Height 1080x1920=1852
+eDP-1 Height 1920x1080=745
+eDP-1 Width 1080x1920=1080
+eDP-1 Width 1920x1080=1440
+eDP-1 Window-Maximized 1080x1920=true
+eDP-1 Window-Maximized 1920x1080=true
+eDP-1 XPosition 1920x1080=239
+eDP-1 YPosition 1920x1080=150
+
+[Notification Messages]
+ConfirmDelete=true
+
+[PreviewSettings]
+Plugins=audiothumbnail,comicbookthumbnail,cursorthumbnail,djvuthumbnail,ebookthumbnail,exrthumbnail,directorythumbnail,imagethumbnail,jpegthumbnail,kraorathumbnail,windowsexethumbnail,windowsimagethumbnail,opendocumentthumbnail,svgthumbnail,ffmpegthumbs
+
+[VersionControl]
+enabledPlugins=Git

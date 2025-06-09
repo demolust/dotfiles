@@ -1,0 +1,11 @@
+[Unit]
+Description=dropbox agent
+After=network.target
+
+[Service]
+Restart=always
+ExecStart=/usr/bin/env %h/.dropbox-dist/dropboxd
+ExecStop=/usr/bin/env %h/.local/bin/dropbox stop
+
+[Install]
+WantedBy=basic.target

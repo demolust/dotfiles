@@ -1,0 +1,320 @@
+# Set shell interpreter for commands
+set shell zsh
+set shellopts '-euy'
+
+# set '-eu' options for shell commands
+# These options are used to have safer shell commands. Option '-e' is used to
+# exit on error and option '-u' is used to give error for unset variables.
+# Option '-f' disables pathname expansion which can be useful when $f, $fs, and
+# $fx variables contain names with '*' or '?' characters. However, this option
+# is used selectively within individual commands as it can be limiting at
+# times.
+# zsh does not split words by default as described here, which makes it difficult to work with $fs and $fx variables, but a compatibility option named shwordsplit (-y or --sh-word-split) is provided for this purpose. You can set this option for all commands as such
+
+# set internal field separator (IFS) to "\n" for shell commands
+# This is useful to automatically split file names in $fs and $fx properly
+# since default file separator used in these variables (i.e. 'filesep' option)
+# is newline. You need to consider the values of these options and create your
+# commands accordingly.
+set ifs "\n"
+
+map e $$EDITOR "$f"
+map E $$PAGER "$f"
+map w $$SHELL
+
+# Warn about nested instances
+& if [ $LF_LEVEL -gt 1 ]; then lf -remote "send $id echoerr 'Warning: Running in a nested lf instance!'"; fi
+
+# default already
+set filesep "\n"
+
+### Set refresh rate
+set period 1
+
+# Set icons
+set icons
+
+# Enable Borders
+set drawbox
+
+# Leave some space at the top and the bottom of the screen
+#set scrolloff 10
+
+### Set hidden files to be visible
+set hidden
+
+### Use `.` to enter a shell, this is apprt from orginal maps `!`, `$`, `&`, `%`
+map . shell
+
+### Enable file and directory information
+set info size
+set dircounts
+
+### Clear mark from files after pasting
+map p :paste; clear
+
+# Map esc to quit/command mode
+map <esc> quit
+
+# Use the `dim` attribute instead of underline for the cursor in the preview pane
+set cursorpreviewfmt "\033[7;2m"
+
+# Allows to view the result of execution of previous commands
+# Invokes a shell `true`, the I/O goes to terminal and finally waits for a key tobe pressed to continue, which brings back lf view
+map ` !true
+
+# mkdir command. See wiki if you want it to select created dir
+map s :push %mkdir<space>
+map S :push %touch<space>
+
+# Make rename behaves more like vim
+# Rename with the cursor placed at the extension
+map i :rename
+# Rename with the cursor placed at the beginning
+map I :rename; cmd-home
+# Rename with the cursor placed at the end
+map a :rename; cmd-end
+# Rename with the cursor placed at the end
+map A :rename; cmd-end
+# Rename with the portion before the extension deleted
+map r :rename; cmd-delete-home
+# Rename with the entire filename deleted
+map R :rename; cmd-end; cmd-delete-home
+
+### Enable mouse interaction
+set mouse true
+
+### Define some of the lf special shell commands
+
+cmd on-init &{{
+  set +u
+  if [ -p "${FIFO_UEBERZUG}" ]; then
+    lf -remote "send $id redraw"
+  fi
+  set -u
+  lf -remote "send $id set statfmt \"$(eza -ld --color=always "$f" | sed 's/\\/\\\\/g;s/"/\\"/g')\""
+}}
+
+cmd on-quit &{{
+  set +u
+  if [ -p "${FIFO_UEBERZUG}" ]; then
+    exec 3>&-
+    rm -f -- "${UEBERZUG_SOCKET}"
+    rm -f -- "${FIFO_UEBERZUG}"
+  fi
+  set -u
+}}
+
+cmd on-select &{{
+  set +u
+  if [ -p "${FIFO_UEBERZUG}" ]; then
+    lf -remote "send $id redraw"
+  fi
+  set -u
+  lf -remote "send $id set statfmt \"$(eza -ld --color=always "$f" | sed 's/\\/\\\\/g;s/"/\\"/g')\""
+}}
+
+# Put lf into background
+map <c-z> $ kill -STOP $PPID
+
+# Create a cmd to follow symlinks
+cmd follow_link %{{
+  lf -remote "send ${id} select '$(readlink $f)'"
+}}
+
+map gL follow_link
+
+# Execute current file (must be executable)
+map b $$f
+map B !$f
+
+### Define a parent directory move in a up/down direction from the current directory
+### Without moving the view
+cmd move-parent &{{
+    dironly="setlocal '$(dirname "$PWD")' dironly"
+    lf -remote "send $id :updir; $dironly true; $1; $dironly false; open"
+}}
+
+map J move-parent down
+map K move-parent up
+
+cmd settings ${{
+  env | grep ^lf_ | sort | $PAGER
+}}
+
+### Set image preview method
+set sixel true
+
+### Use custom a scope.sh script as defined in $XDG_CONFIG_HOME/lf/scope.sh for previews
+set previewer ~/.config/lf/scope-lf-wrapper.sh
+set cleaner ~/.config/lf/cleaner
+
+### The following part needs to have at rifle (from ranger) in path
+### Allows to set rifle to open all files, it will load rifle.conf from $XDG_CONFIG_HOME/ranger/rifle.conf
+### This will overwrite the orginal `open` cmd
+cmd open $set -f; rifle -p 0 "$fx"
+
+# Use enter to open files
+map <enter> open
+
+### Define command to view all the defined rifle opener method options
+cmd open-with ${{
+    set -f
+    method=$(rifle -l $fx | sed -e "s/:[a-zA-Z]*:[a-zA-Z]*:/ \| /" | fzf \
+      --no-sort --disabled --layout=reverse \
+      --no-info --prompt="Open with > " \
+      --bind=change:clear-query \
+      --bind=q:abort \
+      --bind=j:down,k:up \
+      --bind=d:half-page-down,u:half-page-up \
+      --bind=space:page-down,backspace:page-up \
+      --bind=g:first,G:last \
+      --bind=f:jump,jump:accept \
+      --tmux=center,80%,80% | sed -e 's/ |.*//g')
+    [ -n "${method}" ] && rifle -p $method $fx
+}}
+
+map o open-with
+map O open-with
+
+### Map c/C to clear always the selected files/dirs
+cmd clear_unselect &{{
+  rm ~/.local/share/lf/files 2>/dev/null
+  lf -remote "send clear"
+  lf -remote "send unselect"
+}}
+
+map c clear_unselect
+map C clear_unselect
+
+### Deleting files will put them under the XDG TRASH spec, if trash-cli is installed
+cmd trash &{{
+  if [[ "$(command -v trash-put)" ]]; then
+    trash-put $fx
+  else
+    mkdir -p ~/.trash
+    mv -- $fx ~/.trash
+  fi
+}}
+
+map t trash
+map T trash
+map <delete> trash
+
+# Decompress current file or selected files
+cmd extract &{{
+  set -f
+  case $f in
+      *.tar.bz|*.tar.bz2|*.tbz|*.tbz2) tar xjvf $f;;
+      *.tar.gz|*.tgz) tar xzvf $f;;
+      *.tar.xz|*.txz) tar xJvf $f;;
+      *.zip) unzip $f;;
+      *.rar) unrar x $f;;
+      *.7z) 7z x $f;;
+  esac
+}}
+
+cmd multiextract &{{
+  set -f
+  for file in $fx; do
+    case $file in
+        *.tar.bz|*.tar.bz2|*.tbz|*.tbz2) tar xjvf $file;;
+        *.tar.gz|*.tgz) tar xzvf $file;;
+        *.tar.xz|*.txz) tar xJvf $file;;
+        *.zip) unzip $file;;
+        *.rar) unrar x $file;;
+        *.7z) 7z x $file;;
+    esac
+  done
+  rm ~/.local/share/lf/files 2>/dev/null
+  lf -remote "send clear"
+  lf -remote "send unselect"
+}}
+
+map x multiextract
+map X multiextract
+
+# compress current file or selected files with tar and gunzip
+cmd tar ${{
+  set -f
+  set +eu
+  filename=$1
+  set -eu
+  if [ -z "${filename}" ]; then
+    read "?Enter filename: "  filename
+  fi
+  #tmp_dir=${filename}
+  tmp_dir=$(mktemp -d)
+  for file in ${fx}; do
+    rsync -az "${file}" "${tmp_dir}"
+  done
+  #tar czf "${filename}".tgz "${tmp_dir}"
+  # https://stackoverflow.com/questions/939982/how-do-i-tar-a-directory-of-files-and-folders-without-including-the-directory-it
+  find "${tmp_dir}" \( -type f -o -type d -o -type l \) -printf "%P\n" | tar -czf "${filename}".tgz --no-recursion -C "${tmp_dir}" -T -
+  rm -rf "${tmp_dir}"
+  rm ~/.local/share/lf/files 2>/dev/null
+  lf -remote "send clear"
+  lf -remote "send unselect"
+}}
+
+# compress current file or selected files with zip
+cmd zip ${{
+  set -f
+  set +eu
+  filename=$1
+  set -eu
+  if [ -z "${filename}" ]; then
+    read "?Enter filename: "  filename
+  fi
+  #tmp_dir=${filename}
+  tmp_dir=$(mktemp -d)
+  for file in ${fx}; do
+    rsync -az "${file}" "${tmp_dir}"
+  done
+  #zip -r "${filename}".zip "${tmp_dir}"
+  #find "${tmp_dir}" \( -type f -o -type d -o -type l \) -printf "%P\n" | zip "${filename}".zip --names-stdin "${tmp_dir}"
+  (cd "${tmp_dir}"; find "${tmp_dir}" \( -type f -o -type d -o -type l \) -printf "%P\n" | zip -q "${filename}".zip --names-stdin)
+  mv "${tmp_dir}"/"${filename}".zip .
+  rm -rf "${tmp_dir}"
+  rm ~/.local/share/lf/files 2>/dev/null
+  lf -remote "send clear"
+  lf -remote "send unselect"
+}}
+
+map z zip
+map Z tar
+
+### Defines a custom search method using fzf
+cmd fzf_jump ${{
+  selection=$(fd --hidden --max-depth=1 --color=always | fzf \
+  --ansi\
+  --border=rounded\
+  --layout=reverse\
+  --prompt="Jump to selection: "\
+  --tmux=center,80%,80%)
+  if [ -n "$selection" ]; then
+    if [ -d "$selection" ]; then
+      cmd="cd"
+    else
+      cmd="select"
+    fi
+    selection="$(printf '%s' "$selection" | sed 's/\\/\\\\/g;s/"/\\"/g')"
+    lf -remote "send $id $cmd \"$selection\""
+  fi
+}}
+
+cmd fzf_search ${{
+  selection=$(fd --hidden --max-depth=1 --color=always | fzf \
+  --ansi\
+  --border=rounded\
+  --layout=reverse\
+  --prompt="Jump to selection: "\
+  --tmux=center,80%,80% | sed 's/\\/\\\\/g;s/"/\\"/g')
+  if [ -n "$selection" ]; then
+    lf -remote "send $id select \"$selection\""
+  fi
+}}
+
+map / :fzf_search
+map ? :fzf_jump
+

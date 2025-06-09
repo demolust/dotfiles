@@ -1,0 +1,7 @@
+[Desktop Entry]
+Exec=sh -c "$HOME"/.local/bin/cmus_warpper.sh
+MimeType=audio/mpeg;
+Name=cmus_warpper.sh
+NoDisplay=true
+Terminal=true
+Type=Application

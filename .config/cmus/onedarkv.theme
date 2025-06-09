@@ -1,0 +1,51 @@
+# Colors
+# Original them from https://raw.githubusercontent.com/vtmx/dotfiles/1f514a70b62fc7573e98a49f76fee3bff02b51c3/config/cmus/onedarkv.theme
+
+# Main
+set color_win_bg=default
+set color_win_fg=default
+
+# Title
+set color_win_title_bg=default
+set color_win_title_fg=blue
+
+# Border sidebar
+set color_separator=darkgray
+
+# Directory of browser
+set color_win_dir=blue
+
+# Cursor
+set color_win_sel_bg=blue
+set color_win_sel_fg=black
+
+# Cursor artist in tree
+set color_win_cur_sel_bg=blue
+set color_win_cur_sel_fg=black
+
+# First song in tree track
+set color_win_inactive_sel_bg=default
+set color_win_inactive_sel_fg=default
+
+# Song playing in tree track
+set color_win_inactive_cur_sel_bg=default
+set color_win_inactive_cur_sel_fg=blue
+
+# Playing in sorted view 
+set color_win_cur=blue
+
+# Botton playing song
+set color_titleline_bg=default
+set color_titleline_fg=blue
+
+# Status time vol etc
+set color_statusline_bg=default
+set color_statusline_fg=default
+
+# Command line
+set color_cmdline_bg=default
+set color_cmdline_fg=default
+
+# Info idk
+set color_info=yellow
+set color_error=red

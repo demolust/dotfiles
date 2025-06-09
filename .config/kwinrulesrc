@@ -1,0 +1,120 @@
+[$Version]
+update_info=kwinrules.upd:replace-placement-string-to-enum,kwinrules.upd:use-virtual-desktop-ids
+
+[0a7dcad1-9a88-407a-ba32-a09f76d0b251]
+Description=Application settings for opera
+clientmachine=localhost
+ignoregeometry=true
+ignoregeometryrule=4
+maximizehoriz=true
+maximizehorizrule=3
+maximizevert=true
+maximizevertrule=3
+position=0,0
+positionrule=4
+sizerule=4
+wmclass=opera
+wmclassmatch=1
+
+[1120da0c-7dc0-46a1-b1c2-21e0a79a4e8e]
+Description=Application settings for org.wezfurlong.wezterm
+ignoregeometry=true
+ignoregeometryrule=2
+noborder=true
+noborderrule=3
+position=0,0
+positionrule=3
+wmclass=wezterm-gui org.wezfurlong.wezterm
+wmclasscomplete=true
+wmclassmatch=1
+
+[2acea369-1d02-49e7-a72f-f34bc9a7abaf]
+Description=Application settings for saber
+wmclass=\ssaber
+wmclasscomplete=true
+wmclassmatch=1
+
+[3]
+Description=Application settings for org.kde.konsole
+ignoregeometry=true
+maximizehoriz=true
+maximizevert=true
+noborder=true
+noborderrule=3
+position=0,36
+size=1477,795
+wmclass=konsole org.kde.konsole
+wmclasscomplete=true
+wmclassmatch=1
+
+[3a8c7d5e-6288-45d6-b7f5-a244850770b9]
+Description=Window settings for org.mozilla.firefox
+noborder=true
+noborderrule=3
+title=Mozilla Firefox Private Browsing
+types=1
+wmclass=firefox org.mozilla.firefox
+wmclasscomplete=true
+wmclassmatch=1
+
+[4]
+Description=Application settings for Alacritty
+ignoregeometry=true
+ignoregeometryrule=4
+maximizehoriz=true
+maximizehorizrule=3
+maximizevert=true
+maximizevertrule=3
+position=0,0
+positionrule=4
+size=1477,831
+sizerule=4
+wmclass=alacritty Alacritty
+wmclasscomplete=true
+wmclassmatch=2
+
+[4c235ed5-ff47-4251-83b8-dba9a9b54f0d]
+Description=Application settings for Opera
+clientmachine=localhost
+maximizehoriz=true
+maximizehorizrule=3
+maximizevert=true
+maximizevertrule=3
+wmclass=Opera
+wmclassmatch=1
+
+[543ede7e-8650-4c0d-b1ba-d2dfd3e14a95]
+Description=Application settings for org.kde.konsole
+noborder=true
+noborderrule=3
+wmclass=konsole org.kde.konsole
+wmclasscomplete=true
+wmclassmatch=1
+
+[6fd7fa4e-48ad-44c1-be93-19ffecb7ad3f]
+Description=Application settings for Alacritty
+ignoregeometry=true
+ignoregeometryrule=3
+maximizehoriz=true
+maximizehorizrule=4
+maximizevert=true
+maximizevertrule=4
+placement=1
+placementrule=1
+position=0,0
+positionrule=4
+sizerule=4
+wmclass=alacritty Alacritty
+wmclasscomplete=true
+wmclassmatch=1
+
+[General]
+count=5
+rules=3a8c7d5e-6288-45d6-b7f5-a244850770b9,4c235ed5-ff47-4251-83b8-dba9a9b54f0d,3,4,1120da0c-7dc0-46a1-b1c2-21e0a79a4e8e
+
+[f8e6202f-4f9d-4654-9909-0b86931d7c7f]
+Description=Application settings for firefox
+noborder=true
+noborderrule=3
+wmclass=firefox
+wmclassmatch=1

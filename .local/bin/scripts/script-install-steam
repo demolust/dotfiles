@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+source "$(dirname "$0")"/pkg_manager.sh
+
+pkg_install steam || exit 1
+echo "Starting steam"
+exec setsid uwsm-app -- steam >/dev/null 2>&1 &

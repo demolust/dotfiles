@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+# Lock the screen
+if ! systemctl --user -q is-active hyprlock.service; then
+  systemctl --user start hyprlock.service
+fi
+
+# Ensure 1password is locked
+#
+if [[ "$(pgrep -x "1password")" ]]; then
+  1password --lock &
+fi
+
+# Avoid running screensaver when locked
+pkill -f "alacritty --class Screensaver"

@@ -1,0 +1,88 @@
+@import "../../.local/share/themes/current/swaync.css";
+
+:root {
+  --border-radius: 22px;
+  --cc-bg: transparent;
+  
+  /* Use the imported color variables */
+  --widget-background: @background-color;
+  --border: 2px solid @border-color;
+  --text-color: @label;
+  
+  --noti-bg-alpha: 1;
+  --padding: calc(var(--border-radius) / 2);
+}
+
+/* Global text color for the control center */
+.control-center {
+  border-radius: 0;
+  color: var(--text-color);
+}
+
+.widgets > .widget,
+.widget-mpris > carouselindicatordots,
+.widget-mpris > box > button {
+  background: var(--widget-background);
+  border-radius: var(--border-radius);
+  padding: calc(var(--border-radius) / 2);
+  color: var(--text-color);
+}
+
+.control-center-list-placeholder {
+  padding: var(--border-radius);
+  color: var(--text-color);
+}
+
+.notification-group {
+  border-radius: var(--border-radius);
+  padding: 8px;
+  border: var(--border);
+}
+
+.widget.widget-mpris {
+  background: transparent;
+  border-radius: 0;
+  padding: 0;
+  border: none;
+}
+
+.widget.widget-mpris > carouselindicatordots {
+  --dots-padding: 4px;
+  padding: var(--dots-padding);
+  padding-left: var(--dots-padding);
+  padding-right: calc(6px + var(--dots-padding));
+  margin: 0;
+  margin-top: var(--padding);
+}
+
+.widget-mpris > box > button:hover {
+  /* Slightly lighter background on hover using secondary color */
+  background: @bg-secondary;
+}
+
+.widget-mpris-player {
+  box-shadow: none;
+  margin: 0 var(--padding);
+  color: var(--text-color);
+}
+
+.widget-mpris-player:only-child {
+  margin: 0;
+}
+
+.close-button {
+    background: #f7768e; /* Kept as requested */
+    color: #000000;
+    text-shadow: none;
+    padding: 0;
+    border-radius: 10px;
+    margin-top: 5px;
+    margin-right: 5px;
+}
+
+.close-button:hover {
+    background: #f7768e;
+    box-shadow: none;
+    transition: all .15s ease-in-out;
+    border: none;
+}

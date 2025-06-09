@@ -1,0 +1,16 @@
+[Unit]
+Description=Hyprland idle daemon
+PartOf=graphical-session.target
+After=graphical-session.target
+Requisite=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/hypridle
+Restart=on-failure
+ExecCondition=/usr/lib/systemd/systemd-xdg-autostart-condition "" "KDE:GNOME"
+Slice=session.slice
+RestartSec=2s
+
+[Install]
+WantedBy=graphical-session.target

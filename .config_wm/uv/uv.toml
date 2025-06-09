@@ -1,0 +1,14 @@
+# Set "python-downloads" to "automatic" instead of "manual" && 
+# Set "python-preference" to "system" instead of "managed",
+# This combination of options will avoid unintended Python downloads.
+# As it will be needed to explicit specificy the needed python version 
+# on the uv operations command 
+# Otherwise, any managed Python would be used for uv operations where no
+# particular Python is specified, even if the only available managed Python
+# were much older than the primary system Python.
+# This method will avoid cluttering the system with RPM-packaged (system) Pythons
+
+# https://docs.astral.sh/uv/reference/settings/#python-downloads
+python-downloads = "automatic"
+# https://docs.astral.sh/uv/reference/settings/#python-preference
+python-preference = "system"

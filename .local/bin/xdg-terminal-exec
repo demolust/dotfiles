@@ -1,0 +1,99 @@
+#!/usr/bin/env bash
+
+insert_into_array() {
+  local array_name="$1"
+  local index="$2"
+  local value_to_insert="$3"
+
+  # Get the current length of the array
+  eval "local array_length=\${#${array_name}[@]}"
+
+  # Adjust index if it's out of bounds
+  if (( index > array_length )); then
+    # Insert at the end (index-1 relative to the specified out-of-bounds index)
+    index=$((array_length))
+  elif (( index < 0 )); then
+    # Insert at the beginning
+    index=0
+  fi
+
+  # Construct the new array with the inserted value
+  eval "${array_name}=(\"\${${array_name}[@]:0:$index}\" \"$value_to_insert\" \"\${${array_name}[@]:$index}\")"
+}
+
+configured_term=$(/usr/bin/xdg-terminal-exec --print-id)
+
+if [[ "$configured_term" == "org.wezfurlong.wezterm.desktop" ]];then
+  base_cmd=()
+  query_xdg=false
+  print_help=false
+  query_xdg_cmd=()
+
+  PARSED_ARGUMENTS=$(getopt -a -n "$0" -o e,h -l help,app-id:,title:,dir:,print-id,print-path,print-content,print-cmd::,print-delimiter: -- "$@")
+  VALID_ARGUMENTS=$?
+
+  if [[ "$VALID_ARGUMENTS" != "0" ]]; then
+    /usr/bin/xdg-terminal-exec --help
+    exit 2
+  fi
+
+  eval set -- "$PARSED_ARGUMENTS"
+
+  while :; do
+    case "${1}" in
+    -e)
+      insert_into_array "base_cmd" 0 "start"
+      insert_into_array "base_cmd" 1 "--always-new-process"
+      shift
+      ;;
+    --app-id)
+      insert_into_array "base_cmd" 1 "--class=\"${2}\""
+      shift 2
+      ;;
+    --dir)
+      insert_into_array "base_cmd" 2 "--cwd=\"${2}\""
+      shift 2
+      ;;
+    --title)
+      shift 2
+      ;;
+    --print-id|--print-path|--print-content)
+      query_xdg=true
+      query_xdg_cmd+=("$1")
+      shift
+      ;;
+    --print-cmd|--print-delimiter)
+      query_xdg=true
+      query_xdg_cmd+=("$1=$2")
+      shift 2
+      ;;
+    -h | --help)
+      print_help=true
+      shift
+      ;;
+    --)
+      shift
+      break
+      ;;
+    *)
+      echo "Unexpected option: $1 - this should not happen."
+      usage
+      ;;
+    esac
+  done
+
+  if [[ "$print_help" == true ]];then
+    /usr/bin/xdg-terminal-exec --help
+    exit 0
+  fi
+
+  if [[ "$query_xdg" == true ]];then
+    /usr/bin/xdg-terminal-exec "${query_xdg_cmd[@]}"
+    exit 0
+  fi
+
+  exec -- wezterm "${base_cmd[@]}" -- "$@" &
+
+else
+  /usr/bin/xdg-terminal-exec "$@"
+fi

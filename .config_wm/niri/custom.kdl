@@ -1,0 +1,10 @@
+
+// Experiments
+window-rule {
+    match app-id=r#"^com\.wm\.etile$"#
+    open-floating true
+    default-floating-position x=200 y=0 relative-to="bottom-left"
+    default-window-height { proportion 0.5; }
+    default-column-width { proportion 0.5; }
+    open-maximized false
+}

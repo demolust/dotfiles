@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+set -e
+
+FIRST_RUN_MODE="$CSTATE_DIR/first-run.mode"
+
+if [[ -f "$FIRST_RUN_MODE" ]]; then
+  rm -f "$FIRST_RUN_MODE"
+  bash "$CDATA_DIR/install/first-run/battery-monitor.sh"
+  bash "$CDATA_DIR/install/first-run/cleanup-reboot-sudoers.sh"
+  bash "$CDATA_DIR/install/first-run/firewall.sh"
+  bash "$CDATA_DIR/install/first-run/dns-resolver.sh"
+  bash "$CDATA_DIR/install/first-run/gnome-theme.sh"
+  bash "$CDATA_DIR/install/first-run/wifi.sh"
+  bash "$CDATA_DIR/install/first-run/welcome.sh"
+  sudo rm -f /etc/sudoers.d/first-run
+fi

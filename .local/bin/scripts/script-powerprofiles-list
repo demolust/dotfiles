@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+
+if [[ "$(command -v powerprofilesctl)" ]]; then
+powerprofilesctl list |
+  awk '/^\s*[* ]\s*[a-zA-Z0-9\-]+:$/ { gsub(/^[*[:space:]]+|:$/,""); print }' |
+  tac
+elif [[ "$(command -v tuned-adm)" ]]; then
+tuned-adm list |
+  awk '/^-[[:space:]][[:alnum:]_-]+[[:space:]]+-[[:space:]][[:alnum:]].+$/ { gsub(/[[:space:]]+-[[:space:]][[:alnum:]].+$/,""); gsub(/^-[[:space:]]/,""); print }'
+fi

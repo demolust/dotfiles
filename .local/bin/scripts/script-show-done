@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+msg="${1}
+
+Press any key to close..."
+
+echo
+gum spin --spinner "globe" --title "${msg}" -- bash -c 'read -n 1 -s'

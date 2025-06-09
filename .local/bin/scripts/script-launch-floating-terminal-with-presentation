@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+cmd="$@"
+exec setsid uwsm-app -- script-launch-terminal-float bash -c "script-show-logo && $cmd || (script-show-done 'Failed!, Please check output' && exit 1) && script-show-done 'Done!'"

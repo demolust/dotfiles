@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+if [[ "$(command -v flatpak)" ]]; then
+    flatpak update -y
+fi

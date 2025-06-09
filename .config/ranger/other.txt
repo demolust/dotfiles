@@ -1,0 +1,9 @@
+class empty(Command):
+    """:empty
+        Deletes all files and dirs of the trash directory
+    """
+
+    def executes(self):
+        files = os.listdir(trash)
+        shutil.rmtree(trash)
+        os.mkdir(trash, mode=0o700)

@@ -1,0 +1,18 @@
+[Unit]
+PartOf=graphical-session.target
+After=graphical-session.target
+Requisite=graphical-session.target
+ConditionEnvironment=WAYLAND_DISPLAY
+Description=unoserver
+
+[Service]
+Type=exec
+ExitType=cgroup
+Slice=app-graphical.slice
+ExecStart=%h/.local/bin/unoserver
+ExecStop=pkill -9 unoserver
+Restart=on-failure
+TimeoutStopFailureMode=terminate
+
+[Install]
+WantedBy=graphical-session.target

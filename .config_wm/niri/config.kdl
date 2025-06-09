@@ -1,0 +1,17 @@
+
+// General default config
+include "defaults/input.kdl"
+include "defaults/envs.kdl"
+include "defaults/autostart.kdl"
+include "defaults/windows.kdl"
+//include "defaults/bindings.kdl"
+include "defaults/looknfeel.kdl"
+
+// User config
+include "input.kdl"
+include "monitors.kdl"
+include "envs.kdl"
+include "autostart.kdl"
+include "windows.kdl"
+include "bindings.kdl"
+include "looknfeel.kdl"

@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+source "$(dirname "$0")"/monitors_info.sh
+
+if (($# == 0)); then
+  echo "Usage: script-launch-or-focus [window-pattern||cmd-to-execute] [launch-command]"
+  exit 1
+fi
+
+WINDOW_PATTERN="$1"
+LAUNCH_COMMAND="${2:-"uwsm-app -- $WINDOW_PATTERN"}"
+get_window_address "$WINDOW_PATTERN"
+
+if [[ -n $WINDOW_ADDRESS ]]; then
+  focus_window "$WINDOW_ADDRESS"
+else
+  eval exec "$LAUNCH_COMMAND"
+fi

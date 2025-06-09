@@ -1,0 +1,9 @@
+
+environment {
+  DISPLAY ":0"
+  SDL_VIDEODRIVER "wayland"
+  MOZ_ENABLE_WAYLAND "1"
+  ELECTRON_OZONE_PLATFORM_HINT "wayland"
+  OZONE_PLATFORM "wayland"
+  XDG_SESSION_TYPE "wayland"
+}

@@ -1,0 +1,9 @@
+
+spawn-at-startup "dbus-update-activation-environment" "--systemd" "WAYLAND_DISPLAY" "XDG_CURRENT_DESKTOP" "QT_QPA_PLATFORMTHEME"
+//Overkill and cluters env
+//spawn-at-startup "dbus-update-activation-environment" "--systemd" "all"
+spawn-at-startup "xwayland-satellite"
+
+hotkey-overlay {
+    skip-at-startup
+}

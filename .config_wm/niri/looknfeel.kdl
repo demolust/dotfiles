@@ -1,0 +1,7 @@
+cursor {
+  xcursor-theme "Borealis-cursors"
+  xcursor-size 32
+  hide-when-typing
+  hide-after-inactive-ms 10000
+}
+

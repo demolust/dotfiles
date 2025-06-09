@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+position="left"
+pos="${position:0:1}"
+
+if [[ "$DESKTOP_SESSION" == "niri" ]]; then
+  num=$(niri msg -j windows | jq -r ".[] | .app_id" | grep -Pc "^com\.wm\.${pos}tile_[\d]+")
+elif [[ "$DESKTOP_SESSION" =~ "hyprland" ]]; then
+  num=$(hyprctl clients -j | jq -r ".[] | .class" | grep -Pc "^com\.wm\.${pos}tile_[\d]+")
+fi
+num=$((num+1))
+
+script-position-terminal -p "$position" -n "$num" &
+[[ "$DESKTOP_SESSION" =~ "hyprland" ]] && sleep 0.2
+exec setsid uwsm-app -- xdg-terminal-exec --app-id=com.wm."${pos}"tile_"${num}" -e -- "$@"

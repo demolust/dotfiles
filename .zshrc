@@ -360,6 +360,8 @@ if [[ "$(command -v eza)" ]]; then
   cm=38;2;230;150;210:bu=38;2;95;215;175:sc=38;2;110;222;222"
   alias ls='eza -gH --color=always'
   alias ll='eza -lgH --color=always'
+  alias lll='eza -1gH --color=always'
+  alias llll='eza -1gHA --color=always'
   alias l='eza -lgHA --color=always'
   alias l.='eza -d .* --color=always'
   alias tree='eza -a -I ".git|node_modules|venv" --tree --color=always'

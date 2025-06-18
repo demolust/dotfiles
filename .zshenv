@@ -82,6 +82,11 @@ if [[ "$(command -v node)" ]]; then
   export NODE_REPL_HISTORY="$XDG_STATE_HOME"/node_repl_history
 fi
 
+if [[ "$(command -v python)" ]]; then
+  export PYTHONSTARTUP="$XDG_CONFIG_HOME"/python/pythonrc
+  export PYTHON_HISTORY="$XDG_STATE_HOME"/python_history
+fi
+
 if [[ "$(command -v parallel)" ]]; then
   export PARALLEL_HOME="$XDG_CONFIG_HOME"/parallel
 fi

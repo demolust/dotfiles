@@ -519,6 +519,7 @@ function cs {
 }
 
 function lazygp {
+  git pull
   git add .
   git commit -m "$@"
   git push

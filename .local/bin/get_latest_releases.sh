@@ -36,7 +36,7 @@ declare -A tools=(
   [lf]='gokcehan/lf:lf:lf --version:"$bin.*$OS.*$ARCH2.*(tar.gz|zip)"'
   [ripgrep]='BurntSushi/ripgrep:rg:rg --version | awk '\''NR==1 {print $2}'\'':"$bin.*$ARCH.*$OS.*gnu.*(tar.gz|zip)"'
   [zoxide]='ajeetdsouza/zoxide:zoxide:zoxide --version | awk '\''{print $2}'\'':"$bin.*$ARCH.*$OS.*gnu.*(tar.gz|zip)"'
-  [xh]='ducaale/xh:xh:xh --version | head -n 1 | awk '\''{print $2}'\'':"$bin.*$ARCH.*$OS.*gnu.*(tar.gz|zip)"'
+  [xh]='ducaale/xh:xh:xh --version | awk '\''NR==1 {print $2}'\'':"$bin.*$ARCH.*$OS.*gnu.*(tar.gz|zip)"'
 )
 
 download_and_install() {

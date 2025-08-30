@@ -421,7 +421,7 @@ binds {
     Mod+S hotkey-overlay-title="Opens the GUI filemanager" { spawn "thunar"; }
 
     // Lock, Logout, Shutdown & Reboot Promopt
-    Mod+Shift+Return hotkey-overlay-title="Opens the exit prompt" { spawn "wlogout" "-b" "4"; }
+    Mod+Shift+Return hotkey-overlay-title="Opens the exit prompt" { spawn "wlogout" "-sb" "4"; }
 
     // General Scripts
     Mod+Alt+L hotkey-overlay-title="Locks the screen" { spawn "~/.config/niri/scripts/HyprLockScreen.sh"; }

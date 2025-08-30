@@ -9,8 +9,8 @@ LockSidebar=true
 ShowSidebar=true
 
 [KFileDialog Settings]
-Recent Files[$e]=file:$HOME/Downloads/test_print.pdf,file:$HOME/Downloads/test_print.pdf
-Recent URLs[$e]=file:$HOME/Downloads/,file:$HOME/Downloads/latex/
+Recent Files[$e]=
+Recent URLs[$e]=
 detailViewIconSize=16
 
 [MainWindow]

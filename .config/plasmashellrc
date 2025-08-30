@@ -9,8 +9,8 @@ ColumnState=AAAA/wAAAAAAAAABAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAk8AAAACAQAAAQAA
 Number of Actions=0
 
 [KFileDialog Settings]
-Recent Files[$e]=wp2831986-black-background-png.png,file:$HOME/.local/bin/launch_cmus.sh,file:$HOME/.local/bin/launch_tmux_cmus.sh,file:$HOME/.local/bin/launch_ranger.sh,file:$HOME/Pictures/Wallpapers/wp2831986-black-background-png.png
-Recent URLs[$e]=file:$HOME/Pictures/Wallpapers/,file:$HOME/.local/bin/,file:$HOME/,file:$HOME/.local/
+Recent Files[$e]=
+Recent URLs[$e]=
 detailViewIconSize=16
 
 [KPropertiesDialog]

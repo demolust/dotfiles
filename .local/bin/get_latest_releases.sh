@@ -18,7 +18,7 @@ mkdir -p "$INSTALL_DIR"
 # List of tools with their GitHub repo and how to check their version
 declare -A tools=(
   # Format: [name]='github_repo:binary_name:version_cmd:"base_asset_pattern"'
-  [eza]='eza-community/eza:eza:eza --version | awk '\''NR==2 {print $1}'\''| sed '\''s/^v//'\'':"$bin.*$ARCH.*$OS.*gnu.*(tar.gz|zip)"'
+  [eza]='eza-community/eza:eza:eza --version | awk '\''NR==2 {print $1}'\'' | sed '\''s/^v//'\'':"$bin.*$ARCH.*$OS.*gnu.*(tar.gz|zip)"'
   [bat]='sharkdp/bat:bat:bat --version | awk '\''{print $2}'\'':"$bin.*$ARCH.*$OS.*gnu.*(tar.gz|zip)"'
   [fd]='sharkdp/fd:fd:fd --version | awk '\''{print $2}'\'':"$bin.*$ARCH.*$OS.*gnu.*(tar.gz|zip)"'
   [starship]='starship/starship:starship:starship --version | awk '\''NR==1 {print $2}'\'':"$bin.*$ARCH.*$OS.*gnu.*(tar.gz|zip)"'

@@ -1,0 +1,17 @@
+[Unit]
+Description=Restart wallpaper_change Service
+Requires=wallpaper_change.service
+PartOf=graphical-session.target
+After=graphical-session.target
+Requisite=graphical-session.target
+ConditionEnvironment=WAYLAND_DISPLAY
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/systemctl --user restart wallpaper_change.service
+Restart=no
+RestartSec=150s
+StartLimitBurst=2
+
+[Install]
+WantedBy=graphical-session.target

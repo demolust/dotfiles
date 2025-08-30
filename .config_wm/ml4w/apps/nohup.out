@@ -1,0 +1,59 @@
+
+(hyprland-settings:2): Gtk-WARNING **: 10:06:55.416: Theme parser error: gtk.css:4970:12-17: "shade" is not a valid color name.
+
+(hyprland-settings:2): Gtk-WARNING **: 10:06:55.416: Theme parser error: gtk.css:5030:12-17: "shade" is not a valid color name.
+
+(hyprland-settings:2): Gtk-WARNING **: 10:06:55.417: Theme parser error: gtk.css:5057:12-15: "mix" is not a valid color name.
+
+(hyprland-settings:2): Gtk-WARNING **: 10:06:55.417: Theme parser error: gtk.css:5061:12-15: "mix" is not a valid color name.
+
+(hyprland-settings:2): Gtk-WARNING **: 10:06:55.417: Theme parser warning: gtk.css:5262:3-5263:1: Expected ';' at end of block
+
+(hyprland-settings:2): Gtk-WARNING **: 10:06:55.417: Theme parser error: gtk.css:5293:3-19: No property named "-gtk-icon-effect"
+
+(hyprland-settings:2): Gtk-WARNING **: 10:06:55.697: Theme parser error: gtk.css:4970:12-17: "shade" is not a valid color name.
+
+(hyprland-settings:2): Gtk-WARNING **: 10:06:55.697: Theme parser error: gtk.css:5030:12-17: "shade" is not a valid color name.
+
+(hyprland-settings:2): Gtk-WARNING **: 10:06:55.698: Theme parser error: gtk.css:5057:12-15: "mix" is not a valid color name.
+
+(hyprland-settings:2): Gtk-WARNING **: 10:06:55.698: Theme parser error: gtk.css:5061:12-15: "mix" is not a valid color name.
+
+(hyprland-settings:2): Gtk-WARNING **: 10:06:55.698: Theme parser warning: gtk.css:5262:3-5263:1: Expected ';' at end of block
+
+(hyprland-settings:2): Gtk-WARNING **: 10:06:55.698: Theme parser error: gtk.css:5293:3-19: No property named "-gtk-icon-effect"
+
+(hyprland-settings:2): Gtk-WARNING **: 10:06:55.754: Theme parser error: gtk.css:4970:12-17: "shade" is not a valid color name.
+
+(hyprland-settings:2): Gtk-WARNING **: 10:06:55.754: Theme parser error: gtk.css:5030:12-17: "shade" is not a valid color name.
+
+(hyprland-settings:2): Gtk-WARNING **: 10:06:55.754: Theme parser error: gtk.css:5057:12-15: "mix" is not a valid color name.
+
+(hyprland-settings:2): Gtk-WARNING **: 10:06:55.754: Theme parser error: gtk.css:5061:12-15: "mix" is not a valid color name.
+
+(hyprland-settings:2): Gtk-WARNING **: 10:06:55.754: Theme parser warning: gtk.css:5262:3-5263:1: Expected ';' at end of block
+
+(hyprland-settings:2): Gtk-WARNING **: 10:06:55.754: Theme parser error: gtk.css:5293:3-19: No property named "-gtk-icon-effect"
+
+(hyprland-settings:2): Gtk-CRITICAL **: 10:06:57.010: gtk_css_section_get_bytes: assertion 'section != NULL' failed
+
+(hyprland-settings:2): Gtk-CRITICAL **: 10:06:57.010: gtk_css_section_get_bytes: assertion 'section != NULL' failed
+
+(hyprland-settings:2): Gtk-CRITICAL **: 10:06:57.010: gtk_css_section_to_string: assertion 'section != NULL' failed
+
+(hyprland-settings:2): Gtk-WARNING **: 10:06:57.010: Theme parser error: (null): Error loading image 'file:///home/jcastro/.themes/Flat-Remix-GTK-Blue-Dark/gtk-4.0/assets/titlebutton@2.png': Error opening file /home/jcastro/.themes/Flat-Remix-GTK-Blue-Dark/gtk-4.0/assets/titlebutton@2.png: No such file or directory
+MESA-INTEL: warning: ../src/intel/vulkan/anv_formats.c:782: FINISHME: support YUV colorspace with DRM format modifiers
+MESA-INTEL: warning: ../src/intel/vulkan/anv_formats.c:814: FINISHME: support more multi-planar formats with DRM modifiers
+
+(hyprland-settings:2): Gtk-CRITICAL **: 10:06:58.352: gtk_css_section_get_bytes: assertion 'section != NULL' failed
+
+(hyprland-settings:2): Gtk-CRITICAL **: 10:06:58.352: gtk_css_section_to_string: assertion 'section != NULL' failed
+
+(hyprland-settings:2): Gtk-WARNING **: 10:06:58.352: Theme parser error: (null): Error loading image 'file:///home/jcastro/.themes/Flat-Remix-GTK-Blue-Dark/gtk-4.0/assets/titlebutton@2.png': Error opening file /home/jcastro/.themes/Flat-Remix-GTK-Blue-Dark/gtk-4.0/assets/titlebutton@2.png: No such file or directory
+
+(hyprland-settings:2): Gtk-WARNING **: 10:07:02.732: Finalizing AdwPreferencesPage 0x55c46ab43da0, but it still has children left:
+   - GtkBox 0x55c46ab4f6f0
+:: Using configuration in: /home/jcastro/.config/com.ml4w.hyprlandsettings
+:: hyprctl.sh updated in /home/jcastro/.config/com.ml4w.hyprlandsettings
+:: Using default settings.json in /app/share/hyprland-settings/hyprland_settings
+:: Execute: /home/jcastro/.config/com.ml4w.hyprlandsettings/hyprctl.sh

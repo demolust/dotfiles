@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
-#set -x
+
+set -x
+
 # shellcheck disable=SC2120,SC1090,SC2154,SC2034
 # SC2120: foo references arguments, but none are ever passed.
 # SC1090: Can't follow non-constant source. Use a directive to specify location.
@@ -7,6 +9,7 @@
 # SC2034: foo appears unused. Verify it or export it.
 
 LINK="https://source.unsplash.com/random/"
+LOCAL_WALLPAPER_DIR="$HOME/Pictures/"
 
 if [ -z ${XDG_CONFIG_HOME+x} ]; then
     XDG_CONFIG_HOME="$HOME/.config"
@@ -24,6 +27,7 @@ if [ ! -d "$CACHEDIR" ]; then
 fi
 
 WALLPAPER="$CACHEDIR/wallpaper.jpg"
+QDBUS=$(command -v qdbus || command -v qdbus-qt5 || command -v qdbus-qt6)
 
 save_cmd() {
     cp "$WALLPAPER" "$HOME/Pictures/wallpaper$RANDOM.jpg"
@@ -233,10 +237,13 @@ usage() {
     [-d | --directory]
     [-k | --kde]
     [-K | --KDE]
+    [-e | --hyprland]
+    [-z | --hyprlock]
+    [-n | --niri]
     [-x | --xfce]
     [-g | --gnome]
     [-m | --monitors <monitor count (nitrogen)>]
-    [-n | --nitrogen]
+    [-N | --nitrogen]
     [-sa | --save]    <Save current image to pictures directory>
     "
     exit 2
@@ -256,11 +263,13 @@ type_check() {
 
     if [ $ISTYPE = false ]; then
         echo "MIME-Type missmatch. Downloaded file is not an image!"
-        exit 1
+        echo "Selecting an image from ${LOCAL_WALLPAPER_DIR}"
+        select_random_wallpaper "${LOCAL_WALLPAPER_DIR}"
     fi
 }
 
 select_random_wallpaper() {
+    local DIR="$1"
     WALLPAPER=$(find "$DIR" -type f \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" -o -iname "*.svg" -o -iname "*.gif" \) -print | shuf -n 1)
 }
 
@@ -343,28 +352,71 @@ nitrogen_cmd() {
 }
 
 kde_cmd() {
+    KDE_WALLPAPER_CACHEDIR="${XDG_CACHE_HOME}/kde_wall"
+    if [ ! -d "$KDE_WALLPAPER_CACHEDIR" ]; then
+      mkdir -p "$KDE_WALLPAPER_CACHEDIR"
+    fi
+    WALLPAPER_FILE="${KDE_WALLPAPER_CACHEDIR}/wall.jpg"
+    cp "$WALLPAPER" "${WALLPAPER_FILE}"
     cp "$WALLPAPER" "$CACHEDIR/tmp.jpg"
-    qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript "var allDesktops = desktops();print (allDesktops);for (i=0;i<allDesktops.length;i++) {d = allDesktops[i];d.wallpaperPlugin = \"org.kde.image\";d.currentConfigGroup = Array(\"Wallpaper\", \"org.kde.image\", \"General\");d.writeConfig(\"Image\", \"file:$CACHEDIR/tmp.jpg\")}"
-    qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript "var allDesktops = desktops();print (allDesktops);for (i=0;i<allDesktops.length;i++) {d = allDesktops[i];d.wallpaperPlugin = \"org.kde.image\";d.currentConfigGroup = Array(\"Wallpaper\", \"org.kde.image\", \"General\");d.writeConfig(\"Image\", \"file:$WALLPAPER\")}"
-    sleep 5 && rm "$CACHEDIR/tmp.jpg"
+    $QDBUS org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript "var allDesktops = desktops();print (allDesktops);for (i=0;i<allDesktops.length;i++) {d = allDesktops[i];d.wallpaperPlugin = \"org.kde.image\";d.currentConfigGroup = Array(\"Wallpaper\", \"org.kde.image\", \"General\");d.writeConfig(\"Image\", \"file:$CACHEDIR/tmp.jpg\")}"
+    $QDBUS org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript "var allDesktops = desktops();print (allDesktops);for (i=0;i<allDesktops.length;i++) {d = allDesktops[i];d.wallpaperPlugin = \"org.kde.image\";d.currentConfigGroup = Array(\"Wallpaper\", \"org.kde.image\", \"General\");d.writeConfig(\"Image\", \"file:$WALLPAPER_FILE\")}"
+    sleep 5 && rm -f "$CACHEDIR/tmp.jpg"
 }
 
 kde_lockscreen_cmd() {
-    cp "$WALLPAPER" "$CACHEDIR/tmp.jpg"
-    kwriteconfig6 --file kscreenlockerrc --group Greeter --group Wallpaper --group org.kde.image --group General --key Image "file:$WALLPAPER"
-    kwriteconfig6 --file kscreenlockerrc --group Greeter --group Wallpaper --group org.kde.image --group General --key PreviewImage "file:$WALLPAPER"
-    sleep 5 && rm "$CACHEDIR/tmp.jpg"
+    KDE_WALLPAPER_CACHEDIR="${XDG_CACHE_HOME}/kde_wall"
+    if [ ! -d "$KDE_WALLPAPER_CACHEDIR" ]; then
+      mkdir -p "$KDE_WALLPAPER_CACHEDIR"
+    fi
+    WALLPAPER_FILE="${KDE_WALLPAPER_CACHEDIR}/lock.jpg"
+    cp "$WALLPAPER" "${WALLPAPER_FILE}"
+    kwriteconfig6 --file kscreenlockerrc --group Greeter --group Wallpaper --group org.kde.image --group General --key Image "file:$WALLPAPER_FILE"
+    kwriteconfig6 --file kscreenlockerrc --group Greeter --group Wallpaper --group org.kde.image --group General --key PreviewImage "file:$WALLPAPER_FILE"
 }
 
 kde_all_cmd() {
-    cp "$WALLPAPER" "$CACHEDIR/tmp.jpg"
-    qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript "var allDesktops = desktops();print (allDesktops);for (i=0;i<allDesktops.length;i++) {d = allDesktops[i];d.wallpaperPlugin = \"org.kde.image\";d.currentConfigGroup = Array(\"Wallpaper\", \"org.kde.image\", \"General\");d.writeConfig(\"Image\", \"file:$CACHEDIR/tmp.jpg\")}"
-    qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript "var allDesktops = desktops();print (allDesktops);for (i=0;i<allDesktops.length;i++) {d = allDesktops[i];d.wallpaperPlugin = \"org.kde.image\";d.currentConfigGroup = Array(\"Wallpaper\", \"org.kde.image\", \"General\");d.writeConfig(\"Image\", \"file:$WALLPAPER\")}"
-    kwriteconfig6 --file kscreenlockerrc --group Greeter --group Wallpaper --group org.kde.image --group General --key Image "file:$WALLPAPER"
-    kwriteconfig6 --file kscreenlockerrc --group Greeter --group Wallpaper --group org.kde.image --group General --key PreviewImage "file:$WALLPAPER"
-    sleep 5 && rm "$CACHEDIR/tmp.jpg"
+    KDE_WALLPAPER_CACHEDIR="${XDG_CACHE_HOME}/kde_wall"
+    if [ ! -d "$KDE_WALLPAPER_CACHEDIR" ]; then
+      mkdir -p "$KDE_WALLPAPER_CACHEDIR"
+    fi
+    WALLPAPER_FILE="${KDE_WALLPAPER_CACHEDIR}/fwl.jpg"
+    cp "$WALLPAPER" "${WALLPAPER_FILE}"
+    $QDBUS org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript "var allDesktops = desktops();print (allDesktops);for (i=0;i<allDesktops.length;i++) {d = allDesktops[i];d.wallpaperPlugin = \"org.kde.image\";d.currentConfigGroup = Array(\"Wallpaper\", \"org.kde.image\", \"General\");d.writeConfig(\"Image\", \"file:$WALLPAPER_FILE\")}"
+    $QDBUS org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript "var allDesktops = desktops();print (allDesktops);for (i=0;i<allDesktops.length;i++) {d = allDesktops[i];d.wallpaperPlugin = \"org.kde.image\";d.currentConfigGroup = Array(\"Wallpaper\", \"org.kde.image\", \"General\");d.writeConfig(\"Image\", \"file:$WALLPAPER_FILE\")}"
+    kwriteconfig6 --file kscreenlockerrc --group Greeter --group Wallpaper --group org.kde.image --group General --key Image "file:$WALLPAPER_FILE"
+    kwriteconfig6 --file kscreenlockerrc --group Greeter --group Wallpaper --group org.kde.image --group General --key PreviewImage "file:$WALLPAPER_FILE"
 }
 
+niri_cmd() {
+  NIRI_CACHEDIR="${XDG_CACHE_HOME}/niri"
+  if [ ! -d "$NIRI_CACHEDIR" ]; then
+    mkdir -p "$NIRI_CACHEDIR"
+  fi
+  WALLPAPER_FILE="${NIRI_CACHEDIR}/tmp.jpg"
+  cp "$WALLPAPER" "${WALLPAPER_FILE}"
+  set_niri_wallpaper.sh
+}
+
+hyprland_cmd() {
+  echo "Not implemented"
+  exit 0
+}
+
+hyprlock_cmd() {
+  HYPRLOCK_CACHEDIR="${XDG_CACHE_HOME}/hyprlock"
+  if [ ! -d "$HYPRLOCK_CACHEDIR" ]; then
+    mkdir -p "$HYPRLOCK_CACHEDIR"
+  fi
+  WALLPAPER_FILE="${HYPRLOCK_CACHEDIR}/hyprlock.jpg"
+  cp "$WALLPAPER" "${WALLPAPER_FILE}"
+  set_hyprlock_wallpaper.sh
+}
+
+hyprfull_cmd() {
+  echo "Not implemented"
+  exit 0
+}
 
 xfce_cmd() {
     ## CONNECTEDOUTPUTS ACTIVEOUTPUT and CONNECTED are not used
@@ -421,13 +473,19 @@ feh_cmd() {
 PYWAL=0
 LIGHT=0
 KDE=false
+KDE_LOCK=false
+KDE_FULL=false
+NIRI=false
+HYPRLAND=false
+HYPRLOCK=flase
+HYPR_FULL=false
 XFCE=false
 GNOME=false
 NITROGEN=false
 SWAY=false
 MONITORS=1
 # SC2034
-PARSED_ARGUMENTS=$(getopt -a -n "$0" -o h:w:s:l:b:r:a:c:d:m:pLkKnxgy:sa --long search:,height:,width:,fehbg:,fehopt:,artist:,subreddit:,directory:,monitors:,termcolor:,lighwal:,kde,KDE,nitrogen,xfce,gnome,sway,save -- "$@")
+PARSED_ARGUMENTS=$(getopt -a -n "$0" -o h:w:s:l:b:r:a:c:d:m:pLkKnNxgyez:sa --long search:,height:,width:,fehbg:,fehopt:,artist:,subreddit:,directory:,monitors:,termcolor:,lighwal:,kde,KDE,niri,nitrogen,hyprland,hyprlock,xfce,gnome,sway,save -- "$@")
 
 VALID_ARGUMENTS=$?
 if [ "$VALID_ARGUMENTS" != "0" ]; then
@@ -476,7 +534,7 @@ while :; do
         MONITORS=${2}
         shift 2
         ;;
-    -n | --nitrogen)
+    -N | --nitrogen)
         NITROGEN=true
         shift
         ;;
@@ -500,6 +558,10 @@ while :; do
         KDE_LOCK=true
         shift
         ;;
+    -n | --niri)
+        NIRI=true
+        shift
+        ;;
     -x | --xfce)
         XFCE=true
         shift
@@ -510,6 +572,14 @@ while :; do
         ;;
     -y | --sway)
         SWAY=true
+        shift
+        ;;
+    -e | --hyprland)
+        HYPRLAND=true
+        shift
+        ;;
+    -z | --hyprlock)
+        HYPRLOCK=true
         shift
         ;;
     -- | '')
@@ -524,7 +594,7 @@ while :; do
 done
 
 if [ -n "$DIR" ]; then
-    select_random_wallpaper
+    select_random_wallpaper "$DIR"
 elif [ "$LINK" = "reddit" ] || [ -n "$SUB" ]; then
     reddit "$SUB"
 elif [ "$LINK" = "deviantart" ] || [ -n "$ARTIST" ]; then
@@ -541,6 +611,12 @@ if [ "$KDE" = true ]; then
     kde_cmd 
 elif [ "$KDE_LOCK" = true ]; then
     kde_lockscreen_cmd
+elif [ "$NIRI" = true ]; then
+    niri_cmd
+elif [ "$HYPRLAND" = true ]; then
+    hyprland_cmd
+elif [ "$HYPRLOCK" = true ]; then
+    hyprlock_cmd
 elif [ "$XFCE" = true ]; then
     xfce_cmd
 elif [ "$GNOME" = true ]; then
@@ -550,7 +626,7 @@ elif [ "$NITROGEN" = true ]; then
 elif [ "$SWAY" = true ]; then
     sway_cmd
 else
-    feh_cmd >/dev/null 2>&1
+    echo "Finished processing"
 fi
 
-pywal_cmd
+#pywal_cmd

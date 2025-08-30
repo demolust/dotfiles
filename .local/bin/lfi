@@ -28,7 +28,8 @@ if [ -n "${DISPLAY-}" ] && [ -z "${FIFO_UEBERZUG-}" ]; then
   # live longer than is strictly necessary.
   UEBERZUG_PID=$(pgrep ueberzug | tail -n 1)
   export UEBERZUG_SOCKET="${TMPDIR:-/tmp}/ueberzugpp-${UEBERZUG_PID}.socket"
-  lf "$@" 3>&-
+  #lf "$@" 3>&-
+  exec lf "$@"
 else
   exec lf "$@"
 fi

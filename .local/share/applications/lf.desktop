@@ -2,7 +2,7 @@
 Categories=ConsoleOnly;System;FileTools;FileManager
 Comment[en_US]=Launches the lf file manager
 Comment=Launches the lf file manager
-Exec=sh -c "$HOME"/.local/bin/launch_lf_wezterm.sh
+Exec=sh -c "$HOME"/.local/bin/launch_lf_tmux_wezterm.sh
 Icon=custom_terminal
 Keywords=File;Manager;Browser;Explorer;Launcher;Vi;Vim;Python
 MimeType=inode/directory;

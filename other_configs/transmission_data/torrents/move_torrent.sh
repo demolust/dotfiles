@@ -10,7 +10,6 @@ if [ ! -d "$destinationPath" ]; then
 	set +e
 fi
 
-#transmission-remote localhost:9091 -n admin:password -t "${TR_TORRENT_ID}" --move "${destinationPath}"
 transmission-remote localhost:9091 -t "${TR_TORRENT_ID}" --move "${destinationPath}"
 
 

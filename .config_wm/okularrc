@@ -1,0 +1,45 @@
+State=AAAA/wAAAAD9AAAAAAAAB4AAAAOuAAAABAAAAAQAAAAIAAAACPwAAAADAAAAAQAAAAEAAAAsAHEAdQBpAGMAawBBAG4AbgBvAHQAYQB0AGkAbwBuAFQAbwBvAGwAQgBhAHICAAAAAP////8AAAAAAAAAAAAAAAIAAAABAAAAFgBtAGEAaQBuAFQAbwBvAGwAQgBhAHIBAAAAAP////8AAAAAAAAAAAAAAAIAAAABAAAAIgBhAG4AbgBvAHQAYQB0AGkAbwBuAFQAbwBvAGwAQgBhAHIAAAAAAP////8AAAAAAAAAAA==
+eDP-1 Window-Maximized 1920x1080=true
+
+[Desktop Entry]
+FullScreen=false
+
+[General]
+LockSidebar=true
+ShowSidebar=true
+
+[KFileDialog Settings]
+Recent Files[$e]=file:$HOME/Downloads/test_print.pdf,file:$HOME/Downloads/test_print.pdf
+Recent URLs[$e]=file:$HOME/Downloads/,file:$HOME/Downloads/latex/
+detailViewIconSize=16
+
+[MainWindow]
+1477x831 screen: Window-Maximized=true
+1536x864 screen: Window-Maximized=true
+1920x1080 screen: Height=461
+1920x1080 screen: Width=558
+1920x1080 screen: Window-Maximized=true
+eDP-1=eDP-1
+eDP-1 Height 1080x1920=1884
+eDP-1 Height 1486x836 eDP-1=778
+eDP-1 Height 1920x1080=1006
+eDP-1 Height 1920x1080 eDP-1=720
+eDP-1 Height 836x1486 eDP-1=1426
+eDP-1 Width 1080x1920=1080
+eDP-1 Width 1486x836 eDP-1=1486
+eDP-1 Width 1920x1080=1920
+eDP-1 Width 1920x1080 eDP-1=1172
+eDP-1 Width 836x1486 eDP-1=836
+eDP-1 Window-Maximized 1080x1920=true
+eDP-1 Window-Maximized 1486x836 eDP-1=true
+eDP-1 Window-Maximized 1920x1080=true
+eDP-1 Window-Maximized 1920x1080 eDP-1=true
+eDP-1 Window-Maximized 836x1486 eDP-1=true
+eDP-1 XPosition 1080x1920=0
+eDP-1 XPosition 1486x836 eDP-1=0
+eDP-1 XPosition 1920x1080=0
+eDP-1 XPosition 836x1486 eDP-1=0
+eDP-1 YPosition 1080x1920=36
+eDP-1 YPosition 1486x836 eDP-1=58
+eDP-1 YPosition 1920x1080=74
+eDP-1 YPosition 836x1486 eDP-1=60

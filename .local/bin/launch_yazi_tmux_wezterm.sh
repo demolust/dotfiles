@@ -3,9 +3,8 @@
 set -x
 application="launch_tmux_yazi.sh"
 CTERMS="wezterm-gui"
-current_date=$(date +'%Y-%m-%d_%R:%S')
 
 echo ${PPID}
-kill -9 ${PPID}
-nohup "${CTERMS}" start -- "${application}" > /dev/null 
+exec "${CTERMS}" start -- "${application}" & 
+sleep 1
 

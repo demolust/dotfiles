@@ -1,8 +1,8 @@
 [Desktop Entry]
 Categories=ConsoleOnly;System;FileTools
-Comment[en_US]=Launches the cmus
-Comment=Launches the cmus
-Exec=sh -c "$HOME"/.local/bin/launch_cmus_wezterm.sh
+Comment[en_US]=Launches cmus
+Comment=Launches cmus
+Exec=sh -c "$HOME"/.local/bin/launch_cmus_tmux_wezterm.sh
 Icon=custom_music
 Keywords=Music
 MimeType=

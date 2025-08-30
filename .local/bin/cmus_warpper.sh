@@ -13,10 +13,9 @@ song_file="$1"
 uid=$(id -u)
 cmus_socket="/run/user/${uid}/cmus-socket"
 application="launch_tmux_cmus.sh"
-current_date=$(date +'%Y-%m-%d_%R:%S')
 
 if [ ! -S "${cmus_socket}" ]; then
-  nohup "${CTERM}" -e "${application}" > ~/.local/logs/"${application}"_"${current_date}".log 2>&1 &
+  exec "${CTERM}" -e "${application}" &
   # Sleep 0.5 sec to allow all the socket control to not clash
   sleep 0.5
 else

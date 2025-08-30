@@ -1,0 +1,254 @@
+
+## For howto do configurations check
+## https://starship.rs/config/
+## Orignally based on
+## https://github.com/ChrisTitusTech/mybash/blob/main/starship.toml
+
+format = """[](#02098A)\
+$username\
+$hostname\
+[](bg:#434C5E fg:#02098A)\
+$directory\
+[](fg:#434C5E bg:#4C566A)\
+$aws\
+$git_branch\
+$git_commit\
+$git_state\
+$git_status\
+[](fg:#4C566A bg:#1E90FF)\
+$c\
+$cmake\
+$dotnet\
+$elixir\
+$elm\
+$golang\
+$haskell\
+$java\
+$julia\
+$lua\
+$nodejs\
+$nim\
+$perl\
+$php\
+$python\
+$rust\
+$kubernetes\
+$pulumi\
+$terraform\
+$vagrant\
+$docker_context\
+[](fg:#1E90FF)\
+$fill\
+[](#B22222)\
+$status\
+[](fg:#B22222 bg:#035591)\
+$time\
+[](fg:#035591 bg:#2683D1)\
+$cmd_duration\
+[](fg:#2683D1)\
+$line_break\
+$character\
+"""
+
+add_newline = false
+command_timeout = 5000
+continuation_prompt = "[ ](bright-black)"
+
+[fill]
+symbol = ' '
+
+[character]
+success_symbol = "[ ](fg:#02098A)"
+error_symbol = "[ ](fg:#8A0202)"
+
+[username]
+show_always = true
+style_user = "bg:#02098A"
+style_root = "bg:#02098A"
+format = '[$user]($style)'
+
+[hostname]
+ssh_symbol = "🌐"
+style = "bg:#02098A"
+format = "[@$hostname $ssh_symbol]($style)"
+
+[status]
+symbol = "❌"
+style = "bg:#B22222 bold white"
+format = '[$symbol$status]($style)'
+pipestatus_separator = " | "
+disabled = false
+pipestatus = true
+pipestatus_format = "[\\[ $pipestatus \\] $symbol$common_meaning$signal_name$maybe_int]($style)"
+
+[time]
+disabled = false
+time_format = "%T"
+style = "bg:#035591 bold white"
+format = '[$time]($style)'
+
+[cmd_duration]
+style = "bg:#2683D1 bold white"
+format = '[$duration]($style)'
+
+[directory]
+style = "bg:#434C5E"
+format = "[ $path]($style)"
+truncation_length = 3
+truncation_symbol = "…/"
+truncate_to_repo = false
+
+# Here is how you can shorten some long paths by text/icon replacement
+#[directory.substitutions]
+#"Documents" = "󰈙 "
+#"Downloads" = " "
+#"Music" = " "
+#"Pictures" = " "
+#"Developer" = "󰲋 "
+# Keep in mind that the order matters. For example:
+# "Important Documents" = " "
+# will not be replaced, because "Documents" was already substituted before.
+# So either put "Important Documents" before "Documents" or use the substituted version:
+# "Important  " = " "
+
+
+## git config
+
+[git_branch]
+symbol = ""
+style = "bg:#4C566A"
+format = '[ $symbol $branch ]($style)'
+
+[git_commit]
+style = "bg:#4C566A"
+tag_disabled = false
+format = '[\(@$hash$tag\) ]($style)'
+tag_symbol =" 🏷  "
+
+[git_state]
+style = "bg:#4C566A"
+format = '\([$state( $progress_current/$progress_total) ]($style)\) '
+
+[git_status]
+disabled = true
+style = "bg:#4C566A"
+format = '[$all_status$ahead_behind ]($style)'
+
+
+## Programming lang's configs
+
+[c]
+symbol = ""
+style = "bg:#1E90FF white"
+format = '[ $symbol ($version)]($style)'
+
+[cmake]
+symbol = "△"
+style = "bg:#1E90FF white"
+format = '[ $symbol ($version)]($style)'
+
+[dotnet]
+symbol = ".NET"
+style = "bg:#1E90FF white"
+format = '[ $symbol ($version) ($tfm)]($style)'
+
+[elixir]
+symbol = ""
+style = "bg:#1E90FF white"
+format = '[ $symbol ($version)]($style)'
+
+[elm]
+symbol = ""
+style = "bg:#1E90FF white"
+format = '[ $symbol ($version)]($style)'
+
+[golang]
+symbol = ""
+style = "bg:#1E90FF white"
+format = '[ $symbol ($version)]($style)'
+
+[haskell]
+symbol = ""
+style = "bg:#1E90FF white"
+format = '[ $symbol ($version)]($style)'
+
+[java]
+symbol = ""
+style = "bg:#1E90FF white"
+format = '[ $symbol ($version)]($style)'
+
+[julia]
+symbol = ""
+style = "bg:#1E90FF white"
+format = '[ $symbol ($version)]($style)'
+
+[lua]
+symbol = "🌙"
+style = "bg:#1E90FF white"
+format = '[ $symbol ($version)]($style)'
+
+[nodejs]
+symbol = ""
+style = "bg:#1E90FF white"
+format = '[ $symbol ($version)]($style)'
+
+[nim]
+symbol = ""
+style = "bg:#1E90FF white"
+format = '[ $symbol ($version)]($style)'
+
+[perl]
+symbol = "🐪"
+style = "bg:#1E90FF white"
+format = '[ $symbol ($version)]($style)'
+
+[php]
+symbol = "🐘"
+style = "bg:#1E90FF white"
+format = '[ $symbol ($version)]($style)'
+
+[python]
+symbol = "🐍"
+style = "bg:#1E90FF white"
+format = '[ ${symbol} (${version}) (\($virtualenv\))]($style)'
+#format = '[ ${symbol}${pyenv_prefix} (${version}) (\($virtualenv\))]($style)'
+
+[rust]
+symbol = ""
+style = "bg:#1E90FF white"
+format = '[ $symbol ($version)]($style)'
+
+
+## Devops config
+
+[aws]
+symbol = "☁️"
+style = "bg:#4C566A white"
+format = '[ $symbol ($profile ) (\($region\) )(\[$duration\])]($style)'
+
+[docker_context]
+symbol = ""
+style = "bg:#1E90FF white"
+format = '[ $symbol $context ]($style) $path'
+
+[kubernetes]
+symbol = "☸"
+style = "bg:#1E90FF white"
+format = '[ $symbol $context (\($namespace\))]($style)'
+
+[pulumi]
+symbol = ""
+style = "bg:#1E90FF white"
+format = '[ $symbol ($username@)$stack]($style)'
+
+[terraform]
+symbol = "💠"
+style = "bg:#1E90FF white"
+format = '[ $symbol $workspace]($style)'
+
+[vagrant]
+symbol = "⍱"
+style = "bg:#1E90FF white"
+format = '[ $symbol ($version)]($style)'
+
+

@@ -1,0 +1,7 @@
+
+### Since by default cron runs via posix sh, is better to provided desired path in both the command to be executed and
+#as well inside the command (in case is a script)
+
+### Change wallpaper and background lock every 30 min
+*/30 * * * * PATH="$HOME/.local/bin:$HOME/bin:$PATH" random_background_from_topics.sh >> /tmp/random_background_from_topics_$(date +'\%Y-\%m-\%d_\%R:\%S').log 2>&1
+

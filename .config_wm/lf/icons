@@ -1,0 +1,570 @@
+# vim:ft=conf
+
+# These examples require Nerd Fonts or a compatible font to be used.
+# See https://www.nerdfonts.com for more information.
+
+# default values from lf (with matching order)
+# ln      l       # LINK
+# or      l       # ORPHAN
+# tw      t       # STICKY_OTHER_WRITABLE
+# ow      d       # OTHER_WRITABLE
+# st      t       # STICKY
+# di      d       # DIR
+# pi      p       # FIFO
+# so      s       # SOCK
+# bd      b       # BLK
+# cd      c       # CHR
+# su      u       # SETUID
+# sg      g       # SETGID
+# ex      x       # EXEC
+# fi      -       # FILE
+
+# file types (with matching order)
+tw      t       # STICKY_OTHER_WRITABLE
+st      t       # STICKY
+pi      p       # FIFO
+so      s       # SOCK
+bd      b       # BLK
+cd      c       # CHR
+su      u       # SETUID
+sg      g       # SETGID
+#ow             # OTHER_WRITABLE
+#di             # DIR
+#fi             # FILE
+#ln             # LINK
+#or             # ORPHAN
+ex
+
+# # #󰅫
+ow          # OTHER_WRITABLE 2
+di          # DIR 2
+fi          # FILE 2
+ln          # LINK 2
+or          # ORPHAN 2
+#ln          # LINK 3
+#or          # ORPHAN 3
+#ex     󰅫     # EXEC 2
+#ex          # EXEC ### Windows only
+
+# disable some default filetype icons, let them choose icon by filename
+# ln             # LINK
+# or             # ORPHAN
+# tw              # STICKY_OTHER_WRITABLE
+# ow              # OTHER_WRITABLE
+# st              # STICKY
+# di             # DIR
+# pi              # FIFO
+# so              # SOCK
+# bd              # BLK
+# cd              # CHR
+# su              # SETUID
+# sg              # SETGID
+# ex              # EXEC
+# fi             # FILE
+
+# file extensions (vim-devicons)
+*.styl          
+*.sass          
+*.scss          
+*.htm           
+*.html          
+*.slim          
+*.haml          
+*.ejs           
+*.css           
+*.less          
+*.json          
+*.webmanifest   
+*.js            
+*.mjs           
+*.jsx           
+*.rb            
+*.gemspec       
+*.rake          
+*.php           
+*.py            
+*.pyc           
+*.pyo           
+*.pyd           
+*.coffee        
+*.mustache      
+*.hbs           
+*.conf          
+*.ini           
+*.yml           
+*.yaml          
+*.toml          
+*.bat           
+*.mk            
+*.jpg           
+*.jpeg          
+*.bmp           
+*.png           
+*.webp          
+*.gif           
+*.ico           
+*.twig          
+*.cpp           
+*.c++           
+*.cxx           
+*.cc            
+*.cp            
+*.c             
+*.cs            󰌛
+*.h             
+*.hh            
+*.hpp           
+*.hxx           
+*.hs            
+*.lhs           
+*.nix           
+*.lua           
+*.java          
+*.sh            
+*.fish          
+*.bash          
+*.zsh           
+*.ksh           
+*.csh           
+*.awk           
+*.ps1           
+*.ml            λ
+*.mli           λ
+*.diff          
+*.db            
+*.sql           
+*.sqlite        
+*.sqlite3       
+*.dump          
+*.clj           
+*.cljc          
+*.cljs          
+*.edn           
+*.scala         
+*.go            
+*.dart          
+*.xul           
+*.sln           
+*.suo           
+*.pl            
+*.pm            
+*.t             
+*.rss           
+'*.f#'          
+*.fsscript      
+*.fsx           
+*.fs            
+*.fsi           
+*.rs            
+*.rlib          
+*.d             
+*.erl           
+*.hrl           
+*.ex            
+*.exs           
+*.eex           
+*.leex          
+*.heex          
+*.vim           
+*.ai            
+*.psd           
+*.psb           
+*.ts            
+*.tsx           
+*.jl            
+*.pp            
+*.vue           
+*.elm           
+*.swift         
+*.xcplayground  
+*.tex           󰙩
+*.r             󰟔
+*.rproj         󰗆
+*.sol           󰡪
+
+# file names (vim-devicons) (case-insensitive not supported in lf)
+*gruntfile.coffee       
+*gruntfile.js           
+*gruntfile.ls           
+*gulpfile.coffee        
+*gulpfile.js            
+*gulpfile.ls            
+*mix.lock               
+*dropbox                
+*.ds_store              
+*.gitlab-ci.yml         
+*.profile               
+*.bashrc                
+*.bash_profile          
+*.bash_logout           
+*.bashprofile           
+*.zshrc                 
+*.zshenv                
+*.zsh_profile           
+*.zlogout               
+*.zprofile              
+*.vimrc                 
+*.gvimrc                
+*_vimrc                 
+*_gvimrc                
+*favicon.ico            
+*license                
+*patents                
+*node_modules           
+*react.jsx              
+*procfile               
+*dockerfile             
+*docker-compose.yml     
+*docker-compose.yaml    
+*compose.yml            
+*compose.yaml           
+*rakefile               
+*config.ru              
+*gemfile                
+*makefile               
+*cmakelists.txt         
+*robots.txt             󰚩
+
+# file names (case-sensitive adaptations)
+*Gruntfile.coffee       
+*Gruntfile.js           
+*Gruntfile.ls           
+*Gulpfile.coffee        
+*Gulpfile.js            
+*Gulpfile.ls            
+*Dropbox                
+*.DS_Store              
+*LICENSE                
+*React.jsx              
+*Procfile               
+*Dockerfile             
+*Docker-compose.yml     
+*Docker-compose.yaml    
+*Rakefile               
+*Gemfile                
+*Makefile               
+*CMakeLists.txt         
+
+# file patterns (vim-devicons) (patterns not supported in lf)
+# .*jquery.*\.js$         
+# .*angular.*\.js$        
+# .*backbone.*\.js$       
+# .*require.*\.js$        
+# .*materialize.*\.js$    
+# .*materialize.*\.css$   
+# .*mootools.*\.js$       
+# .*vimrc.*               
+# Vagrantfile$            
+
+# file patterns (file name adaptations)
+*jquery.min.js          
+*angular.min.js         
+*backbone.min.js        
+*require.min.js         
+*materialize.min.js     
+*materialize.min.css    
+*mootools.min.js        
+*vimrc                  
+*gvimrc                 
+Vagrantfile             
+
+# archives or compressed (extensions from dircolors defaults)
+# #󰀼 #
+# # #󱈎
+# #
+# #
+
+*.tar   
+*.tgz   
+*.arc   
+*.arj   
+*.taz   
+*.lha   
+*.lz4   
+*.lzh   
+*.lzma  
+*.tlz   
+*.txz   
+*.tzo   
+*.t7z   
+*.zip   
+*.z     
+*.dz    
+*.gz    
+*.lrz   
+*.lz    
+*.lzo   
+*.xz    
+*.zst   
+*.tzst  
+*.bz2   
+*.bz    
+*.tbz   
+*.tbz2  
+*.tz    
+*.jar   
+*.war   
+*.ear   
+*.sar   
+*.rar   
+*.alz   
+*.ace   
+*.zoo   
+*.cpio  
+*.7z    
+*.rz    
+*.cab   
+*.wim   
+*.swm   
+*.dwm   
+*.esd   
+
+# image formats (extensions from dircolors defaults)
+# # #󰈟
+# #󰣌 #󰋫
+
+*.jpg   
+*.jpeg  
+*.mjpg  
+*.mjpeg 
+*.gif   
+*.bmp   
+*.pbm   
+*.pgm   
+*.ppm   
+*.tga   
+*.xbm   
+*.xpm   
+*.tif   
+*.tiff  
+*.png   
+*.svg   
+*.svgz  
+*.mng   
+*.pcx   
+*.mpg   
+*.mpeg  
+*.m2v   
+*.ogm   
+*.vob   
+*.qt    
+*.nuv   
+*.asf   
+*.rm    
+*.rmvb  
+*.flc   
+*.fli   
+*.gl    
+*.dl    
+*.xcf   
+*.xwd   
+*.yuv   
+*.cgm   
+*.emf   
+*.ogv   
+*.ogx   
+
+# video formats (extensions from dircolors defaults)
+#  #
+#  #󰕧
+#󰃽 #󰯜
+# #󰈫
+
+*.avi   
+*.mp4   
+*.m4v   
+*.mp4v  
+*.flv   
+*.webm  
+*.wmv   
+*.mov   
+*.mkv   
+*.vid   
+
+# audio formats (extensions from dircolors defaults)
+#󰎆 #󰎄 #󰎇 #
+#󰝚 #󰈣 #󰃂 #󱍹
+#󰸪
+
+*.aac    󰃂
+*.au     󰃂
+*.flac   󰃂
+*.m4a    󰃂
+*.mid    󰃂
+*.midi   󰃂
+*.mka    󰃂
+*.mp3    󰃂
+*.mpc    󰃂
+*.ogg    󰃂
+*.ra     󰃂
+*.wav    󰃂
+*.oga    󰃂
+*.opus   󰃂
+*.spx    󰃂
+*.xspf   󰃂
+
+# Custom icons
+# 󰈧 # 󰈬 # 󰈛
+#  #  # 󰈦
+*.git-credentials 
+*.gitattributes 
+*.gitconfig   
+*.gitignore   
+*.gitmodules  
+*.git     
+*.config  
+*.log     
+*.txt     
+*.list    
+*.xml     󰗀
+*.xsl     󰗀
+*.xaml    󰗀
+*.resx    󰗀
+*.otf     
+*.ttf     
+*.woff2   
+*.theme   󰔎
+*.url     󰖟
+*.dll     
+*.msi     
+*.exe     
+*.bin     
+*.ps1     
+*.psd1    
+*.psm1    
+*.cmd     
+*.wlua    
+*.lnk     
+*.docx    
+*.xlsx    
+*.pptx    
+*.pptm    
+*.doc     
+*.xls     
+*.ppt     
+*.odt     
+*.odp     
+*.ods     
+*.odg     
+*.rtf     
+*.npmrc   
+*.csproj  󰌛
+*.torrent 
+*.key     
+*.pub     
+*.pem     
+*.crl     
+*.crt     
+*.srl     
+
+#  # 󰋚 #  # 
+*.zcompdump       
+*.wget-hsts       
+*.*_history       
+*.viminfo         
+*.lesshst         
+*.zsh_history     
+*.bash_history    
+*.mysql_history   
+*.python_history  
+*.node_repl_history 
+
+*.js.map    
+*.npmignore 
+*.rspec  
+*.class  
+*.pdb    
+*.sum    
+*.mod    
+*.clang  
+*.clangd 
+
+*.editorconfig  
+*.configure     
+*.env    
+*.cfg    
+*.cache  
+*.iso    
+*.img    
+*.lock   
+*.1      
+*.man    
+*.o      
+*.desktop 
+
+*URL          󰖟
+*AUTHORS      
+*COPYING      
+*CHANGES      
+*DESCRIPTION  
+*README       
+*VERSION      
+*VERSIONS     
+.*-version    
+*rifle        
+*vs           
+*cleaner      
+*lfrun        
+*lfi          
+*lfrc         
+*icons        
+*colors       
+*tags         
+*files        
+*history      
+*rc           
+*config       
+*credentials  
+*cache        
+*search-history    
+*command-history   
+*vlcrc        
+*kwinrc       
+*okularrc     
+*dolphinrc    
+*kwinrulesrc  
+*okularpartrc   
+*plasmashellrc  
+*systemsettingsrc  
+*kglobalshortcutsrc  
+*pycodestyle  
+*id_rsa       
+*known_hosts  󰣀
+*gtkrc        
+*.gtkrc       
+*.gtkrc-2.0   
+*.gtkrc-2.0-kde4   
+*.eml         󰇮
+*.mailmap     󰇮
+*.icon        
+*.face        
+*.face.icon   
+*.kwinrule    
+*.kksrc       
+*.ipynb       
+*.csv         
+*.tsv         
+
+# Overwrite icons
+#󰣇
+*.pdf       
+*.rpm       
+*.deb       
+*.md        
+*.mdx       
+*.markdown  
+*.rmd       
+
+# Original icons
+#*.pdf      
+#*.deb      
+#*.rpm      
+#*.md       
+#*.mdx      
+#*.markdown 
+#*.rmd      
+#*.gitconfig  
+#*.gitignore  
+#*.gitattributes  
+#*.pem           
+

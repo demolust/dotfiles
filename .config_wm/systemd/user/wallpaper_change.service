@@ -1,0 +1,13 @@
+[Unit]
+PartOf=graphical-session.target
+After=graphical-session.target
+Requisite=graphical-session.target
+ConditionEnvironment=WAYLAND_DISPLAY
+
+[Service]
+Type=forking
+ExecStart=%h/.local/bin/random_background_from_topics.sh
+Restart=on-failure
+
+[Install]
+WantedBy=graphical-session.target

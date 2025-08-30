@@ -1,0 +1,7 @@
+{
+    "layer": {
+    "silent": true,
+    "no-cache" : true,
+    "output": "iterm2"
+    }
+}

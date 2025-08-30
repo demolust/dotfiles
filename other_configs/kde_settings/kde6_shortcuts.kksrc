@@ -5,7 +5,7 @@ _launch=Meta+Shift+T
 [cmus.desktop][Global Shortcuts]
 _launch=Meta+C
 
-[lf_wezterm.desktop][Global Shortcuts]
+[lfi.desktop][Global Shortcuts]
 _launch=Meta+E
 
 [net.thunderbird.Thunderbird.desktop][Global Shortcuts]
@@ -24,7 +24,7 @@ _launch=
 
 [org.kde.krunner.desktop][Global Shortcuts]
 RunClipboard=Alt+Shift+F2
-_launch=Search; Alt+F2; Meta+R
+_launch=Search; Meta+R; Alt+F2
 
 [org.kde.plasma-systemmonitor.desktop][Global Shortcuts]
 _launch=Meta+Esc
@@ -42,7 +42,7 @@ RecordScreen=Meta+Alt+R
 RecordWindow=
 RectangularRegionScreenShot=Meta+Shift+Print
 WindowUnderCursorScreenShot=Meta+Ctrl+Print
-_launch=Print; Meta+Shift+S
+_launch=Meta+Shift+S; Print
 
 [org.mozilla.firefox.desktop][Global Shortcuts]
 _launch=
@@ -61,5 +61,5 @@ kcm-powerdevilprofilesconfig=
 kcm-screenlocker=
 kcm-users=
 
-[yazi_wezterm.desktop][Global Shortcuts]
-_launch=Meta+Shift+E
+[yazi.desktop][Global Shortcuts]
+_launch=Meta+K

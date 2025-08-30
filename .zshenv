@@ -159,3 +159,8 @@ if [[ "$DESKTOP_SESSION" == "plasma" ]]; then
   export GTK2_RC_FILES="$XDG_CONFIG_HOME"/gtk-2.0/gtkrc:"$XDG_CONFIG_HOME"/gtk-2.0/gtkrc.mine
 fi
 
+if [[ "$DESKTOP_SESSION" == "niri" ]]; then
+  export QT_QUICK_CONTROLS_STYLE=org.kde.desktop
+  export GTK_RC_FILES="$XDG_CONFIG_HOME"/gtk-1.0/gtkrc
+  export GTK2_RC_FILES="$XDG_CONFIG_HOME"/gtk-2.0/gtkrc
+fi

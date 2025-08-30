@@ -26,7 +26,7 @@
     "custom/exit": {
         "format": "",
         "tooltip-format": "Powermenu",
-        "on-click": "wlogout -b 4",
+        "on-click": "wlogout -sb 4",
         "tooltip": false
     },
 

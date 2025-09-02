@@ -1,9 +1,8 @@
 #!/bin/sh
 set -euf
 
-export PV_IMAGE=true
-
 if [ -n "${DISPLAY-}" ] && [ -z "${FIFO_UEBERZUG-}" ]; then
+  export PV_IMAGE=true
   export FIFO_UEBERZUG="${TMPDIR:-/tmp}/lf-ueberzug-$$"
 
   cleanup() {

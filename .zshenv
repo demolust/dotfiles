@@ -163,4 +163,8 @@ if [[ "$DESKTOP_SESSION" == "niri" ]]; then
   export QT_QUICK_CONTROLS_STYLE=org.kde.desktop
   export GTK_RC_FILES="$XDG_CONFIG_HOME"/gtk-1.0/gtkrc
   export GTK2_RC_FILES="$XDG_CONFIG_HOME"/gtk-2.0/gtkrc
+  export QT_QPA_PLATFORM="wayland"
+  export QT_QPA_PLATFORMTHEME="qt5ct:qt6ct"
+  export QT_AUTO_SCREEN_SCALE_FACTOR="1"
+  export QT_WAYLAND_DISABLE_WINDOWDECORATION="1"
 fi

@@ -456,6 +456,9 @@ Vagrantfile             
 *.crl     
 *.crt     
 *.srl     
+*.tf      
+*.tfstate 
+*.hcl     
 
 #  # 󰋚 #  # 
 *.zcompdump       

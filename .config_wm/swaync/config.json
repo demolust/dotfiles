@@ -64,15 +64,15 @@
           "actions": [
               {
                   "label": "󰐥",
-                  "command": "wlogout -b 4"
+                  "command": "wlogout -sb 4"
               },
               {
                   "label": "󰌾",
-                  "command": "bash -c $HOME/.config/niri/scripts/LockScreen.sh"
+                  "command": "bash -c $HOME/.config/niri/scripts/HyprLockScreen.sh"
               },
               {
                   "label": "󰍃",
-                  "command": "niri msg action quit -s"
+                  "command": "niri msg action quit"
               },
               {
                   "label": "󰀝",

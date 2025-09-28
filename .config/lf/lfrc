@@ -92,7 +92,7 @@ cmd on-init &{{
     lf -remote "send $id redraw"
   fi
   set -u
-  lf -remote "send $id set statfmt \"$(eza -ld --color=always "$f" | sed 's/\\/\\\\/g;s/"/\\"/g')\""
+  lf -remote "send $id set statfmt \"$(eza -ld --color=always $(basename "$f") | sed 's/\\/\\\\/g;s/"/\\"/g')\""
 }}
 
 cmd on-quit &{{
@@ -111,7 +111,7 @@ cmd on-select &{{
     lf -remote "send $id redraw"
   fi
   set -u
-  lf -remote "send $id set statfmt \"$(eza -ld --color=always "$f" | sed 's/\\/\\\\/g;s/"/\\"/g')\""
+  lf -remote "send $id set statfmt \"$(eza -ld --color=always $(basename "$f") | sed 's/\\/\\\\/g;s/"/\\"/g')\""
 }}
 
 # Put lf into background
@@ -317,4 +317,7 @@ cmd fzf_search ${{
 
 map / :fzf_search
 map ? :fzf_jump
+
+map m ${{ file_dnd.sh once $fx }}
+map M ${{ file_dnd.sh multi $fx }}
 

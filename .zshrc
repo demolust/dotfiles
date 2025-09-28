@@ -339,6 +339,10 @@ if [[ "$(command -v thefuck)" ]]; then
   export THEFUCK_EXCLUDE_RULES="fix_file"
 fi
 
+if [[ "$(command -v direnv)" ]]; then
+  eval "$(direnv hook zsh)"
+fi
+
 if [[ "$(command -v tldr)" ]]; then
   export TLDR_CACHE_ENABLED=1
   export TLDR_CACHE_MAX_AGE=720

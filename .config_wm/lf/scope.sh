@@ -75,7 +75,7 @@ handle_extension() {
     ;;
   rar)
     ## Avoid password prompt by providing empty password
-    unrar l -p- -- "${FILE_PATH}" && exit 0
+    unrar l -p- -- "${FILE_PATH}" | grep -A 200 'Attributes' | awk '{out = ""; for (i = 5; i <= NF; i++) {out = out " " $i}; print $2" "$3" "out}' | column --table && exit 0
     exit 0
     ;;
   7z)

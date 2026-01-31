@@ -1,0 +1,4 @@
+
+include "apps/firefox.kdl"
+include "apps/wezterm.kdl"
+include "apps/privacy.kdl"

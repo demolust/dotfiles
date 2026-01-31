@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+if [[ "$(command -v uv)" ]]; then
+  uv_packages="$(uv tool list 2>/dev/null| grep -v -- '^-' | awk '{print $1}')"
+  declare -a uv_packages_array=( $uv_packages )
+  for package in "${uv_packages_array[@]}";do
+    echo "Updating $package"
+    uv tool update "$package"
+  done
+fi

@@ -1,0 +1,12 @@
+/* Derived from tmux-power config */
+@define-color main-theme #02098A;   /* Theme / Border */
+@define-color bg-primary #434C5E;   /* g0 / Background */
+@define-color fg-primary #C2C2C2;   /* g4 / Text & UI */
+@define-color bg-secondary #4C566A; /* g2 / Secondary accents */
+
+/* Mapping to SwayNC specific roles */
+@define-color background-color @bg-primary;
+@define-color border-color @main-theme;
+@define-color label @fg-primary;
+@define-color image @fg-primary;
+@define-color progress @fg-primary;

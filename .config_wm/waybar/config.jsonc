@@ -1,0 +1,248 @@
+{
+  "reload_style_on_change": true,
+  "layer": "top",
+  "position": "top",
+  "spacing": 0,
+  "height": 26,
+  "modules-left": [
+    "custom/wm",
+    "hyprland/workspaces"
+  ],
+  "modules-center": [
+    "clock",
+    "custom/update",
+    "custom/screenrecording-indicator",
+    "custom/vpn"
+  ],
+  "modules-right": [
+    "group/tray-expander",
+    "keyboard-state",
+    "custom/notifications",
+    "bluetooth",
+    "network",
+    "pulseaudio",
+    "group/hardware",
+    "battery",
+    "custom/exit"
+  ],
+  "hyprland/workspaces": {
+    "on-click": "activate",
+    "disable-scroll": false,
+    "on-scroll-up": "hyprctl dispatch workspace -1",
+    "on-scroll-down": "hyprctl dispatch workspace +1",
+    "format": "{icon}",
+    "format-icons": {
+      "default": "",
+      "1": "1",
+      "2": "2",
+      "3": "3",
+      "4": "4",
+      "5": "5",
+      "6": "6",
+      "7": "7",
+      "8": "8",
+      "9": "9",
+      "active": "󱓻"
+    },
+    "persistent-workspaces": {
+      "1": [],
+      "2": [],
+      "3": [],
+      "4": [],
+      "5": []
+    }
+  },
+  "custom/wm": {
+    "format": "",
+    "on-click": "script-menu",
+    "on-click-right": "script-launch-terminal",
+    "tooltip-format": "Menu\n\nSuper + Alt + Space"
+  },
+  "custom/update": {
+    "format": "",
+    "exec": "script-update-available",
+    "on-click": "script-launch-floating-terminal-with-presentation launch_tmux_update.sh",
+    "tooltip-format": "Update available",
+    "signal": 7,
+    "interval": 21600
+  },
+  "cpu": {
+    "interval": 5,
+    "format": "  {usage}%",
+    "on-click": "script-launch-stats"
+  },
+  "memory": {
+    "interval": 5,
+    "format": "  {percentage}% ",
+    "on-click": "script-launch-stats"
+  },
+  "disk": {
+    "interval": 30,
+    "format": "󰋊 {percentage_used}% ",
+    "path": "/",
+    "on-click": "script-launch-stats"
+  },
+  "temperature": {
+    "interval": 10,
+    "hwmon-path": "/sys/class/hwmon/hwmon7/temp1_input",
+    "critical-threshold": 80,
+    "format": " {temperatureC}°C ",
+    "on-click": "script-launch-stats"
+  },
+  "group/hardware": {
+    "orientation": "inherit",
+    "drawer": {
+      "transition-duration": 300,
+      "children-class": "not-memory",
+      "transition-left-to-right": false
+    },
+    "modules": [
+      "cpu",
+      "memory",
+      "temperature",
+      "disk"
+    ]
+  },
+  "clock": {
+    "format": "{:L%A %H:%M}",
+    "format-alt": "{:L%d %B W%V %Y}",
+    "tooltip": true,
+    "tooltip-format": "<tt><small>{calendar}</small></tt>",
+    "on-click-right": "script-launch-calendar",
+    "calendar": {
+      "format": {
+        "months": "<span color='#ffead3'><b>{}</b></span>",
+        "days": "<span color='#ecc6d9'><b>{}</b></span>",
+        "weeks": "<span color='#99ffdd'><b>W{}</b></span>",
+        "weekdays": "<span color='#ffcc66'><b>{}</b></span>",
+        "today": "<span color='#ff6699'><b><u>{}</u></b></span>"
+      }
+    }
+  },
+  "network": {
+    "format-icons": ["󰤯", "󰤟", "󰤢", "󰤥", "󰤨"],
+    "format": "{icon}",
+    "format-wifi": "{icon}",
+    "format-ethernet": "󰀂",
+    "format-disconnected": "󰤮",
+    "tooltip-format-wifi": "{essid} ({frequency} GHz)\n⇣{bandwidthDownBytes}  ⇡{bandwidthUpBytes} 󰹤 {signalStrength}%",
+    "tooltip-format-ethernet": "⇣{bandwidthDownBytes}  ⇡{bandwidthUpBytes}",
+    "tooltip-format-disconnected": "Disconnected",
+    "interval": 3,
+    "spacing": 1,
+    "on-click": "script-launch-wifi"
+  },
+  "battery": {
+    "format": "{icon} {capacity}%",
+    "format-discharging": "{icon} {capacity}%",
+    "format-charging": "{icon} {capacity}%",
+    "format-plugged": " {capacity}%",
+    "format-icons": {
+      "charging": ["󰢜", "󰂆", "󰂇", "󰂈", "󰢝", "󰂉", "󰢞", "󰂊", "󰂋", "󰂅"],
+      "default": ["󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"]
+    },
+    "format-full": "󰂅 {capacity}%",
+    "tooltip-format-discharging": "{power:>1.0f}W↓ {capacity}%",
+    "tooltip-format-charging": "{power:>1.0f}W↑ {capacity}%",
+    "interval": 5,
+    "on-click": "script-menu power",
+    "states": {
+      "warning": 20,
+      "critical": 10
+    }
+  },
+  "bluetooth": {
+    "format": "",
+    "format-disabled": "󰂲",
+    "format-connected": "",
+    "tooltip-format": "Devices connected: {num_connections}",
+    "on-click": "script-launch-bluetooth",
+    "on-click-right": "blueman-manager"
+  },
+  "pulseaudio": {
+    "format": "{icon}",
+    "on-click": "script-launch-audiomix",
+    "on-click-right": "pamixer -t",
+    "tooltip-format": "Playing at {volume}%",
+    "scroll-step": 5,
+    "format-muted": "",
+    "format-icons": {
+      "default": ["", "", " "]
+    }
+  },
+  "group/tray-expander": {
+    "orientation": "inherit",
+    "drawer": {
+      "transition-duration": 600,
+      "children-class": "tray-group-item"
+    },
+    "modules": [
+      "custom/expand-icon",
+      "tray"
+    ]
+  },
+  "custom/expand-icon": {
+    "format": "",
+    "tooltip": false
+  },
+  "custom/screenrecording-indicator": {
+    "on-click": "script-cmd-screenrecord",
+    "exec": "$HOME/.config/waybar/indicators/screen-recording.sh",
+    "signal": 8,
+    "return-type": "json"
+  },
+  "tray": {
+    "icon-size": 16,
+    "spacing": 17
+  },
+  "keyboard-state": {
+    "scrolllock": false,
+    "numlock": false,
+    "capslock": true,
+    "format": {
+      "scrolllock": "S {icon}",
+      "numlock": "N {icon}",
+      "capslock": "C {icon}"
+    },
+    "format-icons": {
+      "locked": " ",
+      "unlocked": " "
+    }
+  },
+  "custom/vpn": {
+    "exec" : "get_vpn_status.sh",
+    "return-type": "json",
+    "tooltip": true,
+    "interval": 1,
+    "on-click": "script-toggle-vpn",
+    "format": " {icon} {0}",
+    "format-icons": ["󰲝", "󰒄"]
+  },
+  "custom/notifications": {
+    "tooltip": true,
+    "on-click": "swaync-client -t -sw",
+    "on-click-right": "set_swaync_dnd.sh",
+    "escape": true,
+    "return-type": "json",
+    "exec-if": "which swaync-client",
+    "exec": "swaync-client -swb",
+    "format-icons": {
+      "default": "󰂜",
+      "none": "󰂜",
+      "notification": "󱅫",
+      "dnd-notification": "󰂠",
+      "dnd-none": "󰪓",
+      "inhibited-notification": "󰂛",
+      "inhibited-none": "󰪑",
+      "dnd-inhibited-notification": "󰂛",
+      "dnd-inhibited-none": "󰪑"
+    },
+    "format": " {0} {icon} "
+  },
+  "custom/exit": {
+    "format": "  ",
+    "on-click": "wlogout -sb 4",
+    "tooltip": false,
+    "tooltip-format": "Powermenu"
+  }
+}

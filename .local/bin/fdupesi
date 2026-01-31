@@ -1,0 +1,179 @@
+#!/usr/bin/env bash
+
+# Dependency Check
+for cmd in fdupes gum grep; do
+  if ! command -v $cmd &>/dev/null; then
+    echo "Error: $cmd is not installed"
+    exit 1
+  fi
+done
+
+# Select directory
+# Use absolute path to ensure operations are safe
+echo "Enter directory to scan (default: current)"
+RAW_DIR=$(gum input --placeholder "Type the directory (default: .)" --value ".")
+if [[ -z "$RAW_DIR" ]] || ! [[ -d "$RAW_DIR" ]];then
+  echo "Not a directory: '$RAW_DIR'"
+  exit 2
+fi
+TARGET_DIR=$(cd "$RAW_DIR" && pwd)
+
+echo "Scanning for duplicates in '$TARGET_DIR'"
+DUPES_FILE=$(mktemp)
+fdupes -r -n "$TARGET_DIR" >"$DUPES_FILE"
+
+if [ ! -s "$DUPES_FILE" ]; then
+  gum style --foreground 212 "No duplicates found"
+  rm "$DUPES_FILE"
+  exit 0
+fi
+
+gum style --foreground 212 "There exists file duplicates on '$TARGET_DIR'"
+# Filter via pattern
+echo "Enter a grep pattern to exclude files (e.g. 'Pattern_1|Pattern_2')"
+echo "Leave empty to process everything"
+SKIP_PATTERN=$(gum input --placeholder "Pattern to skip:")
+
+if [ -n "$SKIP_PATTERN" ]; then
+  FILTERED_FILE=$(mktemp)
+  grep -Ev "$SKIP_PATTERN" "$DUPES_FILE" >"$FILTERED_FILE"
+  mv "$FILTERED_FILE" "$DUPES_FILE"
+fi
+
+# Process Group Function
+process_group() {
+  local group=("${@}")
+  local count=${#group[@]}
+
+  if [ "$count" -lt 2 ]; then return; fi
+  clear
+  gum style --border normal --border-foreground 212 "Group: $count files, Base: $TARGET_DIR"
+
+  # This function builds two arrays:
+  # 1. display_menu: The short options for gum in format "1) File_Name.ext") (Interactive)
+  # 2. legend_text: The detailed path of each file, to be shown above display_menu (Fixed)
+
+  display_menu=("Skip Group")
+  legend_text=""
+
+  # Iterate with index
+  i=1
+  for file in "${group[@]}"; do
+    filename=$(basename "$file")
+
+    # 1. Add to Menu (Short)
+    display_menu+=("$i) $filename")
+    # 2. Add to Legend (Long)
+    rel_file=${file//$TARGET_DIR/}
+    legend_item=$(echo -e "\033[1;32m[$i]\033[0m $rel_file")
+    legend_text+="$legend_item"$'\n'
+    ((i++))
+  done
+
+  echo "----------------------------------------------------"
+  echo -e "$legend_text"
+  echo "----------------------------------------------------"
+
+  echo "Select the master file by number:"
+  CHOICE=$(gum choose "${display_menu[@]}")
+
+  if [[ -z "$CHOICE" || "$CHOICE" == "Skip Group" ]]; then
+    return
+  fi
+
+
+  # Get index of master file
+  SEL_INDEX=$(echo "$CHOICE" | cut -d')' -f1)
+  ARRAY_INDEX=$((SEL_INDEX - 1))
+  MASTER_FILE="${group[$ARRAY_INDEX]}"
+
+  if [ ! -f "$MASTER_FILE" ]; then
+    gum style --foreground 196 "Error selecting file, skipping this group"
+    sleep 2
+    return
+  fi
+
+  # Display the action menu
+  ACTION=$(gum choose "Delete Others" "Move Others to Backup Dir" "Overwrite a specific duplicate" "Cancel & Skip")
+
+  case "$ACTION" in
+  "Cancel & Skip")
+    return
+    ;;
+  "Delete Others")
+    for file in "${group[@]}"; do
+      if [ "$file" != "$MASTER_FILE" ]; then
+        rm -f "$file"
+        echo "Deleted: .../$(basename "$file")"
+      fi
+    done
+    ;;
+  "Move Others to Backup Dir")
+    BACKUP_DIR=$(gum input --placeholder "Backup path" --value "./duplicates_backup")
+    mkdir -p "$BACKUP_DIR"
+    for file in "${group[@]}"; do
+      if [ "$file" != "$MASTER_FILE" ]; then
+        fname=$(basename "$file")
+        mv "$file" "$BACKUP_DIR/${fname}_$(date +%s)"
+        echo "Moved: .../$fname"
+      fi
+    done
+    ;;
+  "Overwrite a specific duplicate")
+    # Build sub-menu for overwrite target
+    # Filter out the selected master file from the options
+    overwrite_menu=()
+    j=1
+    for file in "${group[@]}"; do
+      if [ "$file" != "$MASTER_FILE" ]; then
+        fname=$(basename "$file")
+        overwrite_menu+=("$j) $fname")
+      fi
+      ((j++))
+    done
+
+    echo "Select file to replace with the selected master file:"
+    TARGET_CHOICE=$(gum choose "${overwrite_menu[@]}")
+
+    if [ -n "$TARGET_CHOICE" ]; then
+      # Extract Index
+      T_INDEX=$(echo "$TARGET_CHOICE" | cut -d')' -f1)
+      T_ARRAY_IDX=$((T_INDEX - 1))
+      TARGET_FULL="${group[$T_ARRAY_IDX]}"
+
+      mv "$MASTER_FILE" "$TARGET_FULL"
+      echo "Overwritten: [$T_INDEX] is now the Master"
+
+      # Cleanup leftovers
+      for file in "${group[@]}"; do
+        if [[ "$file" != "$MASTER_FILE" && "$file" != "$TARGET_FULL" ]]; then
+          rm "$file"
+          echo "Deleted extra: .../$(basename "$file")"
+        fi
+      done
+    fi
+    ;;
+  esac
+  sleep 0.5
+}
+
+current_group=()
+
+# Main Loop (FD 3)
+while IFS= read -r -u 3 line; do
+  if [[ -z "$line" ]]; then
+    if [ ${#current_group[@]} -gt 0 ]; then
+      process_group "${current_group[@]}"
+      current_group=()
+    fi
+  else
+    current_group+=("$line")
+  fi
+done 3<"$DUPES_FILE"
+
+if [ ${#current_group[@]} -gt 0 ]; then
+  process_group "${current_group[@]}"
+fi
+
+rm "$DUPES_FILE"
+gum style --foreground 212 "Completed round"

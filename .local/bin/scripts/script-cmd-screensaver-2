@@ -1,0 +1,110 @@
+#!/usr/bin/env bash
+
+MATRIX=false
+UNIMATRIX=false
+TTE=false
+BONSAI=false
+effect=""
+cmd=""
+pcmd=""
+
+usage() {
+  echo "Usage: $0
+    [-m | --cmatrix]
+    [-u | --unimatrix]
+    [-b | --cbonsai]
+    [-t | --tte] <Uses logo>"
+  exit 2
+}
+
+ARG_NUM=$#
+PARSED_ARGUMENTS=$(getopt -a -n "$0" -o bmut -l bonsai,matrix,unimatrix,tte -- "$@")
+VALID_ARGUMENTS=$?
+
+if [[ "$VALID_ARGUMENTS" != "0" || "$ARG_NUM" == "0" ]]; then
+  usage
+fi
+
+eval set -- "$PARSED_ARGUMENTS"
+
+while :; do
+  case "${1}" in
+  -m | --cmatrix)
+    MATRIX=true
+    shift
+    ;;
+  -u | --unimatrix)
+    UNIMATRIX=true
+    shift
+    ;;
+  -t | --tte)
+    TTE=true
+    shift
+    ;;
+  -b | --cbonsai)
+    BONSAI=true
+    shift
+    ;;
+  --)
+    shift
+    break
+    ;;
+  *)
+    echo "Unexpected option: $1 - this should not happen."
+    usage
+    ;;
+  esac
+done
+
+if [[ "$MATRIX" = true ]]; then
+  cmd="cmatrix -s &"
+  pcmd=cmatrix
+elif [[ "$UNIMATRIX" = true ]]; then
+  cmd="unimatrix -s 96 -o &"
+  pcmd=unimatrix
+elif [[ "$BONSAI" = true ]]; then
+  cmd="cbonsai -S -w 2 &"
+  pcmd=cbonsai
+elif [[ "$TTE" = true ]]; then
+  effect=$(tte 2>&1 | grep -oP '{\K[^}]+' | tr ',' ' ' | tr ' ' '\n' | sed -n '/^beams$/,$p' | sort -u | shuf -n1)
+  cmd="tte -i "$DOT_DATA_DIR/branding/screensaver.txt" --frame-rate 240 --canvas-width 0 --canvas-height $(($(tput lines) - 2)) --anchor-canvas c --anchor-text c \"$effect\" &"
+  pcmd=tte
+else
+  usage
+fi
+
+source "$(dirname "$0")"/monitors_info.sh
+
+if ! [[ -f "$DOT_DATA_DIR"/branding/screensaver.txt ]]; then
+  fastfetch --pipe -c "$DOT_DATA_DIR"/config/fastfetch/config_gen_logo.jsonc | sed 's/\x1B[@A-Z\\\]^_]\|\x1B\[[0-9:;<=>?]*[-!"#$%&'"'"'()*+,.\/]*[][\\@A-Z^_`a-z{|}~]//g' | sed '/^$/d' > "$DOT_DATA_DIR"/branding/screensaver.txt
+  sleep 0.5
+fi
+
+screensaver_in_focus() {
+  get_current_active_window
+  [[ "$active_window" =~ "Screensaver" ]]
+}
+
+exit_screensaver() {
+  unhide_cursor
+  pkill "$pcmd" 2>/dev/null
+  pkill -f "alacritty --class Screensaver" 2>/dev/null
+  exit 0
+}
+
+trap exit_screensaver SIGINT SIGTERM SIGHUP SIGQUIT
+hide_cursor
+
+while true; do
+  if [[ "$TTE" == true ]]; then
+    effect=$(tte 2>&1 | grep -oP '{\K[^}]+' | tr ',' ' ' | tr ' ' '\n' | sed -n '/^beams$/,$p' | sort -u | shuf -n1)
+    cmd="tte -i "$DOT_DATA_DIR/branding/screensaver.txt" --frame-rate 240 --canvas-width 0 --canvas-height $(($(tput lines) - 2)) --anchor-canvas c --anchor-text c \"$effect\" &"
+  fi
+  eval "${cmd}"
+
+  while [[ "$(pgrep "$pcmd")" ]]; do
+    if read -r -n 1 -t 3 || ! screensaver_in_focus; then
+      exit_screensaver
+    fi
+  done
+done

@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+MIGRATIONS_DATA_DIR="$DOT_DATA_DIR/migrations"
+MIGRATIONS_STATE_DIR="$DOT_STATE_DIR/migrations"
+
+# Where we store an empty file for each migration that has already been performed.
+COMPLETED_STATE_DIR="$MIGRATIONS_STATE_DIR/completed"
+mkdir -p "$MIGRATIONS_STATE_DIR"
+
+# Skipped migrations are tracked separately
+SKIPPED_STATE_DIR="$MIGRATIONS_STATE_DIR/skipped"
+mkdir -p "$SKIPPED_STATE_DIR"
+
+# Run any pending migrations
+for file in "$MIGRATIONS_DATA_DIR"/*.sh; do
+  filename=$(basename "$file")
+
+  if [[ ! -f "$COMPLETED_STATE_DIR/$filename" && ! -f "$SKIPPED_STATE_DIR/$filename" ]]; then
+    echo -e "\e[32m\nRunning migration (${filename%.sh})\e[0m"
+
+    if bash "$file"; then
+      touch "$COMPLETED_STATE_DIR/$filename"
+    else
+      if gum confirm "Migration ${filename%.sh} failed. Skip and continue?"; then
+        touch "$SKIPPED_STATE_DIR/$filename"
+      else
+        exit 1
+      fi
+    fi
+  fi
+done

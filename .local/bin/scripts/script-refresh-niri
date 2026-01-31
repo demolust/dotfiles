@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+script-refresh-config niri/autostart.kdl
+script-refresh-config niri/bindings.kdl
+script-refresh-config niri/envs.kdl
+script-refresh-config niri/input.kdl
+script-refresh-config niri/niri.kdl

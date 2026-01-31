@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+title="  Calendar  "
+title_len="${#title}"
+export title
+export title_len
+
+exec setsid uwsm-app -- script-launch-terminal-float bash -c 'COLUMNS=$(tput cols);printf "%*s" $(((title_len + COLUMNS) / 2)) "$title";echo; echo;cal -m --three;script-show-done '

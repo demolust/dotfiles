@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+source "$(dirname "$0")"/pkg_manager.sh
+
+pkg_update_repos_user
+
+availibe_updates=$(pkg_list_upgradable)
+if [[ -n "${availibe_updates}" ]]; then
+  echo "Update available"
+  exit 0
+fi
+
+exit 1

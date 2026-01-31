@@ -1,0 +1,8 @@
+
+include "apps.kdl"
+
+// Put swaybg inside the overview backdrop.
+layer-rule {
+    match namespace="^wallpaper$"
+    place-within-backdrop true
+}

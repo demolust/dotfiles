@@ -1,12 +1,12 @@
 {
     "label" : "lock",
-    "action" : "~/.config/niri/scripts/HyprLockScreen.sh",
+    "action" : "loginctl lock-session",
     "text" : "Lock",
     "keybind" : "l"
 }
 {
     "label" : "logout",
-    "action" : "niri msg action quit -s",
+    "action" : "~/.local/bin/scripts/exit_compositor.sh",
     "text" : "Exit",
     "keybind" : "e"
 }

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 if ! [[ "$(command -v fd)" && "$(command -v fzf)" && "$(command -v bat)" ]]; then
   printf "Dependencies not installed\n"

@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+source "$(dirname "$0")"/pkg_manager.sh
+
+if [[ "$DISTRO_ID" == "arch" ]];then
+  # In this case all of the packages are obtained via offical repos or if not via AUR
+  exit 0
+fi
+
+previous_elephant_version="$(elephant version)"
+previous_walker_version="$(walker --version)"
+
+script-update-bin-packages
+script-update-cargo-packages
+script-update-go-packages
+script-update-uv-packages
+
+new_elephant_version="$(elephant version)"
+new_walker_version="$(walker --version)"
+
+if [[ "$previous_elephant_version" != "$new_elephant_version" ]] || [[ "$previous_walker_version" != "$new_walker_version" ]]; then
+  if [[ "$previous_elephant_version" != "$new_elephant_version" ]]; then
+    script-update-elephant-services
+  fi
+  script-restart-walker
+fi
+

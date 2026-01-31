@@ -11,10 +11,14 @@ wezterm.on("gui-startup", function(cmd)
   window:gui_window():maximize()
 end)
 
-config.font = wezterm.font({ family = "LiterationMono Nerd Font", weight = "Regular" })
-config.font_size = 18
+wezterm.on('window-config-reloaded', function(window, pane)
+  window:maximize()
+end)
 
-config.quit_when_all_windows_are_closed = false
+config.font = wezterm.font({ family = "LiterationMono Nerd Font", weight = "Regular" })
+config.font_size = 22
+
+config.quit_when_all_windows_are_closed = true
 config.window_close_confirmation = "NeverPrompt"
 config.hide_tab_bar_if_only_one_tab = true
 config.enable_scroll_bar = false

@@ -1,0 +1,9 @@
+
+input {
+    // Disable power key to prevent sleeping by accident
+    disable-power-key-handling
+    // Enable touch screen
+    touch {
+        map-to-output "eDP-1"
+    }
+}

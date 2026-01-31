@@ -9,6 +9,7 @@ BusName=org.kde.polkit-kde-authentication-agent-1
 Slice=background.slice
 TimeoutStopSec=5sec
 Restart=on-failure
+ExecCondition=/usr/lib/systemd/systemd-xdg-autostart-condition "" "KDE:GNOME"
 
 [Install]
 WantedBy=graphical-session.target

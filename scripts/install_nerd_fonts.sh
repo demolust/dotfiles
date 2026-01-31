@@ -30,17 +30,16 @@ for font in "${fonts_to_be_installed[@]}"; do
   font_tar_name="${font}.tar.xz"
   tmp_font_dir="${tmp_dir}/${font}"
   tmp_font_tar_filename="${tmp_dir}/${font_tar_name}"
-  font_tar_download_url=$(curl -s https://api.github.com/repos/${repo}/releases/latest | grep "${font_tar_name}" | grep browser_download_url | cut -d ":" -f 2- | tr -d '"' | tr -d '[:space:]')
+  font_tar_download_url=$(curl -s https://api.github.com/repos/${repo}/releases/latest | jq '.assets | .[] | .browser_download_url' | grep "${font_tar_name}" | tr -d '"')
   printf "Fonts will be downloaded from %s\n" "${font_tar_download_url}"
   mkdir -p "${tmp_font_dir}"
   wget "${font_tar_download_url}" -O "${tmp_font_tar_filename}"
   tar -xvf "${tmp_font_tar_filename}" -C "${tmp_font_dir}"
 done
 
-rsync -avz "${tmp_dir}/" "${dest_fonts_path}"
+rsync -havzP "${tmp_dir}/" "${dest_fonts_path}"
 fc-cache -fv "${dest_fonts_path}"
 
 printf "Deleting original tar files and stored temporal files\n"
 rm -rvf "${tmp_dir}"
 rm -vf "${dest_fonts_path}/"*.tar.xz
-

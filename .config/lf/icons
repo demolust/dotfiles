@@ -547,6 +547,8 @@ Vagrantfile             
 *.ipynb       
 *.csv         
 *.tsv         
+*.epub        
+*.kdl         
 
 # Overwrite icons
 #󰣇

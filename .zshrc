@@ -237,11 +237,6 @@ zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 
 ####################################### ALIAS #######################################
-### Custom home only aliases
-alias pi='ssh pi'
-alias pizero='ssh pizero'
-alias d7050='ssh d7050'
-
 ### Basic aliases
 alias cp='cp -i'
 alias rm='rm -i'
@@ -259,15 +254,15 @@ alias -- +=pushd
 alias -- -=popd
 alias gs='git status'
 
+### Local LLM alias
+alias ai-local-on="systemctl --user start container-ollama"
+alias ai-local-off="systemctl --user stop container-ollama"
+alias ollama='podman exec -it ollama ollama'
+
 ### Set command aliases
 ### Sets yt-dlp to download 10 files at time & to retry infinitie times any given part of the file in case it fails
 if [[ "$(command -v yt-dlp)" ]]; then
   alias yt-dlp='yt-dlp -N 10 -R infinite'
-fi
-
-#### Use vlc with ani-cli
-if [[ "$(command -v ani-cli)" ]]; then
-  alias ani-cli='ani-cli -v'
 fi
 
 #### Setup colors in ncdu
@@ -362,13 +357,13 @@ if [[ "$(command -v eza)" ]]; then
   mu=38;2;255;175;215:lo=38;2;255;215;183:cr=38;2;240;160;240:\
   do=38;2;200;200;246:co=38;2;255;119;153:tm=38;2;148;148;148:\
   cm=38;2;230;150;210:bu=38;2;95;215;175:sc=38;2;110;222;222"
-  alias ls='eza -gH --color=always'
-  alias ll='eza -lgH --color=always'
-  alias lll='eza -1gH --color=always'
-  alias llll='eza -1gHA --color=always'
-  alias l='eza -lgHA --color=always'
-  alias l.='eza -d .* --color=always'
-  alias tree='eza -a -I ".git|node_modules|venv" --tree --color=always'
+  alias ls='eza -gH --color=auto'
+  alias ll='eza -lgH --color=auto'
+  alias lll='eza -1gH --color=auto'
+  alias llll='eza -1gHA --color=auto'
+  alias l='eza -lgHA --color=auto'
+  alias l.='eza -d .* --color=auto'
+  alias tree='eza -a -I ".git|node_modules|venv" --tree --color=auto'
 fi
 
 if [[ "$(command -v git_remove_untracked_fzf.sh)" ]]; then
@@ -544,6 +539,12 @@ function lazygp {
 ### Section that overrides some plugin settings
 unalias mkdir
 alias mkdir='mkdir -p'
+
+################################### GET SECRETS ###################################
+source "$XDG_DATA_HOME"/secrets/secrets
+
+################################### GET PER ENV DATA ###################################
+source "$XDG_DATA_HOME"/zsh/zshenvs
 
 ################################### USER SETTINGS ###################################
 ### User settings such as PATHS, VARIABLES, and so on, are defined at ~/.zshenv, wich is loaded before this file

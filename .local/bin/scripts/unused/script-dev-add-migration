@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+cd "$DOT_DATA_DIR" || exit 1
+migration_file="$DOT_DATA_DIR/migrations/$(git log -1 --format=%cd --date=unix).sh"
+touch "$migration_file"
+nvim "$migration_file"

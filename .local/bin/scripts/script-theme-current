@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+basename "$(realpath "$CURRENT_THEME_DIR")" | sed -E 's/(^|-)([a-z])/\1\u\2/g; s/-/ /g'

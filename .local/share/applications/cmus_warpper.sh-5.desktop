@@ -1,5 +1,5 @@
 [Desktop Entry]
-Exec=sh -c "$HOME"/.local/bin/cmus_warpper.sh
+Exec=cmus_warpper.sh
 MimeType=audio/aac;
 Name=cmus_warpper.sh
 NoDisplay=true

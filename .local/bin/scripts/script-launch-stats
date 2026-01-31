@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+application="btop"
+exec setsid uwsm-app -- script-launch-terminal-fullscreen "${application}"

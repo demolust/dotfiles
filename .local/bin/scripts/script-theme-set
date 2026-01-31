@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+if [[ -z $1 && $1 != "CNCLD" ]]; then
+  echo "Usage: script-theme-set <theme-name>"
+  exit 1
+fi
+
+THEME_NAME=$(echo "$1" | sed -E 's/<[^>]+>//g' | tr '[:upper:]' '[:lower:]' | tr ' ' '-')
+THEME_PATH="$THEMES_DIR/$THEME_NAME"
+
+# Check if the theme entered exists
+if [[ ! -d "$THEME_PATH" ]]; then
+  echo "Theme '$THEME_NAME' does not exist in $THEMES_DIR"
+  exit 1
+fi
+
+# Update theme symlinks
+ln -nsf "$THEME_PATH" "$CURRENT_THEME_DIR"
+
+# Restart components to apply new theme
+script-restart-waybar
+script-restart-swayosd
+script-restart-swaync
+script-restart-hyprland
+
+# Call hook on theme set
+script-hook theme-set "$THEME_NAME"

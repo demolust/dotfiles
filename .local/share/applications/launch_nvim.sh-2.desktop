@@ -1,0 +1,6 @@
+[Desktop Entry]
+Exec=launch_nvim_tmux.sh
+MimeType=application/x-zerosize;
+Name=launch_nvim.sh
+NoDisplay=true
+Type=Application

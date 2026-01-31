@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+# Triggers the wallpaper change script
+systemctl --user restart wallpaper_change.service

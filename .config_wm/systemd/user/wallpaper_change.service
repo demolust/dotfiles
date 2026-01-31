@@ -6,7 +6,7 @@ ConditionEnvironment=WAYLAND_DISPLAY
 
 [Service]
 Type=forking
-ExecStart=%h/.local/bin/random_background_from_topics.sh
+ExecStart=%h/.local/bin/scripts/random_background_from_topics.sh
 Restart=on-failure
 
 [Install]

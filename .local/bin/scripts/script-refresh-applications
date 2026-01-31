@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+HICOLOR_ICON_DIR="$ICON_DIR/hicolor"
+SUB_HICOLOR_ICONS_DIR="$HICOLOR_ICON_DIR/48x48/apps/"
+mkdir -p "$SUB_ICONS_DIR"
+
+# Copy and sync icon files
+rsync -havzP "$DOT_DATA_DIR"/applications/icons/ "$SUB_HICOLOR_ICONS_DIR"
+gtk-update-icon-cache "$HICOLOR_ICON_DIR" &>/dev/null
+
+# Copy .desktop declarations
+rsync -havzP --exclude=icons "$DOT_DATA_DIR"/applications/ "$APP_DESKTOP_DIR"
+update-desktop-database "$APP_DESKTOP_DIR"

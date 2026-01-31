@@ -1,0 +1,197 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+INSTALL_DIR="$HOME/.local/bin"
+TMP_DIR="$(mktemp -d)"
+EXTRACT_DIR="$(mktemp -d)"
+BKP_DIR="$(mktemp -d)"
+ARCH="$(uname -m)"
+OS="$(uname -s | tr '[:upper:]' '[:lower:]')"
+
+if [[ "$ARCH" == "x86_64" ]]; then
+  ARCH2=amd64
+elif [[ "$ARCH" == "aarch64" ]]; then
+  ARCH2=arm64
+fi
+
+mkdir -p "$INSTALL_DIR"
+
+# List of tools with their GitHub repo and how to check their version
+declare -A tools=(
+  # Format: [name]='github_repo:binary_name:version_cmd:"base_asset_pattern"'
+  [eza]='eza-community/eza:eza:eza --version | awk '\''NR==2 {print $1}'\'' | sed '\''s/^v//'\'':"$bin.*$ARCH.*$OS.*gnu.*(tar.gz|zip)"'
+  [bat]='sharkdp/bat:bat:bat --version | awk '\''{print $2}'\'':"$bin.*$ARCH.*$OS.*gnu.*(tar.gz|zip)"'
+  [fd]='sharkdp/fd:fd:fd --version | awk '\''{print $2}'\'':"$bin.*$ARCH.*$OS.*gnu.*(tar.gz|zip)"'
+  [delta]='dandavison/delta:delta:delta --version | awk '\''{print $2}'\'':"$bin.*$ARCH.*$OS.*gnu.*(tar.gz|zip)"'
+  [dust]='bootandy/dust:dust:dust --version | awk '\''{print $2}'\'':"$bin.*$ARCH.*$OS.*gnu.*(tar.gz|zip)"'
+  [uv]='astral-sh/uv:uv:uv --version | awk '\''{print $2}'\'':"$bin.*$ARCH.*$OS.*gnu.*(tar.gz|zip)"'
+  [uvx]='astral-sh/uv:uvx:uvx --version | awk '\''{print $2}'\'':"uv.*$ARCH.*$OS.*gnu.*(tar.gz|zip)"'
+  [yazi]='sxyazi/yazi:yazi:yazi --version | awk '\''{print $2}'\'':"$bin.*$ARCH.*$OS.*gnu.*(tar.gz|zip)"'
+  [ya]='sxyazi/yazi:ya:ya --version | awk '\''{print $2}'\'':"yazi.*$ARCH.*$OS.*gnu.*(tar.gz|zip)"'
+  [procs]='dalance/procs:procs:procs --version | awk '\''{print $2}'\'' |sed '\''s/"//'\'':"$bin.*$ARCH.*$OS.*(tar.gz|zip)"'
+  [glow]='charmbracelet/glow:glow:glow --version | awk '\''{print $3}'\'':"$bin.*$OS.*($ARCH|$ARCH2).*(tar.gz|zip)"'
+  [gum]='charmbracelet/gum:gum:gum --version | awk '\''{print $3}'\''| sed '\''s/^v//'\'':"$bin.*$OS.*($ARCH|$ARCH2).*(tar.gz|zip)"'
+  [lazygit]='jesseduffield/lazygit:lazygit:lazygit --version | awk -F '\'','\'' '\''{print $4}'\'' | cut -d '\''='\'' -f 2:"$bin.*$OS.*($ARCH|$ARCH2).*(tar.gz|zip)"'
+  [lazygit]='jesseduffield/lazydocker:lazydocker:lazydocker --version | awk '\''NR==1 {print $2}'\'':"$bin.*$OS.*($ARCH|$ARCH2).*(tar.gz|zip)"'
+  [fzf]='junegunn/fzf:fzf:fzf --version | awk '\''{print $1}'\'':"$bin.*$OS.*$ARCH2.*(tar.gz|zip)"'
+  [lf]='gokcehan/lf:lf:lf --version:"$bin.*$OS.*$ARCH2.*(tar.gz|zip)"'
+  [zoxide]='ajeetdsouza/zoxide:zoxide:zoxide --version | awk '\''{print $2}'\'':"$bin.*$ARCH.*$OS.*gnu.*(tar.gz|zip)"'
+  [xh]='ducaale/xh:xh:xh --version | awk '\''NR==1 {print $2}'\'':"$bin.*$ARCH.*$OS.*gnu.*(tar.gz|zip)"'
+  [sunsetr]='psi4j/sunsetr:sunsetr:sunsetr --version | awk '\''NR==1 {print $3}'\'' | sed '\''s/^v//'\'':"$bin.*$ARCH.*$OS.*(tar.gz|zip)"'
+  [walker]='abenz1267/walker:walker:walker --version:"$bin.*$ARCH.*$OS.*gnu.*(tar.gz|zip)"'
+  [elephant]='abenz1267/elephant:elephant:elephant version:"$bin.*$OS.*$ARCH2.*(tar.gz|zip)"'
+  [impala]='pythops/impala:impala:impala --version | awk '\''{print $2}'\'':"$bin.*$ARCH.*$OS.*musl"'
+  [impala]='pythops/bluetui:bluetui:bluetui --version | awk '\''{print $2}'\'':"$bin.*$ARCH.*$OS.*musl"'
+  [aichat]='sigoden/aichat:aichat:aichat --version | awk '\''{print $2}'\'':"$bin.*$ARCH.*$OS.*musl.*(tar.gz|zip)"'
+  [xh]='ducaale/xh:xh:xh --version | awk '\''NR==1 {print $2}'\'':"$bin.*$ARCH.*$OS.*musl.*(tar.gz|zip)"'
+  [zoxide]='ajeetdsouza/zoxide:zoxide:zoxide --version | awk '\''{print $2}'\'':"$bin.*$ARCH.*$OS.*musl.*(tar.gz|zip)"'
+  [sd]='chmln/sd:sd:sd --version | awk '\''{print $2}'\'':"$bin.*$ARCH.*$OS.*(gnu|musl).*(tar.gz|zip)"'
+  [rg]='BurntSushi/ripgrep:rg:rg --version | awk '\''NR==1 {print $2}'\'':"ripgrep.*$ARCH.*$OS.*(gnu|musl).*(tar.gz|zip)"'
+  [starship]='starship/starship:starship:starship --version | awk '\''NR==1 {print $2}'\'':"$bin.*$ARCH.*$OS.*(gnu|musl).*(tar.gz|zip)"'
+)
+
+download_and_install() {
+  local repo="$1"
+  local bin="$2"
+  local version_cmd="$3"
+  local base_asset_pattern="$4"
+
+  echo "Checking for the latest version of $bin via the GitHub API"
+
+  # GitHub API to get latest release info
+  api_url="https://api.github.com/repos/$repo/releases/latest"
+  release_json=$(curl -sL "$api_url")
+
+  latest_version=$(echo "$release_json" | jq -r '.tag_name' | sed 's/^v//')
+  if [[ -z "$latest_version" || "$latest_version" == "null" ]]; then
+    echo "Could not get latest version for $bin"
+    printf "\n"
+    return
+  fi
+
+  # Check installed version
+  if command -v "$bin" &>/dev/null; then
+    installed_version=$(eval "$version_cmd" || echo "")
+    echo "$bin installed version is: $installed_version"
+    if [[ "$installed_version" == "$latest_version" ]]; then
+      echo "$bin is up to date ($installed_version)"
+      printf "\n"
+      return
+    else
+      echo "Updating $bin: $installed_version -> $latest_version"
+    fi
+  else
+    echo "$bin not installed, installing $latest_version"
+  fi
+
+  asset_pattern=$(eval echo eval "$base_asset_pattern" | sed 's/eval //g')
+  # Find asset (binary or archive)
+  asset_url=$(echo "$release_json" | jq -r \
+    ".assets[] | select(.name | test(\"$asset_pattern\"; \"i\")).browser_download_url" | head -1)
+
+  if [[ -z "$asset_url" ]]; then
+    echo "No asset matching the current pattern $asset_pattern for $bin, skipping download and installation, check manually for the release on https://github.com/$repo/releases/latest"
+    printf "\n"
+    return
+  fi
+
+  bkp_bin="$(command -v "$bin" || true)"
+  if [[ $bkp_bin =~ \.local ]]; then
+    echo "Creating a backup of old binary"
+    rsync -azPq "$bkp_bin" "$BKP_DIR/$bin"
+  fi
+
+  asset_name=$(basename "$asset_url")
+  cd "$TMP_DIR"
+  curl -sLO "$asset_url"
+
+  if ! [ -f "$asset_name" ]; then
+    echo "Download of $asset_url failed, retry the script"
+    return
+  fi
+
+  # Extract if archive
+  if [[ "$asset_name" =~ \.tar\.gz$ ]]; then
+    tar -C "$EXTRACT_DIR" -xzf "$asset_name"
+    found_bin=$(find "$EXTRACT_DIR" -type f -name "$bin" | head -n 1)
+    if [[ -z "$found_bin" ]]; then
+      found_bin=$(find "$EXTRACT_DIR" -type f -name "$bin*" | head -n 1)
+      file_type=$(file --dereference --brief -- "$found_bin")
+      if ! [[ "$file_type" =~ ^ELF ]]; then
+        echo "Installation of $bin failed, there is no binary in the release $asset_name"
+        echo "Check manually for the failure and info on the release notes on https://github.com/$repo/releases/latest"
+        printf "\n"
+        return 0
+      fi
+      chmod 755 "$found_bin"
+      mv -f "$found_bin" "$bin"
+      found_bin="$bin"
+    fi
+    mv -f "$found_bin" "$INSTALL_DIR/"
+  elif [[ "$asset_name" =~ \.tgz$ ]]; then
+    tar -C "$EXTRACT_DIR" -xzf "$asset_name"
+    found_bin=$(find "$EXTRACT_DIR" -type f -name "$bin" | head -n 1)
+    if [[ -z "$found_bin" ]]; then
+      found_bin=$(find "$EXTRACT_DIR" -type f -name "$bin*" | head -n 1)
+      file_type=$(file --dereference --brief -- "$found_bin")
+      if ! [[ "$file_type" =~ ^ELF ]]; then
+        echo "Installation of $bin failed, there is no binary in the release $asset_name"
+        echo "Check manually for the failure and info on the release notes on https://github.com/$repo/releases/latest"
+        printf "\n"
+        return 0
+      fi
+      chmod 755 "$found_bin"
+      mv -f "$found_bin" "$bin"
+      found_bin="$bin"
+    fi
+    mv -f "$found_bin" "$INSTALL_DIR/"
+  elif [[ "$asset_name" =~ \.zip$ ]]; then
+    unzip -d "$EXTRACT_DIR" -q -o "$asset_name"
+    found_bin=$(find "$EXTRACT_DIR" -type f -name "$bin" | head -n 1)
+    if [[ -z "$found_bin" ]]; then
+      found_bin=$(find "$EXTRACT_DIR" -type f -name "$bin*" | head -n 1)
+      file_type=$(file --dereference --brief -- "$found_bin")
+      if ! [[ "$file_type" =~ ^ELF ]]; then
+        echo "Installation of $bin failed, there is no binary in the release $asset_name"
+        echo "Check manually for the failure and info on the release notes on https://github.com/$repo/releases/latest"
+        printf "\n"
+        return 0
+      fi
+      chmod 755 "$found_bin"
+      mv -f "$found_bin" "$bin"
+      found_bin="$bin"
+    fi
+    mv -f "$found_bin" "$INSTALL_DIR/"
+  else
+    mv -f "$asset_name" "$INSTALL_DIR/$bin"
+    chmod +x "$INSTALL_DIR/$bin"
+  fi
+
+  echo "$bin installed to $INSTALL_DIR"
+
+  echo "Ensuring correct installation of $bin"
+  if ! ($bin --version > /dev/null || $bin version > /dev/null); then
+    echo "Installation of $bin failed, removing binary"
+    rm -vf "$INSTALL_DIR/$bin"
+    if [ -f "$BKP_DIR/$bin" ]; then
+      echo "Restoring old binary"
+      rsync -azPq "$BKP_DIR/$bin" "$INSTALL_DIR/$bin"
+    fi
+    echo "Check manually for the failure and info on the release notes on https://github.com/$repo/releases/latest"
+  fi
+
+  printf "\n"
+}
+
+for name in "${!tools[@]}"; do
+  IFS=':' read -r repo bin version_cmd base_asset_pattern <<< "${tools[$name]}"
+  download_and_install "$repo" "$bin" "$version_cmd" "$base_asset_pattern"
+done
+
+# Clean up
+rm -rf "$TMP_DIR"
+rm -rf "$BKP_DIR"
+rm -rf "$EXTRACT_DIR"
+echo "All done!"
+

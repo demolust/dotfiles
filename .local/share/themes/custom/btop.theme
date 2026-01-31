@@ -1,0 +1,64 @@
+# Theme: Custom Deep Blue
+# Main bg
+theme[main_bg]="#02098A"
+
+# Main text color
+theme[main_fg]="#C2C2C2"
+
+# Title color for boxes
+theme[title]="#C2C2C2"
+
+# Highlight color for keyboard shortcuts
+theme[hi_fg]="#BFBDBD"
+
+# Background color of selected item in processes box
+theme[selected_bg]="#4C566A"
+
+# Foreground color of selected item in processes box
+theme[selected_fg]="#ffffff"
+
+# Color of inactive/disabled text
+theme[inactive_fg]="#404B61"
+
+# Misc colors for processes box
+theme[proc_misc]="#BFBDBD"
+
+# Box outline colors
+theme[cpu_box]="#434C5E"
+theme[mem_box]="#434C5E"
+theme[net_box]="#434C5E"
+theme[proc_box]="#434C5E"
+theme[div_line]="#434C5E"
+
+# Temperature/CPU/Mem graphs (Kept gradient for readability, adjusted start/end slightly)
+theme[temp_start]="#BFBDBD"
+theme[temp_mid]="#7da6ff"
+theme[temp_end]="#f7768e"
+
+theme[cpu_start]="#BFBDBD"
+theme[cpu_mid]="#7da6ff"
+theme[cpu_end]="#f7768e"
+
+theme[free_start]="#BFBDBD"
+theme[free_mid]="#7da6ff"
+theme[free_end]="#f7768e"
+
+theme[cached_start]="#BFBDBD"
+theme[cached_mid]="#7da6ff"
+theme[cached_end]="#f7768e"
+
+theme[available_start]="#BFBDBD"
+theme[available_mid]="#7da6ff"
+theme[available_end]="#f7768e"
+
+theme[used_start]="#BFBDBD"
+theme[used_mid]="#7da6ff"
+theme[used_end]="#f7768e"
+
+theme[download_start]="#BFBDBD"
+theme[download_mid]="#7da6ff"
+theme[download_end]="#f7768e"
+
+theme[upload_start]="#BFBDBD"
+theme[upload_mid]="#7da6ff"
+theme[upload_end]="#f7768e"

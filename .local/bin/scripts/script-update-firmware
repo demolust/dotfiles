@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+set -e
+echo -e "\e[32mUpdate Firmware\e[0m"
+
+if ! [[ "$(command -v fwupdmgr)" ]]; then
+  script-pkg-add fwupd
+fi
+
+fwupdmgr refresh
+sudo fwupdmgr update

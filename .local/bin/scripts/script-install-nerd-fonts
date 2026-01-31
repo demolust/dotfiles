@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+# This script will install fonts to 'XDG_DATA_HOME/fonts' typically translated to '~/.local/share/fonts'
+
+set -e
+
+tmp_dir=$(mktemp -d)
+if [[ -z "${XDG_DATA_HOME}" ]]; then
+  XDG_DATA_HOME=${XDG_DATA_HOME:="$HOME/.local/share"}
+fi
+dest_fonts_path="${XDG_DATA_HOME}/fonts"
+if [[ ! -d "${dest_fonts_path}" ]]; then
+  mkdir -p "${dest_fonts_path}"
+fi
+
+printf "Directory in which the fonts will be installed %s\n" "${dest_fonts_path}"
+
+fonts_to_be_installed=( $@ )
+repo="ryanoasis/nerd-fonts"
+
+for font in "${fonts_to_be_installed[@]}"; do
+  printf "Downloading and installing %s\n" "${font}"
+  font_tar_name="${font}.tar.xz"
+  font_tar_download_url=$(curl -s https://api.github.com/repos/${repo}/releases/latest | jq '.assets | .[] | .browser_download_url' | grep "${font_tar_name}" | tr -d '"')
+  printf "Fonts will be downloaded from %s\n" "${font_tar_download_url}"
+  font_dir="${dest_fonts_path}/${font}"
+  mkdir -p "${font_dir}"
+  tmp_font_tar_filename="${tmp_dir}/${font_tar_name}"
+  wget "${font_tar_download_url}" -O "${tmp_font_tar_filename}"
+  tar -xvf "${tmp_font_tar_filename}" -C "${font_dir}"
+done
+
+fc-cache -fv "${dest_fonts_path}"
+
+printf "Deleting original tar files and stored temporal files\n"
+rm -rvf "${tmp_dir}"
+

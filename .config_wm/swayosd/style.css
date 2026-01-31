@@ -1,0 +1,27 @@
+@import "../../.local/share/themes/current/swayosd.css";
+
+window {
+  border-radius: 0;
+  opacity: 0.97;
+  border: 2px solid @border-color;
+  background-color: @background-color;
+  border-radius: 14px;
+}
+
+label {
+  font-family: 'LiterationMono Nerd Font';
+  font-size: 11pt;
+  color: @label;
+}
+
+image {
+  color: @image;
+}
+
+progressbar {
+  border-radius: 0;
+}
+
+progress {
+  background-color: @progress;
+}

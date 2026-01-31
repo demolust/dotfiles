@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+set -e
+source "$(dirname "$0")"/pkg_manager.sh
+
+# Used in package emergencies if a bad package has been pushed and we can't revoke.
+ignored_packages=$(script-pkg-ignored)
+
+echo -e "\e[32m\nUpdate system packages\e[0m"
+[[ -n $ignored_packages ]] && echo "Packages to be ignored $ignored_packages"
+
+pkg_update_all
+
+if [[ "$DISTRO_ID" == "arch" ]];then
+  script-update-aur
+fi
+
+if ! pkg_update_check_reboot; then
+  touch "$DOT_STATE_DIR/reboot-required"
+fi

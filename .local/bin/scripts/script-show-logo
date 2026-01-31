@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+if ! [[ -f "$DOT_DATA_DIR"/branding/logo.txt ]]; then
+  fastfetch -c "$DOT_DATA_DIR"/config/fastfetch/config_gen_logo.jsonc | sed 's/\x1B[@A-Z\\\]^_]\|\x1B\[[0-9:;<=>?]*[-!"#$%&'"'"'()*+,.\/]*[][\\@A-Z^_`a-z{|}~]//g' | sed '/^$/d' > "$DOT_DATA_DIR"/logo.txt
+fi
+
+clear
+echo -e "\033[32m"
+cat < "$DOT_DATA_DIR"/logo.txt
+echo -e "\033[0m"
+echo

@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+
+source "$(dirname "$0")"/pkg_manager.sh
+
+if [[ "$DISTRO_ID" == "arch" ]];then
+  script-pkg-add freerdp openbsd-netcat gum podman podman-compose
+  export COMPOSE_BIN=podman-compose
+  export RDP_BIN=xfreerdp3
+elif [[ "$DISTRO_ID" == "fedora" ]];then
+  script-pkg-add freerdp netcat gum podman podman-compose
+  export COMPOSE_BIN=podman-compose
+  export RDP_BIN=wlfreerdp
+elif [[ "$DISTRO_ID" == "rhel" ]];then
+  script-pkg-add freerdp nc gum podman podman-compose
+  export COMPOSE_BIN=podman-compose
+  export RDP_BIN=xfreerdp
+elif [[ "$DISTRO_ID" =~ opensuse* ]];then
+  script-pkg-add freerdp netcat-openbsd gum podman python313-podman-compose
+  export COMPOSE_BIN=podman-compose
+  export RDP_BIN=xfreerdp
+elif [[ "$DISTRO_ID" == "ubuntu" ]];then
+  script-pkg-add freerdp3-x11 netcat-openbsd gum podman podman-compose
+  export COMPOSE_BIN=podman-compose
+  export RDP_BIN=wlfreerdp3
+elif [[ "$DISTRO_ID" == "debian" ]];then
+  script-pkg-add freerdp3-x11 netcat-openbsd gum podman podman-compose
+  export COMPOSE_BIN=podman-compose
+  export RDP_BIN=wlfreerdp3
+fi

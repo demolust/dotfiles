@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+set -e
+
+FIRST_RUN_MODE="$DOT_STATE_DIR/first-run.mode"
+
+if [[ -f "$FIRST_RUN_MODE" ]]; then
+  rm -f "$FIRST_RUN_MODE"
+  bash "$DOT_DATA_DIR/install/first-run/battery-monitor.sh"
+  bash "$DOT_DATA_DIR/install/first-run/cleanup-reboot-sudoers.sh"
+  bash "$DOT_DATA_DIR/install/first-run/firewall.sh"
+  bash "$DOT_DATA_DIR/install/first-run/dns-resolver.sh"
+  bash "$DOT_DATA_DIR/install/first-run/gnome-theme.sh"
+  bash "$DOT_DATA_DIR/install/first-run/wifi.sh"
+  bash "$DOT_DATA_DIR/install/first-run/welcome.sh"
+  sudo rm -f /etc/sudoers.d/first-run
+fi

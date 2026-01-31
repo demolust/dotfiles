@@ -2,7 +2,7 @@
 Categories=ConsoleOnly;System;FileTools
 Comment[en_US]=Launches cmus
 Comment=Launches cmus
-Exec=sh -c "$HOME"/.local/bin/launch_cmus_tmux_wezterm.sh
+Exec=launch_tmux_cmus.sh
 Icon=custom_music
 Keywords=Music
 MimeType=

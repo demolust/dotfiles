@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+if [ -f "$DOT_STATE_DIR/reboot-required" ]; then
+  gum confirm "Updates require reboot. Ready?" && script-state clear re*-required && sudo reboot now
+fi
+
+for file in "$DOT_STATE_DIR"/restart-*-required; do
+  if [ -f "$file" ]; then
+    filename=$(basename "$file")
+    service=$(echo "$filename" | sed 's/restart-\(.*\)-required/\1/')
+    echo "Restarting $service"
+    script-state clear "$filename"
+    script-restart-"$service"
+  fi
+done

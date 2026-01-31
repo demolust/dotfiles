@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+
+restart_nightlighted_waybar() {
+  if grep -q "custom/nightlight" "$XDG_CONFIG_HOME/waybar/config.jsonc"; then
+    systemctl --user restart waybar.service
+  fi
+}
+
+# Ensure sunsetr is running
+if ! systemctl --user -q is-active sunsetr.service; then
+  systemctl --user start sunsetr.service
+  # Give it time to register
+  sleep 1
+fi
+
+# Default temperature values
+NIGHT_TEMP=3200
+DAY_TEMP=5500
+CURRENT_TEMP=$(sunsetr status | grep Temperature | awk '{print $2}' | sed 's/K//')
+
+if [[ "$CURRENT_TEMP" == "$DAY_TEMP" ]]; then
+  sunsetr preset night > /dev/null
+  notify-send " Nightlight screen temperature"
+  restart_nightlighted_waybar
+else
+  sunsetr preset day > /dev/null
+  notify-send "  Daylight screen temperature"
+  restart_nightlighted_waybar
+fi
+
+# Give it time to register the change
+sleep 1
+
+# Default sun time change values
+SUNRISE_TIME="730"
+SUNSET_TIME="1930"
+CURRENT_TIME=$(date +%k%M)
+CURRENT_TEMP=$(sunsetr status | grep Temperature | awk '{print $2}' | sed 's/K//')
+
+if [[ "$CURRENT_TIME" -ge "$SUNRISE_TIME" && "$CURRENT_TIME" -lt "$SUNSET_TIME" ]]; then
+  ## We are in day hours
+  if [[ "$CURRENT_TEMP" == "$DAY_TEMP" ]]; then
+    sunsetr preset default > /dev/null
+  fi
+else
+ ## We are in night hours
+  if [[ "$CURRENT_TEMP" == "$NIGHT_TEMP" ]]; then
+    sunsetr preset default > /dev/null
+  fi
+fi
+

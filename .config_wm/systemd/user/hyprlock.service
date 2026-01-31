@@ -1,13 +1,16 @@
 [Unit]
-Description=Lock current session via hyprlock and controled by systemd
-Requires=wallpaper_change.service
+Description=Lock current session via hyprlock
 PartOf=graphical-session.target
 After=graphical-session.target
 Requisite=graphical-session.target
 ConditionEnvironment=WAYLAND_DISPLAY
 
 [Service]
-Type=simple
-ExecStart=%h/.local/bin/LockScreen.sh
+Type=exec
+ExecStart=/usr/bin/hyprlock --no-fade-in -q
 Restart=on-failure
+RestartSec=1s
+Slice=session.slice
 
+[Install]
+WantedBy=graphical-session.target

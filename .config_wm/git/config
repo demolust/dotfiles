@@ -1,8 +1,11 @@
 # This is Git's per-user configuration file.
-[user]
-# Please adapt and uncomment the following lines:
-  name = jcastro
-  email = jorgecch97@hotmail.com
+
+# Include configs
+[include]
+  path = ~/.local/share/secrets/git_personal
+[include]
+  path = ~/.local/share/secrets/git_work
+
 [core]
   editor = nvim
   pager = delta
@@ -21,7 +24,4 @@
 
 [diff]
   colorMoved = default
-
-[credential]
-  helper = store
 

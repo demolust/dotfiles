@@ -1,0 +1,4 @@
+# Changes require a restart to take effect.
+
+# Defaults of TERMINAL & EDITOR are on respective shell init
+# To use a custom directory for screenshots is in the shell init 

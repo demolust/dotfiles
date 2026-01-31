@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+alacritty_conf_file="$XDG_CONFIG_HOME/alacritty/alacritty.toml"
+if [[ -f "$alacritty_conf_file" ]]; then
+  :x
+fi
+
+killall -SIGUSR1 kitty
+killall -SIGUSR2 ghostty

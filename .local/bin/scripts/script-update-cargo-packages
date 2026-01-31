@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+
+# Format: [binary_name]="crate_name"
+# The script will iterate through the KEYS (binary names) to check for file existence,
+# and use the VALUES (crate names) for the 'cargo install' command.
+declare -A PACKAGES_TO_UPDATE=(
+    ["bat"]="bat"
+    ["git-delta"]="delta"
+    ["du-dust"]="dust"
+    ["eza"]="eza"
+    ["fd"]="fd-find"
+    ["rg"]="ripgrep"
+    ["sd"]="sd"
+    ["starship"]="starship"
+    ["xh"]="xh"
+    ["zoxide"]="zoxide"
+    ["tree-sitter"]="tree-sitter-cli"
+    ["procs"]="procs"
+    ["yazi"]="yazi-build"
+    ["mdcat"]="mdcat"
+    ["mdt"]="md-tui"
+    ["impala"]="impala"
+)
+
+CARGO_BIN_PATH_XDG="$XDG_DATA_HOME/cargo/bin"
+CARGO_BIN_PATH_DEF="$HOME/.cargo/bin"
+if [ -n "$XDG_DATA_HOME" ] && [ -d "$CARGO_BIN_PATH_XDG" ]; then
+  CARGO_BIN_PATH="$CARGO_BIN_PATH_XDG"
+elif [ -d "$CARGO_BIN_PATH_DEF" ]; then
+  CARGO_BIN_PATH="$CARGO_BIN_PATH_DEF"
+else
+  echo "Error: Cargo binary path does not exist, either on $CARGO_BIN_PATH_XDG or $CARGO_BIN_PATH_DEF"
+  exit 1
+fi
+
+for BIN_NAME in "${!PACKAGES_TO_UPDATE[@]}"; do
+    # Get the crate name using the binary name as the key
+    CRATE_NAME="${PACKAGES_TO_UPDATE[$BIN_NAME]}"
+    EXECUTABLE_PATH="$CARGO_BIN_PATH/$BIN_NAME"
+
+    echo "Checking for binary: $BIN_NAME (Crate: $CRATE_NAME)"
+    if [ -f "$EXECUTABLE_PATH" ]; then
+        if ! cargo install "$CRATE_NAME" --locked; then
+            echo "Error: Update for $CRATE_NAME failed!"
+        fi
+    else
+        echo "Binary $BIN_NAME not found in $CARGO_BIN_PATH. Skipping update for $CRATE_NAME"
+    fi
+done
+

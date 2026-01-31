@@ -4,6 +4,6 @@ After=graphical-session.target
 Requisite=graphical-session.target
 
 [Service]
-ExecStart=swayidle -w timeout 599 'niri msg action power-off-monitors' timeout 600 '~/.config/niri/scripts/HyprLockScreen.sh' before-sleep '~/.config/niri/scripts/HyprLockScreen.sh'
+ExecStart=swayidle -w timeout 599 '~/.local/bin/scripts/HyprLockScreen.sh' timeout 600 '~/.local/bin/scripts/poweroff_monitors.sh' resume '~/.local/bin/scripts/poweron_monitors.sh' before-sleep '~/.local/bin/scripts/HyprLockScreen.sh'
 Restart=on-failure
 ExecCondition=/usr/lib/systemd/systemd-xdg-autostart-condition "" "KDE:GNOME"

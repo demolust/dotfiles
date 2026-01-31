@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+application="nmtui"
+exec setsid uwsm-app -- script-launch-terminal-float "${application}"

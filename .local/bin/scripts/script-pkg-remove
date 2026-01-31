@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+source "$(dirname "$0")"/pkg_manager.sh
+export -f pkg_info_local
+export -f pkg_remove
+
+fzf_args=(
+  --multi
+  --preview "source \"$(dirname $0)/pkg_manager.sh\" 2>/dev/null;pkg_info_local {1}"
+  --preview-label='alt-p: toggle description, alt-j/k: scroll, tab: multi-select'
+  --preview-label-pos='bottom'
+  --preview-window 'down:65%:wrap'
+  --bind 'alt-p:toggle-preview'
+  --bind 'alt-d:preview-half-page-down,alt-u:preview-half-page-up'
+  --bind 'alt-k:preview-up,alt-j:preview-down'
+  --color 'pointer:red,marker:red'
+)
+
+pkg_names=$(pkg_list_installed_local | fzf "${fzf_args[@]}")
+
+if [[ -n "$pkg_names" ]]; then
+  # Convert newline-separated selections to space-separated for the package manager
+  #echo "$pkg_names" | tr '\n' ' ' | xargs bash -c 'pkg_remove "$@"'
+  declare -a pkg_names_array=( $pkg_names )
+  pkg_remove "${pkg_names_array[@]}"
+  script-show-done
+fi

@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+script-refresh-config sunsetr/sunsetr.toml
+script-restart-sunsetr

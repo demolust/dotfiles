@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+# This script is to be used and called from script-update
+
+set -e
+
+script-update-local-packages
+script-update-flatpak
+script-update-system-pkgs
+script-migrate
+script-hook post-update
+script-update-available-reset
+script-update-restart

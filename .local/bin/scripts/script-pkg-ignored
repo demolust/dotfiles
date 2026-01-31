@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+IGNORED_PACKAGES_FILE="$DOT_DATA_DIR/install/packages.ignored"
+
+if [[ -f $IGNORED_PACKAGES_FILE ]]; then
+  tr '\r\n' ',' <"$IGNORED_PACKAGES_FILE" | sed 's/,$//'
+fi

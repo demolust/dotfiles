@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+
+# Format: [binary_name]="repo_name"
+# The script will iterate through the KEYS (binary names) to check for file existence,
+# and use the VALUES (repo names) for the 'go install' command.
+declare -A PACKAGES_TO_UPDATE=(
+    ["curlie"]="github.com/rs/curlie@latest"
+    ["gdu"]="github.com/dundee/gdu/v5/cmd/gdu@latest"
+)
+
+GO_BIN_PATH_XDG="$XDG_DATA_HOME/go/bin"
+GO_BIN_PATH_DEF="$HOME/.go/bin"
+if [ -n "$XDG_DATA_HOME" ] && [ -d "$GO_BIN_PATH_XDG" ]; then
+  GO_BIN_PATH="$GO_BIN_PATH_XDG"
+elif [ -d "$GO_BIN_PATH_DEF" ]; then
+  GO_BIN_PATH="$GO_BIN_PATH_DEF"
+else
+  echo "Error: Go binary path does not exist, either on $GO_BIN_PATH_XDG or $GO_BIN_PATH_DEF"
+  exit 1
+fi
+
+for BIN_NAME in "${!PACKAGES_TO_UPDATE[@]}"; do
+    # Get the repo name using the binary name as the key
+    REPO_NAME="${PACKAGES_TO_UPDATE[$BIN_NAME]}"
+    EXECUTABLE_PATH="$GO_BIN_PATH/$BIN_NAME"
+
+    echo "Checking for binary: $BIN_NAME (Repo: $REPO_NAME)"
+    if [ -f "$EXECUTABLE_PATH" ]; then
+        if ! go install -v "$REPO_NAME"; then
+            echo "Error: Update for $REPO_NAME failed!"
+        fi
+    else
+        echo "Binary $BIN_NAME not found in $GO_BIN_PATH. Skipping update for $REPO_NAME"
+    fi
+done
+

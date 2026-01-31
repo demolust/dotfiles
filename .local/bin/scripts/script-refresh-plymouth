@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+custom_dir="/usr/share/plymouth/themes/custom/"
+sudo mkdir -p "$custom_dir"
+sudo rsync -havzP "$DOT_DATA_DIR/default/plymouth/" "$custom_dir"
+sudo plymouth-set-default-theme custom
+
+if [[ "$(command -v limine-mkinitcpio)" ]]; then
+  sudo limine-mkinitcpio
+else
+  sudo mkinitcpio -P
+fi

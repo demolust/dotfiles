@@ -1,0 +1,93 @@
+#!/usr/bin/env bash
+
+usage() {
+  echo "Usage: $0
+    [-p | --position] <up|down|left|right>
+    [-n | --number]   <Number of spawned window to match>"
+  exit 2
+}
+
+ARG_NUM=$#
+PARSED_ARGUMENTS=$(getopt -a -n "$0" -o p:,n: -l position:,number: -- "$@")
+VALID_ARGUMENTS=$?
+
+if [[ "$VALID_ARGUMENTS" != "0" || "$ARG_NUM" == "0" ]]; then
+  usage
+fi
+
+eval set -- "$PARSED_ARGUMENTS"
+
+while :; do
+  case "${1}" in
+  -p | --position)
+    position="${2}"
+    shift 2
+    ;;
+  -n | --number)
+    number="${2}"
+    shift 2
+    ;;
+  --)
+    shift
+    break
+    ;;
+  *)
+    echo "Unexpected option: $1 - this should not happen."
+    usage
+    ;;
+  esac
+done
+
+pos_tile="${position:0:1}tile"
+
+if [[ "$DESKTOP_SESSION" == "niri" ]]; then
+  current_workspace="$(niri msg -j focused-window | jq -r '.layout | .pos_in_scrolling_layout[0]')"
+  current_position="$(niri msg -j focused-window | jq -r '.layout | .pos_in_scrolling_layout[1]')"
+  [[ "$current_position" == "null" ]] && current_position=1
+
+  case "${position}" in
+  "left")
+    action="move-column-left"
+    ;;
+  "right")
+    action="move-column-right"
+    # Exit early since is the default position
+    exit 0
+    ;;
+  "up")
+    action="consume-or-expel-window-left"
+    new_position="${current_position}"
+    ;;
+  "down")
+    action="consume-or-expel-window-left"
+    new_position=$((current_position+1))
+    ;;
+  *)
+    echo "Unexpected position argument ${position}"
+    exit 2
+    ;;
+  esac
+
+  sleep 0.5
+  while ! [[ "$(niri msg -j focused-window | jq -r '.app_id')" =~ com.wm.${pos_tile}_${number} ]];do
+    sleep 0.5
+  done
+  niri msg action "${action}"
+  if [[ "$position" == "up" || "$position" == "down" ]]; then
+    while ! [[ "$(niri msg -j focused-window | jq -r '.layout | .pos_in_scrolling_layout[1]')" -eq "$new_position" ]]; do
+      niri msg action move-window-up
+    done
+  fi
+
+elif [[ "$DESKTOP_SESSION" =~ "hyprland" ]]; then
+  case "${position}" in
+  "left"|"right"|"up"|"down")
+    true
+    ;;
+  *)
+    echo "Unexpected position argument ${position}"
+    exit 2
+    ;;
+  esac
+  hyprctl dispatch layoutmsg preselect "$position"
+fi

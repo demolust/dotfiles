@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+if [[ "$DESKTOP_SESSION" == "niri" ]]; then
+  if systemctl --user -q is-active swayidle.service; then
+    systemctl --user stop swayidle.service
+    notify-send "Stop locking computer when idle"
+  else
+    systemctl --user start swayidle.service
+    notify-send "Start locking computer when idle"
+  fi
+elif [[ "$DESKTOP_SESSION" =~ "hyprland" ]]; then
+  if systemctl --user -q is-active hypridle.service; then
+    systemctl --user stop hypridle.service
+    notify-send "Stop locking computer when idle"
+  else
+    systemctl --user start hypridle.service
+    notify-send "Start locking computer when idle"
+  fi
+fi

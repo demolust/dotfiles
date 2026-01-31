@@ -22,8 +22,6 @@ map e $$EDITOR "$f"
 map E $$PAGER "$f"
 map w $$SHELL
 
-# Warn about nested instances
-& if [ $LF_LEVEL -gt 1 ]; then lf -remote "send $id echoerr 'Warning: Running in a nested lf instance!'"; fi
 
 # default already
 set filesep "\n"
@@ -93,6 +91,8 @@ cmd on-init &{{
   fi
   set -u
   lf -remote "send $id set statfmt \"$(eza -ld --color=always $(basename "$f") | sed 's/\\/\\\\/g;s/"/\\"/g')\""
+  # Warn about nested instances
+  if [ $LF_LEVEL -gt 1 ]; then lf -remote "send $id echoerr 'Warning: Running in a nested lf instance!'"; fi
 }}
 
 cmd on-quit &{{
@@ -143,7 +143,7 @@ cmd settings ${{
 }}
 
 ### Set image preview method
-set sixel true
+#set sixel true
 
 ### Use custom a scope.sh script as defined in $XDG_CONFIG_HOME/lf/scope.sh for previews
 set previewer ~/.config/lf/scope-lf-wrapper.sh
@@ -318,6 +318,9 @@ cmd fzf_search ${{
 map / :fzf_search
 map ? :fzf_jump
 
-map m ${{ file_dnd.sh once $fx }}
-map M ${{ file_dnd.sh multi $fx }}
+map m ${{ dragon -x -s 500 $fx }}
+map M ${{ dragon -a -x -s 500 $fx }}
+
+map u ${{ user_umount.sh }}
+map U ${{ user_mount.sh }}
 

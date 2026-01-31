@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+# Call the VSCode theme setter with Cursor-specific parameters
+script-theme-set-vscode cursor "$XDG_CONFIG_HOME/Cursor/User/settings.json" "$DOT_STATE_DIR/toggles/skip-cursor-theme-changes" Cursor

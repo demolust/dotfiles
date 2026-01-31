@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+# This script expects the corresponding `wgusers` group and
+# the corresponding wireguard interface has been configured correctly
+interface_name="wg0"
+
+if ! ip link show "${interface_name}" 1>/dev/null 2>&1; then
+    notify-send "Starting VPN connection on interface $interface_name"
+    sudo wg-quick up "${interface_name}"
+  else
+    notify-send "Stoping VPN connection on interface $interface_name"
+    sudo wg-quick down "${interface_name}"
+fi

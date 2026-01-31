@@ -52,6 +52,7 @@ $character\
 
 add_newline = false
 command_timeout = 5000
+scan_timeout = 5000
 continuation_prompt = "[ ](bright-black)"
 
 [fill]

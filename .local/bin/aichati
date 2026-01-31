@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+
+CONFIG_FILE="$XDG_CONFIG_HOME/aichat/config.yaml"
+SELECTED_MODEL=$(aichat --list-models | fzf --reverse --tmux=center,85%,50% \
+    --border rounded --header="Select Model: " --no-input --bind='k:up,j:down')
+
+if [[ -z "$SELECTED_MODEL" ]]; then
+  echo "Using default model"
+  SELECTED_MODEL=$(yq '.model' "$CONFIG_FILE")
+fi
+
+[[ -z "$SELECTED_MODEL" ]] && echo "No model could be gathered" && exit 1
+
+case "$SELECTED_MODEL" in
+    *ollama_local*)
+        systemctl --user -q is-active container-ollama.service || \
+        systemctl --user start container-ollama.service
+        ;;
+    *ollama_home*)
+        TARGET_URL="$OLLAMA_HOME_BASE"
+        ;;
+    *ollama_desk*)
+        TARGET_URL="$OLLAMA_DESK_BASE"
+        ;;
+esac
+
+check_network_context() {
+  # Check for SSID & Wireguard Connection
+  CURRENT_SSID=$(nmcli -t -f ACTIVE,SSID dev wifi | grep '^yes' | cut -d: -f2)
+  WG_STATUS=$(nmcli -t -f NAME,TYPE,STATE con show --active | grep "${WG_INTERFACE}:wireguard:activated")
+
+  if [ "$CURRENT_SSID" = "$TARGET_SSID" ]; then
+    return 0
+  elif [ -n "$WG_STATUS" ]; then
+    return 0
+  else
+    return 1
+  fi
+}
+
+check_api_alive() {
+  check_network_context
+  local url=$1
+  curl --silent --head --fail --connect-timeout 3 "$url" >/dev/null
+}
+
+if [[ -n "$TARGET_URL" ]]; then
+    if ! check_api_alive "$TARGET_URL" >/dev/null; then
+        echo "Error: $SELECTED_MODEL is unavailable at $TARGET_URL"
+        exit 1
+    fi
+fi
+
+exec aichat ${SELECTED_MODEL:+-m "$SELECTED_MODEL"} "$@"

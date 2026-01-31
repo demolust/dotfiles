@@ -1,0 +1,84 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+CONFIG_DIR="$HOME/.config/elephant/providers"
+TMP_DIR="$(mktemp -d)"
+ARCH="$(uname -m)"
+OS="$(uname -s | tr '[:upper:]' '[:lower:]')"
+
+if [[ "$ARCH" == "x86_64" ]]; then
+  ARCH2=amd64
+elif [[ "$ARCH" == "aarch64" ]]; then
+  ARCH2=arm64
+fi
+
+mkdir -p "$CONFIG_DIR"
+
+# List of tools with their GitHub repo and how to check their version
+declare -A tools=(
+  # Format: [name]='github_repo:config_name:"base_asset_pattern"'
+  [elephant]='abenz1267/elephant:desktopapplications:"desktopapplications.*$OS.*$ARCH2.*(tar.gz|zip)"'
+)
+
+download_and_install() {
+  local repo="$1"
+  local config_name="$2"
+  local base_asset_pattern="$3"
+
+  echo "Checking for the latest releases of elephant $config_name via the GitHub API"
+
+  # GitHub API to get latest release info
+  api_url="https://api.github.com/repos/$repo/releases/latest"
+  release_json=$(curl -sL "$api_url")
+
+  latest_version=$(echo "$release_json" | jq -r '.tag_name' | sed 's/^v//')
+  if [[ -z "$latest_version" || "$latest_version" == "null" ]]; then
+    echo "Could not get latest release info for $config_name"
+    printf "\n"
+    return
+  fi
+
+  asset_pattern=$(eval echo eval "$base_asset_pattern" | sed 's/eval //g')
+  # Find asset (binary or archive)
+  asset_url=$(echo "$release_json" | jq -r \
+    ".assets[] | select(.name | test(\"$asset_pattern\"; \"i\")).browser_download_url" | head -1)
+
+  if [[ -z "$asset_url" ]]; then
+    echo "No asset matching the current pattern $asset_pattern for $config_name, skipping download and installation, check manually for the release on https://github.com/$repo/releases/latest"
+    printf "\n"
+    return
+  fi
+
+  asset_name=$(basename "$asset_url")
+  cd "$TMP_DIR"
+  curl -sLO "$asset_url"
+
+  if ! [ -f "$asset_name" ]; then
+    echo "Download of $asset_url failed, retry the script"
+    return
+  fi
+
+  # Extract the archive
+  if [[ "$asset_name" =~ \.tar\.gz$ ]]; then
+    tar -xzf "$asset_name"
+    found_bin=$(find . -type f -name "$config_name*.so" | head -n 1)
+    mv -f "$found_bin" "$CONFIG_DIR/"
+  fi
+
+  echo "$config_name installed to $CONFIG_DIR"
+
+  printf "\n"
+}
+
+for name in "${!tools[@]}"; do
+  IFS=':' read -r repo config_name base_asset_pattern <<< "${tools[$name]}"
+  download_and_install "$repo" "$config_name" "$base_asset_pattern"
+done
+
+systemctl --user restart elephant.service
+
+# Clean up
+rm -rf "$TMP_DIR"
+echo "All done!"
+

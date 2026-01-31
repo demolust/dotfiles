@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+source "$(dirname "$0")"/pkg_manager.sh
+
+for pkg in "$@"; do
+  if ! pkg_search_installed "$pkg" &>/dev/null; then
+    exit 0
+  fi
+done
+
+exit 1

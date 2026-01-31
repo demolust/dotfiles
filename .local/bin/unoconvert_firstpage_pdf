@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+# Use the python inside the venv to run the script
+exec "${HOME}/.local/venvs/unoserver/bin/python" "$HOME/.local/bin/scripts/unoconvert_firstpage_pdf.py" "$@"

@@ -1,0 +1,442 @@
+# packages.yml
+# New Structure includes a 'repository' block for distro-specific repo actions.
+---
+- name: Bootstrap Dotfiles Package Setup
+  hosts: localhost
+  tasks:
+    - name: RHEL/Rocky/Alma tasks
+      when: ansible_distribution_id == "rhel"
+      block:
+        - name: Add EPEL Repo
+          package:
+            name: epel-release
+            state: present
+        - name: Install base packages
+          package:
+            name:
+              - vim
+              - zsh
+              - git
+              - tmux
+              - rpmconf
+              - rust
+              - cargo
+              - nodejs
+              - npm
+              - dotnet-sdk-8.0
+              - luarocks
+              - dracut-config-rescue
+              - lshw
+              #- cloud-utils
+              - nmap
+              - ndctl
+              - ibus
+              - hdparm
+              - createrepo
+              - httpd
+              - nginx
+              - ansible
+              - terraform
+              - podman
+              - podman-docker
+              - podman-compose
+              - make
+              - cmake
+              - automake
+              - bison
+              - pkg-config
+              - htop
+              - btop
+              - ncdu
+              - ncurses
+              - fastfetch
+              - atool
+              - mediainfo
+              - libcdio
+              - pandoc
+              - poppler-utils
+              - ImageMagick
+              - perl-Image-ExifTool
+              - w3m
+              - python3-virtualenv
+              - libreoffice-core
+              - libreoffice-pyuno
+              - ranger
+            state: present
+        - name: Remove conflicting packages
+          package:
+            name:
+              - nano
+            state: absent
+
+    - name: Fedora tasks
+      when: ansible_distribution_id == "fedora"
+      block:
+        - name: Enable necessary repositories
+          repository:
+            repo_list:
+              - fedora-cisco-openh264
+            state: enabled
+        - name: Configure RPM Fusion Repositories
+          package:
+            name:
+              - https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm
+              - https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
+              # - https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-{{ ansible_distribution_major_version }}.noarch.rpm
+              # - https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-{{ ansible_distribution_major_version }}.noarch.rpm"
+            state: present
+            prerequisite: true
+        - name: Add necessary extra repositories
+          repository:
+            repo_list:
+              - https://download.opensuse.org/repositories/home:justkidding/Fedora_42/home:justkidding.repo
+            state: present
+        - name: Add copr repositories
+          repository:
+            repo_list:
+              - yalter/niri
+              - derisis13/ani-cli
+              - wezfurlong/wezterm-nightly
+              - brycensranch/gpu-screen-recorder-git
+              - erikreider/SwayNotificationCenter
+              - erikreider/swayosd
+              - errornointernet/packages
+              - pennbauman/ports
+              - solopasha/hyprland
+            state: present
+        - name: Remove conflicting packages
+          package:
+            name:
+              - fedora-workstation-repositories
+            state: absent
+        - name: Install base groups packages
+          package:
+            name:
+              - "@core"
+              - "@multimedia"
+              - "@sound-and-video"
+            state: present
+            prerequisite: true
+        - name: Install base packages prerequisite
+          package:
+            name:
+              - openh264
+              - gstreamer1-plugin-openh264
+              - mozilla-openh264
+            state: present
+            prerequisite: true
+        - name: Install base packages
+          package:
+            name:
+              - vim
+              - neovim
+              - zsh
+              - git
+              - tmux
+              - bc
+              - findutils
+              - gawk
+              - openssl
+              - wget2
+              - curl
+              - jq
+              - rpmconf
+              - yq
+              - lm_sensors
+              - acpi
+              - libnotify
+              - ltrace
+              - strace
+              - irqbalance
+              - rsyslog
+              - bluez
+              - bluez-tools
+              - blueman
+              - distribution-gpg-keys
+              - python3-cairo
+              - graphviz
+              - gvfs
+              - gvfs-mtp
+              - python3-pip
+              - python3-requests
+              - python3-pyquery
+              - python3-dnf-plugin-post-transaction-actions
+              - ncdu
+              - thefuck
+              - zoxide
+              - gdu
+              - git-delta
+              - fd-find
+              - glow
+              - bat
+              - eza
+              - uv
+              - lf
+              - ranger
+              - freerdp
+              - netcat
+              - podman
+              - podman-compose
+              - parallel
+              - nmap
+              - nvme-cli
+              - sysstat
+              - fuse
+              - squashfuse
+              - tuned
+              - tuned-ppd
+              - upower
+              - clean-rpm-gpg-pubkey
+              - remove-retired-packages
+              - pulseaudio-libs-devel
+              - pam-devel
+              - scdoc
+              - xdg-user-dirs
+              - xdg-utils
+              - xdg-desktop-portal-gtk
+              - xdg-desktop-portal-gnome
+              - xdg-terminal-exec
+              - libxkbcommon-utils
+              - util-linux
+              - pipewire-alsa
+              - pipewire-utils
+              - polkit-kde
+              - dconf
+              - gsettings
+              - gnome-keyring
+              - gnome-tweaks
+              - gnome-system-monitor
+              - qt5ct
+              - qt5-qtwayland
+              - qt6-qtwayland
+              - qt6-qtsvg
+              - qt6-qtvirtualkeyboard
+              - qt6-qtmultimedia
+              - qt6-qtdeclarative
+              - qt6-qtbase-devel
+              - qt6-qtbase-private-devel
+              - qt6-qtwayland-devel
+              - qt6-qtdeclarative-devel
+              - sddm
+              - poppler-glib-devel
+              - gjs
+              - gjs-devel
+              - gobject-introspection
+              - gobject-introspection-devel
+              - libdbusmenu-gtk3
+              - libsoup3
+              - gtk3-devel
+              - gtk-layer-shell
+              - gtk4-layer-shell-devel
+              - protobuf-compiler
+              - openssl-devel
+              - libxcrypt-compat
+              - libinput-devel
+              - libxkbcommon-devel
+              - alacritty
+              - swayidle
+              - swaybg
+              - waybar
+              - wlogout
+              - nautilus
+              - Thunar
+              - thunar-volman
+              - thunar-archive-plugin
+              - tumbler
+              - xarchiver
+              - tldr
+              - sassc
+              - inxi
+              - gum
+              - fcitx5
+              - wiremix
+              - pamixer
+              - playerctl
+              - pavucontrol
+              - xclip
+              - wl-clipboard
+              - copyq
+              - grim
+              - slurp
+              - python3-pygments
+              - python3-virtualenv
+              - htop
+              - btop
+              - nvtop
+              - powertop
+              - cpu-x
+              - okular
+              - kdeconnect-app
+              - fuse
+              - libreoffice-core
+              - libreoffice-pyuno
+              - nomacs
+              - imv
+              - mpv
+              - mpv-mpris
+              - ark
+              - p7zip-plugins
+              - libcdio
+              - libarchive
+              - unzip
+              - libzip
+              - lzop
+              - arj
+              - atool
+              - pdftk-java
+              - wkhtmltopdf
+              - fdupes
+              - catdoc
+              - pandoc
+              - stat
+              - poppler-utils
+              - mupdf
+              - ffmpegthumbnailer
+              - ImageMagick
+              - fontforge
+              - mediainfo
+              - perl-Image-ExifTool
+              - odt2txt
+              - elinks
+              - lynx
+              - w3m
+              - w3m-img
+              - gnome-epub-thumbnailer
+              - ncurses
+              - discount
+              - id3v2
+              - NetworkManager
+              - NetworkManager-tui
+              - network-manager-applet
+              - wireguard-tools
+              - transmission
+              - transmission-common
+              - xmlstarlet
+              - cmatrix
+              - cbonsai
+              - trash-cli
+              - direnv
+              - luarocks
+              - picocom
+              - rofi
+              - dunst
+              - mako
+              - wireshark
+              - brightnessctl
+              - cava
+              - loupe
+              - qalculate-gtk
+              - swappy
+              - fastfetch
+              - firefox
+              - thunderbird
+              - breeze-gtk
+              - plasma-breeze
+              - adobe-source-code-pro-fonts
+              - fira-code-fonts
+              - fontawesome-fonts-all
+              - google-droid-sans-fonts
+              - google-noto-sans-cjk-fonts
+              - google-noto-color-emoji-fonts
+              - google-noto-emoji-fonts
+              - jetbrains-mono-fonts
+              - yad
+              - xournalpp
+              - cmake
+              - meson
+              - typescript
+              - nodejs
+              - nodejs-npm
+              - rust
+              - cargo
+              - golang
+              - dotnet-sdk-10.0
+              - java-25-openjdk-headless
+            state: present
+        - name: Install extra RPM Fusion packages
+          package:
+            name:
+              - unrar
+              - vlc
+              - cmus
+              #- ffmpeg
+              #- steam
+              #- lutris
+            state: present
+        - name: Install extra packages from copr
+          package:
+            name:
+              - ueberzugpp
+              - wezterm
+              - niri
+              - hyprland
+              # - hyprland-qt-support
+              # - hyprland-qtutils
+              # - hyprpolkitagent
+              - hyprlang
+              - hyprlock
+              - hypridle
+              - hyprpaper
+              - hyprgraphics
+              - hyprsunset
+              - hyprutils
+              - qt6ct
+              - nwg-look
+              - pyprland
+              - satty
+              - swww
+              - cliphist
+              - xcur2png
+              - hyprlang-devel
+              - hyprutils-devel
+              - wallust
+              - gpu-screen-recorder-ui
+              - SwayNotificationCenter
+              - swayosd
+              - ani-cli
+            state: present
+
+    - name: Ubuntu tasks
+      when: ansible_distribution_id == "ubuntu"
+      block:
+        - name: Install PPA prerequisites
+          package:
+            name: software-properties-common
+            state: present
+        - name: Add necessary PPA repositories
+          repository:
+            repo_list:
+              - ppa:deadsnakes/ppa
+              - ppa:git-core/ppa
+            state: present
+        - name: Install base packages
+          package:
+            name:
+              - htop
+              - vim
+              - zsh
+            state: present
+
+    - name: Arch tasks
+      when: ansible_distribution_id == "arch"
+      block:
+        - name: Install base packages
+          package:
+            name:
+              - htop
+              - vim
+              - zsh
+              - git
+              - tmux
+            state: present
+        - name: Install AUR prerequisites
+          package:
+            name: yay
+            state: present
+            prerequisite: true
+        - name: Install AUR packages
+          kewlfft.aur.aur:
+            name: sublime-text-4
+            state: present
+
+# Still need to add blocks for debian, opensuse-leap, opensuse-tumbleweed

@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+application="wiremix"
+exec setsid uwsm-app -- script-launch-terminal-float "${application}"

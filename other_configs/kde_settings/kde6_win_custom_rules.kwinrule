@@ -39,15 +39,19 @@ wmclassmatch=1
 
 [Application settings for org.wezfurlong.wezterm]
 Description=Application settings for org.wezfurlong.wezterm
-ignoregeometry=true
-ignoregeometryrule=2
 noborder=true
 noborderrule=3
-position=0,0
-positionrule=3
 wmclass=wezterm-gui org.wezfurlong.wezterm
 wmclasscomplete=true
 wmclassmatch=1
+
+[Application settings for org.wezfurlong.wezterm (com.wm.*)]
+Description=Application settings for org.wezfurlong.wezterm (com.wm.*)
+noborder=true
+noborderrule=3
+wmclass=com.wm
+wmclasscomplete=true
+wmclassmatch=2
 
 [Window settings for org.mozilla.firefox]
 Description=Window settings for org.mozilla.firefox

@@ -1,0 +1,71 @@
+
+// You can change the path where screenshots are saved.
+// A ~ at the front will be expanded to the home directory.
+// The path is formatted with strftime(3) to give you the screenshot date and time.
+screenshot-path "~/Pictures/Screenshots/Screenshot from %Y-%m-%d %H-%M-%S.png"
+
+// You can also set this to null to disable saving screenshots to disk.
+// screenshot-path null
+
+include "custom.kdl"
+
+window-rule {
+    match app-id=r#"^com\.wm\.float$"#
+    open-floating true
+}
+
+window-rule {
+    match app-id=r#"^com\.wm\.dropdown$"#
+    open-floating true
+    // Anchor to the top edge of the screen.
+    default-floating-position x=0 y=0 relative-to="top"
+    // Half of the screen high.
+    default-window-height { proportion 0.5; }
+    // 80% of the screen wide.
+    default-column-width { proportion 0.8; }
+}
+
+window-rule {
+    match app-id=r#"^com\.wm\.fullscreen$"#
+    open-fullscreen true
+}
+
+window-rule {
+    match app-id=r#"^com\.wm\.tile$"#
+    default-column-width { proportion 0.5; }
+    default-window-height { proportion 0.5; }
+    open-maximized false
+}
+
+window-rule {
+    match app-id=r#"^com\.wm\.ltile(_[\d]+|)?$"#
+    default-column-width { proportion 0.5; }
+    default-window-height { proportion 0.5; }
+    open-maximized false
+}
+
+window-rule {
+    match app-id=r#"^com\.wm\.rtile(_[\d]+|)?$"#
+    default-column-width { proportion 0.5; }
+    default-window-height { proportion 0.5; }
+    open-maximized false
+}
+
+window-rule {
+    match app-id=r#"^com\.wm\.utile(_[\d]+|)?$"#
+    default-column-width { proportion 0.5; }
+    default-window-height { proportion 0.5; }
+    open-maximized false
+}
+
+window-rule {
+    match app-id=r#"^com\.wm\.dtile(_[\d]+|)?$"#
+    default-column-width { proportion 0.5; }
+    default-window-height { proportion 0.5; }
+    open-maximized false
+}
+
+// General rule for all other windows
+window-rule {
+    open-maximized true
+}

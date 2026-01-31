@@ -26,14 +26,14 @@ PV_HEIGHT="${3}" # Height of the preview pane (number of fitting characters)
 PV_POS_X="${4}"
 PV_POS_Y="${5}"
 IMAGE_CACHE_PATH="${6}"
-PV_IMAGE_ENABLED="${7}" # 'True' if image previews are enabled, 'False' otherwise.
+PV_IMAGE_ENABLED="${7}" ## 'True' if image previews are enabled, 'False' otherwise.
 
 FILE_EXTENSION="${FILE_PATH##*.}"
 FILE_EXTENSION_LOWER="$(printf "%s" "${FILE_EXTENSION}" | tr '[:upper:]' '[:lower:]')"
 
 ## Settings
-#HIGHLIGHT_SIZE_MAX=262143 # 256KiB
-HIGHLIGHT_SIZE_MAX=1048576 # 1MB
+#HIGHLIGHT_SIZE_MAX=262143 ## 256KiB
+HIGHLIGHT_SIZE_MAX=1048576 ## 1MB
 HIGHLIGHT_TABWIDTH=${HIGHLIGHT_TABWIDTH:-8}
 HIGHLIGHT_STYLE=${HIGHLIGHT_STYLE:-pablo}
 HIGHLIGHT_OPTIONS="--replace-tabs=${HIGHLIGHT_TABWIDTH} --style=${HIGHLIGHT_STYLE} ${HIGHLIGHT_OPTIONS:-}"
@@ -118,6 +118,18 @@ handle_extension() {
     exit 0
     ;;
 
+  pptx)
+    while IFS= read -r SUBFILE; do
+        unzip -p -- "${FILE_PATH}" "${SUBFILE}" | grep -oP '(?<=\<a:t\>).*?(?=\</a:t\>)'
+    done < <(unzip -Z1 -- "${FILE_PATH}" | grep ppt/slides/slide | sort -V) && exit 0
+    exit 0
+    ;;
+
+  ppt)
+    catppt -- "${FILE_PATH}" && exit 0
+    exit 0
+    ;;
+
   ## HTML
   htm | html | xhtml)
     ## Preview as text conversion
@@ -174,10 +186,141 @@ handle_image() {
   #    exit 0
   #  ;;
 
+  ## CSV image preview
+  text/plain | text/csv)
+    ## Special check: Only convert if the extension is .csv
+    if [[ "${FILE_EXTENSION_LOWER}" == csv ]]; then
+      if [ -p "$FIFO_UEBERZUG" ]; then
+        ## Create the pdf and rename it to avoid confusion
+        !  [[ -d "${IMAGE_CACHE_PATH}/docs" ]] && mkdir -p "${IMAGE_CACHE_PATH}/docs"
+        FILENAME="$(basename "${FILE_PATH}")"
+        BASE_FILENAME="${FILENAME%.*}"
+        PDF_FILENAME="${BASE_FILENAME}.pdf"
+        CACHE_FILE="${IMAGE_CACHE_PATH}/docs/${PDF_FILENAME}"
+        if ! [ -f "${CACHE_FILE}" ]; then
+        unoconvert_firstpage_pdf "${FILE_PATH}" "${CACHE_FILE}"
+        #unoconvert_firstpage_pdf -i "${FILE_PATH}" -o "${CACHE_FILE}"
+        #unoconvert --filter-options PageRange=1 -- "${FILE_PATH}" "${CACHE_FILE}"
+        #soffice --headless "-env:UserInstallation=file:///tmp/LibreOffice_Conversion_${USER}" --convert-to 'pdf:calc_pdf_Export:{"PageRange":{"type":"string","value":"1"}}' --outdir "${IMAGE_CACHE_PATH}/docs" "${FILENAME}"
+        fi
+        create_file_hash "${FILE_PATH}"
+        create_cache pdftoppm -f 1 -l 1 \
+          -scale-to-x "${DEFAULT_SIZE%x*}" \
+          -scale-to-y -1 \
+          -singlefile \
+          -jpeg -tiffcompression jpeg \
+          -- "${CACHE_FILE}" "${FILE_PV_CACHE%.*}"
+      fi
+      exit 0
+    else
+      handle_extension
+    fi
+  ;;
+
+  ## Word Processing / Text Documents
+  application/vnd.openxmlformats-officedocument.wordprocessingml.document|\
+  application/vnd.oasis.opendocument.text|\
+  application/msword)
+    if [ -p "$FIFO_UEBERZUG" ]; then
+      ## Create the pdf and rename it to avoid confusion
+      !  [[ -d "${IMAGE_CACHE_PATH}/docs" ]] && mkdir -p "${IMAGE_CACHE_PATH}/docs"
+      FILENAME="$(basename "${FILE_PATH}")"
+      BASE_FILENAME="${FILENAME%.*}"
+      PDF_FILENAME="${BASE_FILENAME}.pdf"
+      CACHE_FILE="${IMAGE_CACHE_PATH}/docs/${PDF_FILENAME}"
+      if ! [ -f "${CACHE_FILE}" ]; then
+        unoconvert_firstpage_pdf "${FILE_PATH}" "${CACHE_FILE}"
+        #unoconvert_firstpage_pdf -i "${FILE_PATH}" -o "${CACHE_FILE}"
+        #unoconvert --filter-options PageRange=1 -- "${FILE_PATH}" "${CACHE_FILE}"
+        #soffice --headless "-env:UserInstallation=file:///tmp/LibreOffice_Conversion_${USER}" --convert-to 'pdf:writer_pdf_Export:{"PageRange":{"type":"string","value":"1"}}' --outdir "${IMAGE_CACHE_PATH}/docs" "${FILENAME}"
+
+      fi
+      create_file_hash "${FILE_PATH}"
+      create_cache pdftoppm -f 1 -l 1 \
+        -scale-to-x "${DEFAULT_SIZE%x*}" \
+        -scale-to-y -1 \
+        -singlefile \
+        -jpeg -tiffcompression jpeg \
+        -- "${CACHE_FILE}" "${FILE_PV_CACHE%.*}"
+    fi
+    exit 0
+  ;;
+
+  ##  Spreadsheet Documents
+  application/vnd.oasis.opendocument.spreadsheet|\
+  application/vnd.openxmlformats-officedocument.spreadsheetml.sheet|\
+  application/vnd.ms-excel)
+    if [ -p "$FIFO_UEBERZUG" ]; then
+      ## Create the pdf and rename it to avoid confusion
+      !  [[ -d "${IMAGE_CACHE_PATH}/docs" ]] && mkdir -p "${IMAGE_CACHE_PATH}/docs"
+      FILENAME="$(basename "${FILE_PATH}")"
+      BASE_FILENAME="${FILENAME%.*}"
+      PDF_FILENAME="${BASE_FILENAME}.pdf"
+      CACHE_FILE="${IMAGE_CACHE_PATH}/docs/${PDF_FILENAME}"
+      if ! [ -f "${CACHE_FILE}" ]; then
+        unoconvert_firstpage_pdf "${FILE_PATH}" "${CACHE_FILE}"
+        #unoconvert_firstpage_pdf -i "${FILE_PATH}" -o "${CACHE_FILE}"
+        #unoconvert --filter-options PageRange=1 -- "${FILE_PATH}" "${CACHE_FILE}"
+        #soffice --headless "-env:UserInstallation=file:///tmp/LibreOffice_Conversion_${USER}" --convert-to 'pdf:calc_pdf_Export:{"PageRange":{"type":"string","value":"1"}}' --outdir "${IMAGE_CACHE_PATH}/docs" "${FILENAME}"
+      fi
+      create_file_hash "${FILE_PATH}"
+      create_cache pdftoppm -f 1 -l 1 \
+        -scale-to-x "${DEFAULT_SIZE%x*}" \
+        -scale-to-y -1 \
+        -singlefile \
+        -jpeg -tiffcompression jpeg \
+        -- "${CACHE_FILE}" "${FILE_PV_CACHE%.*}"
+    fi
+    exit 0
+  ;;
+
+  ## Presentation Documents
+  application/vnd.oasis.opendocument.presentation|\
+  application/vnd.openxmlformats-officedocument.presentationml.presentation|\
+  application/vnd.ms-powerpoint)
+    if [ -p "$FIFO_UEBERZUG" ]; then
+      ## Create the pdf and rename it to avoid confusion
+      !  [[ -d "${IMAGE_CACHE_PATH}/docs" ]] && mkdir -p "${IMAGE_CACHE_PATH}/docs"
+      FILENAME="$(basename "${FILE_PATH}")"
+      BASE_FILENAME="${FILENAME%.*}"
+      PDF_FILENAME="${BASE_FILENAME}.pdf"
+      CACHE_FILE="${IMAGE_CACHE_PATH}/docs/${PDF_FILENAME}"
+      if ! [ -f "${CACHE_FILE}" ]; then
+        unoconvert_firstpage_pdf "${FILE_PATH}" "${CACHE_FILE}"
+        #unoconvert_firstpage_pdf -i "${FILE_PATH}" -o "${CACHE_FILE}"
+        #unoconvert --filter-options PageRange=1 -- "${FILE_PATH}" "${CACHE_FILE}"
+        #soffice --headless "-env:UserInstallation=file:///tmp/LibreOffice_Conversion_${USER}" --convert-to 'pdf:draw_pdf_Export:{"PageRange":{"type":"string","value":"1"}}' --outdir "${IMAGE_CACHE_PATH}/docs" "${FILENAME}"
+      fi
+      create_file_hash "${FILE_PATH}"
+      create_cache pdftoppm -f 1 -l 1 \
+        -scale-to-x "${DEFAULT_SIZE%x*}" \
+        -scale-to-y -1 \
+        -singlefile \
+        -jpeg -tiffcompression jpeg \
+        -- "${CACHE_FILE}" "${FILE_PV_CACHE%.*}"
+    fi
+    exit 0
+  ;;
+
+  image/gif)
+    if [ -p "$FIFO_UEBERZUG" ]; then
+      ## Create the thumbnail at orginal size and rename it to avoid confusion
+      create_file_hash "${FILE_PATH}"
+      TEMP_IMG="${FILE_PV_CACHE}"
+      if ! [ -f "${TEMP_IMG}" ]; then
+        ffmpegthumbnailer -i "${FILE_PATH}" -o "${TEMP_IMG}" -s 0
+      fi
+      ## Re-scale the image down to an acceptable size to be shown as preview
+      create_file_hash "${TEMP_IMG}"
+      create_cache magick -- "${TEMP_IMG}" -thumbnail "${DEFAULT_SIZE}" "${FILE_PV_CACHE}"
+    fi
+    exit 0
+    ;;
+
   ## Image
   image/*)
     if [ -p "$FIFO_UEBERZUG" ]; then
-      # ueberzug doesn't handle image orientation correctly
+      ## ueberzug doesn't handle image orientation correctly
       local UNSHARP=0x.5
       orientation="$(identify -format '%[orientation]\n' -- "${FILE_PATH}")"
       if [ -n "$orientation" ] &&
@@ -195,18 +338,16 @@ handle_image() {
 
   ## Video
   video/*)
-    # Thumbnail
     if [ -p "$FIFO_UEBERZUG" ]; then
+      ## Create the thumbnail at orginal size and rename it to avoid confusion
       create_file_hash "${FILE_PATH}"
-
       TEMP_IMG="${FILE_PV_CACHE}"
       if ! [ -f "${TEMP_IMG}" ]; then
         ffmpegthumbnailer -i "${FILE_PATH}" -o "${TEMP_IMG}" -s 0
       fi
+      ## Re-scale the image down to an acceptable size to be shown as preview
       create_file_hash "${TEMP_IMG}"
       create_cache magick -- "${TEMP_IMG}" -thumbnail "${DEFAULT_SIZE}" "${FILE_PV_CACHE}"
-
-      #create_cache ffmpegthumbnailer -i "${FILE_PATH}" -o "${FILE_PV_CACHE}" -s 0 # && exit 0
     fi
     exit 0
     ;;
@@ -220,21 +361,21 @@ handle_image() {
         -scale-to-y -1 \
         -singlefile \
         -jpeg -tiffcompression jpeg \
-        -- "${FILE_PATH}" "${FILE_PV_CACHE%.*}" # && exit 0
+        -- "${FILE_PATH}" "${FILE_PV_CACHE%.*}"
     fi
     exit 0
     ;;
 
   ## ePub, MOBI, FB2 (using Calibre)
-  #application/epub+zip | application/x-mobipocket-ebook | \
-  #  application/x-fictionbook+xml)
-  #  # ePub (using https://github.com/marianosimone/epub-thumbnailer)
-  #  epub-thumbnailer "${FILE_PATH}" "${IMAGE_CACHE_PATH}" \
-  #    "${DEFAULT_SIZE%x*}" && exit 0
-  #  ebook-meta --get-cover="${IMAGE_CACHE_PATH}" -- "${FILE_PATH}" \
-  #    >/dev/null && exit 0
-  #  exit 0
-  #  ;;
+  application/epub+zip | application/x-mobipocket-ebook | \
+    application/x-fictionbook+xml)
+    if [ -p "$FIFO_UEBERZUG" ]; then
+      create_file_hash "${FILE_PATH}"
+      ## So far no need to use the `-s "${DEFAULT_SIZE%x*}"` flag as it resizes both axis
+      create_cache gnome-epub-thumbnailer "${FILE_PATH}" "${FILE_PV_CACHE}"
+    fi
+    exit 0
+    ;;
 
   ## Font
   application/font* | application/*opentype | font/*)
@@ -249,7 +390,7 @@ handle_image() {
       --text "  0123456789.:,;(*!?') ff fl fi ffi ffl  " \
       --text "  The quick brown fox jumps over the lazy dog.  " \
       "${FILE_PATH}"; then
-      create_cache magick -- "${FILE_PV_CACHE_2}" -thumbnail "${DEFAULT_SIZE}" "${FILE_PV_CACHE}" # && rm "${preview_png}" && exit 0
+      create_cache magick -- "${FILE_PV_CACHE_2}" -thumbnail "${DEFAULT_SIZE}" "${FILE_PV_CACHE}"
     else
       handle_fallback
     fi
@@ -306,11 +447,11 @@ handle_image() {
   #}
 
   #case "${FILE_EXTENSION_LOWER}" in
-  ### 3D models
-  ### OpenSCAD only supports png image output, and ${IMAGE_CACHE_PATH}
-  ### is hardcoded as jpeg. So we make a tempfile.png and just
-  ### move/rename it to jpg. This works because image libraries are
-  ### smart enough to handle it.
+  ## 3D models
+  ## OpenSCAD only supports png image output, and ${IMAGE_CACHE_PATH}
+  ## is hardcoded as jpeg. So we make a tempfile.png and just
+  ## move/rename it to jpg. This works because image libraries are
+  ## smart enough to handle it.
   #csg | scad)
   #  openscad_image "${FILE_PATH}" && exit 0
   #  ;;
@@ -353,10 +494,6 @@ handle_mime() {
   ## Text
   text/* | */xml | application/javascript)
     ## Syntax highlight
-    if [[ "$(stat --printf='%s' -- "${FILE_PATH}")" -gt "${HIGHLIGHT_SIZE_MAX}" ]]; then
-      echo "----- File exceeds max preview size ${HIGHLIGHT_SIZE_MAX} -----" 
-      handle_fallback
-    fi
     if [[ "$(tput colors)" -ge 256 ]]; then
       local pygmentize_format='terminal256'
       local highlight_format='xterm256'
@@ -365,12 +502,12 @@ handle_mime() {
       local highlight_format='ansi'
     fi
     env COLORTERM=8bit bat --color=always --style="plain" \
-      -- "${FILE_PATH}" && exit 0
+      -- "${FILE_PATH}" | head -n "$(tput lines)" && exit 0
     pygmentize -f "${pygmentize_format}" -O "style=${PYGMENTIZE_STYLE}" \
-      -- "${FILE_PATH}" && exit 0
+      -- "${FILE_PATH}" | head -n "$(tput lines)" && exit 0
     env HIGHLIGHT_OPTIONS="${HIGHLIGHT_OPTIONS}" highlight \
       --out-format="${highlight_format}" \
-      --force -- "${FILE_PATH}" && exit 0
+      --force -- "${FILE_PATH}" | head -n "$(tput lines)" && exit 0
     exit 0
     ;;
 

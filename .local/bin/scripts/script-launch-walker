@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+# Ensure elephant is running before launching walker
+if ! systemctl --user -q is-active elephant.service; then
+  systemctl --user start elephant.service
+fi
+
+# Ensure walker service is running
+if ! systemctl --user -q is-active walker.service; then
+  systemctl --user start walker.service
+fi
+
+exec walker --width 644 --maxheight 300 --minheight 300 "$@"

@@ -62,8 +62,8 @@ set cursorpreviewfmt "\033[7;2m"
 map ` !true
 
 # mkdir command. See wiki if you want it to select created dir
-map s :push %mkdir<space>
-map S :push %touch<space>
+map n :push %touch<space>
+map N :push %mkdir<space>
 
 # Make rename behaves more like vim
 # Rename with the cursor placed at the extension
@@ -324,3 +324,10 @@ map M ${{ dragon -a -x -s 500 $fx }}
 map u ${{ user_umount.sh }}
 map U ${{ user_mount.sh }}
 
+# Restore some of the default keybinds to the `s` map
+map sr :set reverse!
+map sh set hidden!
+map sN set info
+map sS set info size
+map sT set info time
+map sA set info size:time

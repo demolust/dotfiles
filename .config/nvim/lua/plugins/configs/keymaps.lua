@@ -13,7 +13,7 @@ map("n", "<leader>nd", function()
 end, { desc = "Dismiss all notifications" })
 
 -- Set lint using nvim-lint
-map("n", "<leader>fl", function() require("lint").try_lint() end, { desc = "Lintting" })
+map("n", "<leader>ci", function() require("lint").try_lint() end, { desc = "Lintting" })
 
 -- Gitsigns
 M.gitsigns = {
@@ -345,7 +345,7 @@ M.lspconfig = {
 -- Conform
 M.conform = {
   {
-    "<leader>fm",
+    "<leader>cf",
     function()
       require("conform").format({ async = true, lsp_fallback = true })
     end,

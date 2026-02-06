@@ -15,6 +15,8 @@ M.opts = {
     ["<S-Tab>"] = { "select_prev", "snippet_backward", "fallback" },
     ["<C-u>"] = { "scroll_documentation_up", "fallback" },
     ["<C-d>"] = { "scroll_documentation_down", "fallback" },
+    ['<Up>'] = {},
+    ['<Down>'] = {},
   },
 
   appearance = {

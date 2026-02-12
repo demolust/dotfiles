@@ -142,12 +142,11 @@ cmd settings ${{
   env | grep ^lf_ | sort | $PAGER
 }}
 
-### Set image preview method
-#set sixel true
-
 ### Use custom a scope.sh script as defined in $XDG_CONFIG_HOME/lf/scope.sh for previews
 set previewer ~/.config/lf/scope-lf-wrapper.sh
 set cleaner ~/.config/lf/cleaner
+#set rulerfmt '  %a|  %p|  \033[7;31m %m \033[0m|  \033[7;33m %c \033[0m|  \033[7;35m %s \033[0m|  \033[7;36m %v \033[0m|  \033[7;34m %f \033[0m|  %i/%t'
+set rulerfile ~/.config/lf/ruler
 
 ### The following part needs to have at rifle (from ranger) in path
 ### Allows to set rifle to open all files, it will load rifle.conf from $XDG_CONFIG_HOME/ranger/rifle.conf

@@ -541,10 +541,10 @@ unalias mkdir
 alias mkdir='mkdir -p'
 
 ################################### GET SECRETS ###################################
-source "$XDG_DATA_HOME"/secrets/secrets
+source "$XDG_DATA_HOME"/secrets/secrets.zsh
 
 ################################### GET PER ENV DATA ###################################
-source "$XDG_DATA_HOME"/zsh/zshenvs
+source "$XDG_DATA_HOME"/zsh/envs.zsh
 
 ################################### USER SETTINGS ###################################
 ### User settings such as PATHS, VARIABLES, and so on, are defined at ~/.zshenv, wich is loaded before this file

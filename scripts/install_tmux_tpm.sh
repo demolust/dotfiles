@@ -1,13 +1,11 @@
 #!/usr/bin/env bash
 
-if [[ -z "${XDG_DATA_HOME}" ]]; then
-  XDG_DATA_HOME=${XDG_DATA_HOME:="$HOME/.local/share"}
-fi
+XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
+TMUX_PLUGINS_BASEPATH="$XDG_DATA_HOME/tmux/plugins"
 
 printf "Checking if tpm is already installed\n"
-
-TMUX_PLUGINS_BASEPATH="$XDG_DATA_HOME/tmux/plugins"
 if [ ! -d "${TMUX_PLUGINS_BASEPATH}/tpm" ]; then
+  printf "Installing tpm on %s/tpm\n" "${TMUX_PLUGINS_BASEPATH}"
   mkdir -p "$TMUX_PLUGINS_BASEPATH"
   git clone https://github.com/tmux-plugins/tpm "${TMUX_PLUGINS_BASEPATH}/tpm"
 fi

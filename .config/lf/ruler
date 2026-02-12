@@ -1,0 +1,35 @@
+{{$mod_color := "48;2;2;9;138" -}}
+{{if eq .Mode "VISUAL" -}}
+  {{$mod_color = "48;2;64;75;97" -}}
+{{end -}}
+{{printf "\033[38;2;194;194;194;%sm %s " $mod_color .Mode -}}
+
+{{with .Message -}}
+    {{. | printf " \033[0m %s" -}}
+{{else with .Stat -}}
+    {{.Name | printf " \033[37;40m %s " -}}
+    {{with .Target}} -> {{.}}{{end -}}
+{{end -}}
+
+{{.SPACER -}}
+
+{{with .Stat -}}
+    {{.Size | humanize | printf "\033[34;40m %5s" -}}
+    {{.ModTime | printf " \033[37;40m %s" -}}
+{{end -}}
+
+{{with .Keys}} {{.}} {{end -}}
+{{with .Progress}} {{join . " " | printf " 󰪹 %s"}}{{end -}}
+{{with .Copy}} {{len . | printf "%s %d 󰆏  \033[0m" $.Options.copyfmt}}{{end -}}
+{{with .Cut}} {{len . | printf "%s %d 󰆐  \033[0m" $.Options.cutfmt}}{{end -}}
+{{with .Select}} {{len . | printf "%s %d 󰒉  \033[0m" $.Options.selectfmt}}{{end -}}
+{{with .Visual}} {{len . | printf "%s %d \033[0m" $.Options.visualfmt}}{{end -}}
+{{with .Filter}} {{join . " " | printf "\033[7;34m 󰈲 %s \033[0m"}}{{end -}}
+
+{{.ScrollPercentage | printf "\033[38;2;194;194;194;48;2;67;76;94m %s " -}}
+
+{{$pos_color := "48;2;2;9;138" -}}
+{{if eq .Mode "VISUAL" -}}
+  {{$pos_color = "48;2;64;75;97" -}}
+{{end -}}
+{{printf "\033[38;2;194;194;194;%sm %d/%d \033[0m" $pos_color .Index .Total -}}

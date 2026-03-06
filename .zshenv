@@ -133,6 +133,7 @@ fi
 
 export PLATFORMIO_CORE_DIR="$XDG_DATA_HOME"/platformio
 
+export LESSHISTFILE="${XDG_STATE_HOME}"/lesshst
 if [[ -f ~/.lesshst ]]; then
   mv ~/.lesshst "$XDG_STATE_HOME"/lesshst
 fi

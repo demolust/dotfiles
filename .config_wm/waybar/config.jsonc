@@ -1,5 +1,5 @@
 {
-  "reload_style_on_change": true,
+  "reload_style_on_change": false,
   "layer": "top",
   "position": "top",
   "spacing": 0,
@@ -67,12 +67,12 @@
     "interval": 21600
   },
   "cpu": {
-    "interval": 5,
+    "interval": 10,
     "format": "  {usage}%",
     "on-click": "script-launch-stats"
   },
   "memory": {
-    "interval": 5,
+    "interval": 10,
     "format": "  {percentage}% ",
     "on-click": "script-launch-stats"
   },
@@ -128,7 +128,7 @@
     "tooltip-format-wifi": "{essid} ({frequency} GHz)\n⇣{bandwidthDownBytes}  ⇡{bandwidthUpBytes} 󰹤 {signalStrength}%",
     "tooltip-format-ethernet": "⇣{bandwidthDownBytes}  ⇡{bandwidthUpBytes}",
     "tooltip-format-disconnected": "Disconnected",
-    "interval": 3,
+    "interval": 10,
     "spacing": 1,
     "on-click": "script-launch-wifi"
   },
@@ -144,7 +144,7 @@
     "format-full": "󰂅 {capacity}%",
     "tooltip-format-discharging": "{power:>1.0f}W↓ {capacity}%",
     "tooltip-format-charging": "{power:>1.0f}W↑ {capacity}%",
-    "interval": 5,
+    "interval": 30,
     "on-click": "script-menu power",
     "states": {
       "warning": 20,
@@ -213,7 +213,8 @@
     "exec" : "get_vpn_status.sh",
     "return-type": "json",
     "tooltip": true,
-    "interval": 1,
+    "interval": "once",
+    "signal": 9,
     "on-click": "script-toggle-vpn",
     "format": " {icon} {0}",
     "format-icons": ["󰲝", "󰒄"]

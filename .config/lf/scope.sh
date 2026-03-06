@@ -32,8 +32,8 @@ FILE_EXTENSION="${FILE_PATH##*.}"
 FILE_EXTENSION_LOWER="$(printf "%s" "${FILE_EXTENSION}" | tr '[:upper:]' '[:lower:]')"
 
 ## Settings
-#HIGHLIGHT_SIZE_MAX=262143 ## 256KiB
 HIGHLIGHT_SIZE_MAX=1048576 ## 1MB
+BRIGHTNESS_THRESHOLD=200
 HIGHLIGHT_TABWIDTH=${HIGHLIGHT_TABWIDTH:-8}
 HIGHLIGHT_STYLE=${HIGHLIGHT_STYLE:-pablo}
 HIGHLIGHT_OPTIONS="--replace-tabs=${HIGHLIGHT_TABWIDTH} --style=${HIGHLIGHT_STYLE} ${HIGHLIGHT_OPTIONS:-}"
@@ -72,17 +72,17 @@ handle_extension() {
     bsdtar --list --file "${FILE_PATH}" && exit 0
     tar vvtf "${FILE_PATH}" && exit 0
     exit 0
-    ;;
+  ;;
   rar)
     ## Avoid password prompt by providing empty password
     unrar l -p- -- "${FILE_PATH}" | grep -A 200 'Attributes' | awk '{out = ""; for (i = 5; i <= NF; i++) {out = out " " $i}; print $2" "$3" "out}' | column --table && exit 0
     exit 0
-    ;;
+  ;;
   7z)
     ## Avoid password prompt by providing empty password
     7z l -p -- "${FILE_PATH}" && exit 0
     exit 0
-    ;;
+  ;;
 
   ## PDF
   pdf)
@@ -93,13 +93,13 @@ handle_extension() {
       fmt -w "${PV_WIDTH}" && exit 0
     exiftool "${FILE_PATH}" | tr -s '  ' | fmt -s && exit 0
     exit 0
-    ;;
+  ;;
 
   ## BitTorrent
   torrent)
     transmission-show -- "${FILE_PATH}" && exit 0
     exit 0
-    ;;
+  ;;
 
   ## OpenDocument
   odt | ods | odp | sxw)
@@ -108,7 +108,7 @@ handle_extension() {
     ## Preview as markdown conversion
     pandoc -s -t markdown -- "${FILE_PATH}" && exit 0
     exit 0
-    ;;
+  ;;
 
   ## XLSX
   xlsx)
@@ -116,19 +116,19 @@ handle_extension() {
     ## Uses: https://github.com/dilshod/xlsx2csv
     xlsx2csv -- "${FILE_PATH}" && exit 0
     exit 0
-    ;;
+  ;;
 
   pptx)
     while IFS= read -r SUBFILE; do
         unzip -p -- "${FILE_PATH}" "${SUBFILE}" | grep -oP '(?<=\<a:t\>).*?(?=\</a:t\>)'
     done < <(unzip -Z1 -- "${FILE_PATH}" | grep ppt/slides/slide | sort -V) && exit 0
     exit 0
-    ;;
+  ;;
 
   ppt)
     catppt -- "${FILE_PATH}" && exit 0
     exit 0
-    ;;
+  ;;
 
   ## HTML
   htm | html | xhtml)
@@ -137,30 +137,30 @@ handle_extension() {
     lynx -dump -- "${FILE_PATH}" && exit 0
     elinks -dump "${FILE_PATH}" && exit 0
     pandoc -s -t markdown -- "${FILE_PATH}" && exit 0
-    ;;
+  ;;
 
   ## JSON
   json)
     jq --color-output . "${FILE_PATH}" && exit 0
     python -m json.tool -- "${FILE_PATH}" && exit 0
-    ;;
+  ;;
 
   ## Direct Stream Digital/Transfer (DSDIFF) and wavpack aren't detected
   ## by file(1).
   dff | dsf | wv | wvc)
     mediainfo "${FILE_PATH}" | tr -s '  ' | fmt -s && exit 0
     exiftool "${FILE_PATH}" | tr -s '  ' | fmt -s && exit 0
-    ;; # Continue with next handler on failure
+  ;;
 
   ## doc
   doc)
     catdoc -- "${FILE_PATH}" && exit 0
     exit 0
-    ;;
+  ;;
 
   iso)
     iso-info --no-header -l "${FILE_PATH}" && exit 0
-    ;;
+  ;;
 
   esac
 }
@@ -173,18 +173,19 @@ handle_image() {
   local DEFAULT_SIZE="600x400"
   local mimetype="${1}"
   case "${mimetype}" in
+
   ## SVG
   #image/svg+xml | image/svg)
   #  convert -- "${FILE_PATH}" "${IMAGE_CACHE_PATH}" && exit 0
   #  exit 0
-  #  ;;
+  #;;
 
   ## DjVu
   #image/vnd.djvu)
   #  ddjvu -format=tiff -quality=90 -page=1 -size="${DEFAULT_SIZE}" \
   #    - "${IMAGE_CACHE_PATH}" <"${FILE_PATH}" &&
   #    exit 0
-  #  ;;
+  #;;
 
   ## CSV image preview
   text/plain | text/csv)
@@ -199,17 +200,25 @@ handle_image() {
         CACHE_FILE="${IMAGE_CACHE_PATH}/docs/${PDF_FILENAME}"
         if ! [ -f "${CACHE_FILE}" ]; then
         unoconvert_firstpage_pdf "${FILE_PATH}" "${CACHE_FILE}"
-        #unoconvert_firstpage_pdf -i "${FILE_PATH}" -o "${CACHE_FILE}"
-        #unoconvert --filter-options PageRange=1 -- "${FILE_PATH}" "${CACHE_FILE}"
-        #soffice --headless "-env:UserInstallation=file:///tmp/LibreOffice_Conversion_${USER}" --convert-to 'pdf:calc_pdf_Export:{"PageRange":{"type":"string","value":"1"}}' --outdir "${IMAGE_CACHE_PATH}/docs" "${FILENAME}"
         fi
         create_file_hash "${FILE_PATH}"
-        create_cache pdftoppm -f 1 -l 1 \
-          -scale-to-x "${DEFAULT_SIZE%x*}" \
-          -scale-to-y -1 \
-          -singlefile \
-          -jpeg -tiffcompression jpeg \
-          -- "${CACHE_FILE}" "${FILE_PV_CACHE%.*}"
+        TEMP_IMG="${FILE_PV_CACHE}"
+        if ! [ -f "${TEMP_IMG}" ]; then
+          pdftoppm -f 1 -l 1 \
+            -scale-to-x "${DEFAULT_SIZE%x*}" \
+            -scale-to-y -1 \
+            -singlefile \
+            -jpeg -tiffcompression jpeg \
+            -- "${CACHE_FILE}" "${TEMP_IMG%.*}"
+        fi
+        create_file_hash "${TEMP_IMG}"
+        BRIGHTNESS=$(ffprobe -v error -f lavfi -i "movie=${TEMP_IMG},scale=128:-1,signalstats" \
+        -show_entries frame_tags=lavfi.signalstats.YAVG -of default=nw=1:nk=1)
+        if (( $(echo "$BRIGHTNESS > $BRIGHTNESS_THRESHOLD" | bc -l) )); then
+          create_cache ffmpeg -hide_banner -v error -y -i "$TEMP_IMG" -vf "negate" -update 1 "${FILE_PV_CACHE}"
+        else
+          draw "${TEMP_IMG}"
+        fi
       fi
       exit 0
     else
@@ -217,64 +226,13 @@ handle_image() {
     fi
   ;;
 
-  ## Word Processing / Text Documents
+  ## Word Processing Docs, Spreadsheet Docs, Presentation Docs
   application/vnd.openxmlformats-officedocument.wordprocessingml.document|\
   application/vnd.oasis.opendocument.text|\
-  application/msword)
-    if [ -p "$FIFO_UEBERZUG" ]; then
-      ## Create the pdf and rename it to avoid confusion
-      !  [[ -d "${IMAGE_CACHE_PATH}/docs" ]] && mkdir -p "${IMAGE_CACHE_PATH}/docs"
-      FILENAME="$(basename "${FILE_PATH}")"
-      BASE_FILENAME="${FILENAME%.*}"
-      PDF_FILENAME="${BASE_FILENAME}.pdf"
-      CACHE_FILE="${IMAGE_CACHE_PATH}/docs/${PDF_FILENAME}"
-      if ! [ -f "${CACHE_FILE}" ]; then
-        unoconvert_firstpage_pdf "${FILE_PATH}" "${CACHE_FILE}"
-        #unoconvert_firstpage_pdf -i "${FILE_PATH}" -o "${CACHE_FILE}"
-        #unoconvert --filter-options PageRange=1 -- "${FILE_PATH}" "${CACHE_FILE}"
-        #soffice --headless "-env:UserInstallation=file:///tmp/LibreOffice_Conversion_${USER}" --convert-to 'pdf:writer_pdf_Export:{"PageRange":{"type":"string","value":"1"}}' --outdir "${IMAGE_CACHE_PATH}/docs" "${FILENAME}"
-
-      fi
-      create_file_hash "${FILE_PATH}"
-      create_cache pdftoppm -f 1 -l 1 \
-        -scale-to-x "${DEFAULT_SIZE%x*}" \
-        -scale-to-y -1 \
-        -singlefile \
-        -jpeg -tiffcompression jpeg \
-        -- "${CACHE_FILE}" "${FILE_PV_CACHE%.*}"
-    fi
-    exit 0
-  ;;
-
-  ##  Spreadsheet Documents
+  application/msword|\
   application/vnd.oasis.opendocument.spreadsheet|\
   application/vnd.openxmlformats-officedocument.spreadsheetml.sheet|\
-  application/vnd.ms-excel)
-    if [ -p "$FIFO_UEBERZUG" ]; then
-      ## Create the pdf and rename it to avoid confusion
-      !  [[ -d "${IMAGE_CACHE_PATH}/docs" ]] && mkdir -p "${IMAGE_CACHE_PATH}/docs"
-      FILENAME="$(basename "${FILE_PATH}")"
-      BASE_FILENAME="${FILENAME%.*}"
-      PDF_FILENAME="${BASE_FILENAME}.pdf"
-      CACHE_FILE="${IMAGE_CACHE_PATH}/docs/${PDF_FILENAME}"
-      if ! [ -f "${CACHE_FILE}" ]; then
-        unoconvert_firstpage_pdf "${FILE_PATH}" "${CACHE_FILE}"
-        #unoconvert_firstpage_pdf -i "${FILE_PATH}" -o "${CACHE_FILE}"
-        #unoconvert --filter-options PageRange=1 -- "${FILE_PATH}" "${CACHE_FILE}"
-        #soffice --headless "-env:UserInstallation=file:///tmp/LibreOffice_Conversion_${USER}" --convert-to 'pdf:calc_pdf_Export:{"PageRange":{"type":"string","value":"1"}}' --outdir "${IMAGE_CACHE_PATH}/docs" "${FILENAME}"
-      fi
-      create_file_hash "${FILE_PATH}"
-      create_cache pdftoppm -f 1 -l 1 \
-        -scale-to-x "${DEFAULT_SIZE%x*}" \
-        -scale-to-y -1 \
-        -singlefile \
-        -jpeg -tiffcompression jpeg \
-        -- "${CACHE_FILE}" "${FILE_PV_CACHE%.*}"
-    fi
-    exit 0
-  ;;
-
-  ## Presentation Documents
+  application/vnd.ms-excel|\
   application/vnd.oasis.opendocument.presentation|\
   application/vnd.openxmlformats-officedocument.presentationml.presentation|\
   application/vnd.ms-powerpoint)
@@ -287,17 +245,25 @@ handle_image() {
       CACHE_FILE="${IMAGE_CACHE_PATH}/docs/${PDF_FILENAME}"
       if ! [ -f "${CACHE_FILE}" ]; then
         unoconvert_firstpage_pdf "${FILE_PATH}" "${CACHE_FILE}"
-        #unoconvert_firstpage_pdf -i "${FILE_PATH}" -o "${CACHE_FILE}"
-        #unoconvert --filter-options PageRange=1 -- "${FILE_PATH}" "${CACHE_FILE}"
-        #soffice --headless "-env:UserInstallation=file:///tmp/LibreOffice_Conversion_${USER}" --convert-to 'pdf:draw_pdf_Export:{"PageRange":{"type":"string","value":"1"}}' --outdir "${IMAGE_CACHE_PATH}/docs" "${FILENAME}"
       fi
       create_file_hash "${FILE_PATH}"
-      create_cache pdftoppm -f 1 -l 1 \
-        -scale-to-x "${DEFAULT_SIZE%x*}" \
-        -scale-to-y -1 \
-        -singlefile \
-        -jpeg -tiffcompression jpeg \
-        -- "${CACHE_FILE}" "${FILE_PV_CACHE%.*}"
+      TEMP_IMG="${FILE_PV_CACHE}"
+      if ! [ -f "${TEMP_IMG}" ]; then
+        pdftoppm -f 1 -l 1 \
+          -scale-to-x "${DEFAULT_SIZE%x*}" \
+          -scale-to-y -1 \
+          -singlefile \
+          -jpeg -tiffcompression jpeg \
+          -- "${CACHE_FILE}" "${TEMP_IMG%.*}"
+      fi
+      create_file_hash "${TEMP_IMG}"
+      BRIGHTNESS=$(ffprobe -v error -f lavfi -i "movie=${TEMP_IMG},scale=128:-1,signalstats" \
+      -show_entries frame_tags=lavfi.signalstats.YAVG -of default=nw=1:nk=1)
+      if (( $(echo "$BRIGHTNESS > $BRIGHTNESS_THRESHOLD" | bc -l) )); then
+        create_cache ffmpeg -hide_banner -v error -y -i "$TEMP_IMG" -vf "negate" -update 1 "${FILE_PV_CACHE}"
+      else
+        draw "${TEMP_IMG}"
+      fi
     fi
     exit 0
   ;;
@@ -315,7 +281,7 @@ handle_image() {
       create_cache magick -- "${TEMP_IMG}" -thumbnail "${DEFAULT_SIZE}" "${FILE_PV_CACHE}"
     fi
     exit 0
-    ;;
+  ;;
 
   ## Image
   image/*)
@@ -334,7 +300,7 @@ handle_image() {
       fi
     fi
     exit 0
-    ;;
+  ;;
 
   ## Video
   video/*)
@@ -350,21 +316,32 @@ handle_image() {
       create_cache magick -- "${TEMP_IMG}" -thumbnail "${DEFAULT_SIZE}" "${FILE_PV_CACHE}"
     fi
     exit 0
-    ;;
+  ;;
 
   ## PDF
   application/pdf)
     if [ -p "$FIFO_UEBERZUG" ]; then
       create_file_hash "${FILE_PATH}"
-      create_cache pdftoppm -f 1 -l 1 \
-        -scale-to-x "${DEFAULT_SIZE%x*}" \
-        -scale-to-y -1 \
-        -singlefile \
-        -jpeg -tiffcompression jpeg \
-        -- "${FILE_PATH}" "${FILE_PV_CACHE%.*}"
+      TEMP_IMG="${FILE_PV_CACHE}"
+      if ! [ -f "${TEMP_IMG}" ]; then
+        pdftoppm -f 1 -l 1 \
+          -scale-to-x "${DEFAULT_SIZE%x*}" \
+          -scale-to-y -1 \
+          -singlefile \
+          -jpeg -tiffcompression jpeg \
+          -- "${FILE_PATH}" "${TEMP_IMG%.*}"
+      fi
+      create_file_hash "${TEMP_IMG}"
+      BRIGHTNESS=$(ffprobe -v error -f lavfi -i "movie=${TEMP_IMG},scale=128:-1,signalstats" \
+      -show_entries frame_tags=lavfi.signalstats.YAVG -of default=nw=1:nk=1)
+      if (( $(echo "$BRIGHTNESS > $BRIGHTNESS_THRESHOLD" | bc -l) )); then
+        create_cache ffmpeg -hide_banner -v error -y -i "$TEMP_IMG" -vf "negate" -update 1 "${FILE_PV_CACHE}"
+      else
+        draw "${TEMP_IMG}"
+      fi
     fi
     exit 0
-    ;;
+  ;;
 
   ## ePub, MOBI, FB2 (using Calibre)
   application/epub+zip | application/x-mobipocket-ebook | \
@@ -375,7 +352,7 @@ handle_image() {
       create_cache gnome-epub-thumbnailer "${FILE_PATH}" "${FILE_PV_CACHE}"
     fi
     exit 0
-    ;;
+  ;;
 
   ## Font
   application/font* | application/*opentype | font/*)
@@ -394,7 +371,7 @@ handle_image() {
     else
       handle_fallback
     fi
-    ;;
+  ;;
 
   ## Preview archives using the first image inside.
   # (Very useful for comic book collections for example.)
@@ -435,7 +412,7 @@ handle_image() {
   #  [ "$zip" ] && unzip -pP "" -- "${FILE_PATH}" "$fe" > \
   #    "${IMAGE_CACHE_PATH}" && exit 0
   #  [ "$rar" ] || [ "$zip" ] && rm -- "${IMAGE_CACHE_PATH}"
-  #  ;;
+  #;;
   esac
 
   #openscad_image() {
@@ -454,42 +431,37 @@ handle_image() {
   ## smart enough to handle it.
   #csg | scad)
   #  openscad_image "${FILE_PATH}" && exit 0
-  #  ;;
+  #;;
   #3mf | amf | dxf | off | stl)
   #  openscad_image <(echo "import(\"${FILE_PATH}\");") && exit 0
-  #  ;;
+  #;;
   #esac
 }
 
 handle_mime() {
   local mimetype="${1}"
   case "${mimetype}" in
+
   ## RTF and DOC
   text/rtf | *msword)
     ## Preview as text conversion
-    ## note: catdoc does not always work for .doc files
-    ## catdoc: http://www.wagner.pp.ru/~vitus/software/catdoc/
     catdoc -- "${FILE_PATH}" && exit 0
     exit 0
-    ;;
+  ;;
 
   ## DOCX, ePub, FB2 (using markdown)
-  ## You might want to remove "|epub" and/or "|fb2" below if you have
-  ## uncommented other methods to preview those formats
   *wordprocessingml.document | */epub+zip | */x-fictionbook+xml)
     ## Preview as markdown conversion
     pandoc -s -t markdown -- "${FILE_PATH}" && exit 0
     exit 0
-    ;;
+  ;;
 
   ## XLS
   *ms-excel)
     ## Preview as csv conversion
-    ## xls2csv comes with catdoc:
-    ##   http://www.wagner.pp.ru/~vitus/software/catdoc/
     xls2csv -- "${FILE_PATH}" && exit 0
     exit 0
-    ;;
+  ;;
 
   ## Text
   text/* | */xml | application/javascript)
@@ -509,7 +481,7 @@ handle_mime() {
       --out-format="${highlight_format}" \
       --force -- "${FILE_PATH}" | head -n "$(tput lines)" && exit 0
     exit 0
-    ;;
+  ;;
 
   ## DjVu
   image/vnd.djvu)
@@ -517,7 +489,7 @@ handle_mime() {
     djvutxt "${FILE_PATH}" | fmt -w "${PV_WIDTH}" && exit 0
     exiftool "${FILE_PATH}" | tr -s '  ' | fmt -s && exit 0
     exit 0
-    ;;
+  ;;
 
   ## Image
   image/*)
@@ -525,21 +497,21 @@ handle_mime() {
     #img2txt --gamma=0.6 --width="${PV_WIDTH}" -- "${FILE_PATH}" && exit 0
     exiftool "${FILE_PATH}" | tr -s '  ' | fmt -s && exit 0
     exit 0
-    ;;
+  ;;
 
   ## Video and audio
   video/* | audio/*)
     mediainfo "${FILE_PATH}" | tr -s '  ' | fmt -s && exit 0
     exiftool "${FILE_PATH}" | tr -s '  ' | fmt -s && exit 0
     exit 0
-    ;;
+  ;;
 
   ## JSON
   application/json)
     jq --color-output . "${FILE_PATH}" && exit 0
     python -m json.tool -- "${FILE_PATH}" && exit 0
     exit 0
-    ;;
+  ;;
 
   esac
 }
@@ -557,4 +529,3 @@ handle_extension
 handle_mime "${MIMETYPE}"
 handle_fallback
 
-exit 0

@@ -1,10 +1,8 @@
 # This is Git's per-user configuration file.
 
-# Include configs
+# Include base config
 [include]
-  path = ~/.local/share/secrets/git_personal
-[include]
-  path = ~/.local/share/secrets/git_work
+  path = ~/.local/share/secrets/configs/git/git
 
 [core]
   editor = nvim

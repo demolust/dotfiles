@@ -30,7 +30,7 @@ for font in "${fonts_to_be_installed[@]}"; do
                jq -r ".assets[] | select(.name == \"$font_tar_name\") | .browser_download_url")
   printf "Fonts will be downloaded from %s\n" "${font_url}"
   if [[ -z "${font_url}" ]]; then
-    printf "Error: Could not find download URL for %s\n" "$font" >&2
+    printf "Error: Could not find download URL for %s\n" "${font}" >&2
     continue
   fi
   mkdir -p "${tmp_font_dir}"

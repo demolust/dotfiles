@@ -25,3 +25,4 @@ if [[ "$previous_elephant_version" != "$new_elephant_version" ]] || [[ "$previou
   script-restart-walker
 fi
 
+echo "All done"

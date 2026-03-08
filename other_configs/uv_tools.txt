@@ -1,0 +1,8 @@
+glances
+isd-tui
+posting
+pygments
+terminaltexteffects
+tldr
+unimatrix
+xlsx2csv

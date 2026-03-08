@@ -102,7 +102,7 @@
               - erikreider/swayosd
               - errornointernet/packages
               - pennbauman/ports
-              - solopasha/hyprland
+              - lionheartp/Hyprland
             state: present
         - name: Remove conflicting packages
           package:
@@ -352,6 +352,16 @@
               - golang
               - dotnet-sdk-10.0
               - java-25-openjdk-headless
+              - clamav
+              - clamd
+              - clamav-update
+              - setools-console
+              - policycoreutils-python-utils
+              - iotop-c
+              - fatrace
+              - iftop
+              - tcptrack
+              - nethogs
             state: present
         - name: Install extra RPM Fusion packages
           package:
@@ -370,9 +380,9 @@
               - wezterm
               - niri
               - hyprland
-              # - hyprland-qt-support
-              # - hyprland-qtutils
-              # - hyprpolkitagent
+              - hyprland-qt-support
+              - hyprland-guiutils
+              - hyprpolkitagent
               - hyprlang
               - hyprlock
               - hypridle

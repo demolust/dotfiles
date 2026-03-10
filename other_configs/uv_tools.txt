@@ -4,5 +4,6 @@ posting
 pygments
 terminaltexteffects
 tldr
+trash-cli
 unimatrix
 xlsx2csv

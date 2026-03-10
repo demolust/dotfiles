@@ -47,6 +47,7 @@ declare -A tools=(
   [sd]='chmln/sd:sd:sd --version | awk '\''{print $2}'\'':"$bin.*$ARCH.*$OS.*(gnu|musl).*(tar.gz|zip)"'
   [rg]='BurntSushi/ripgrep:rg:rg --version | awk '\''NR==1 {print $2}'\'':"ripgrep.*$ARCH.*$OS.*(gnu|musl).*(tar.gz|zip)"'
   [starship]='starship/starship:starship:starship --version | awk '\''NR==1 {print $2}'\'':"$bin.*$ARCH.*$OS.*(gnu|musl).*(tar.gz|zip)"'
+  [podlet]='containers/podlet:podlet:podlet --version | awk '\''{print $2}'\'':"$bin.*$ARCH.*$OS.*(gnu|musl).*(tar.xz|zip)"'
 )
 
 download_and_install() {
@@ -129,6 +130,23 @@ download_and_install() {
     mv -f "$found_bin" "$INSTALL_DIR/"
   elif [[ "$asset_name" =~ \.tgz$ ]]; then
     tar -C "$EXTRACT_DIR" -xzf "$asset_name"
+    found_bin=$(find "$EXTRACT_DIR" -type f -name "$bin" | head -n 1)
+    if [[ -z "$found_bin" ]]; then
+      found_bin=$(find "$EXTRACT_DIR" -type f -name "$bin*" | head -n 1)
+      file_type=$(file --dereference --brief -- "$found_bin")
+      if ! [[ "$file_type" =~ ^ELF ]]; then
+        echo "Installation of $bin failed, there is no binary in the release $asset_name"
+        echo "Check manually for the failure and info on the release notes on https://github.com/$repo/releases/latest"
+        printf "\n"
+        return 0
+      fi
+      chmod 755 "$found_bin"
+      mv -f "$found_bin" "$bin"
+      found_bin="$bin"
+    fi
+    mv -f "$found_bin" "$INSTALL_DIR/"
+  elif [[ "$asset_name" =~ \.xz$ ]]; then
+    tar -C "$EXTRACT_DIR" -xf "$asset_name"
     found_bin=$(find "$EXTRACT_DIR" -type f -name "$bin" | head -n 1)
     if [[ -z "$found_bin" ]]; then
       found_bin=$(find "$EXTRACT_DIR" -type f -name "$bin*" | head -n 1)

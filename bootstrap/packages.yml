@@ -177,6 +177,7 @@
               - netcat
               - podman
               - podman-compose
+              - podlet
               - parallel
               - nmap
               - nvme-cli
@@ -194,7 +195,7 @@
               - xdg-user-dirs
               - xdg-utils
               - xdg-desktop-portal-gtk
-              - xdg-desktop-portal-gnome
+              - xdg-desktop-portal-wlr
               - xdg-terminal-exec
               - libxkbcommon-utils
               - util-linux
@@ -361,6 +362,7 @@
               - fatrace
               - iftop
               - tcptrack
+              - tcpdump
               - nethogs
             state: present
         - name: Install extra RPM Fusion packages
@@ -394,7 +396,7 @@
               - nwg-look
               - pyprland
               - satty
-              - swww
+              #- swww
               - cliphist
               - xcur2png
               - hyprlang-devel

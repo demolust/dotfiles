@@ -459,6 +459,8 @@ Vagrantfile             
 *.tf      
 *.tfstate 
 *.hcl     
+*.tpl     
+*.j2      
 
 #  # 󰋚 #  # 
 *.zcompdump       

@@ -1,0 +1,16 @@
+app.zen_browser.zen
+com.adilhanney.saber
+com.brave.Browser
+com.github.PintaProject.Pinta
+com.github.flxzt.rnote
+com.github.tchx84.Flatseal
+com.simulide.simulide
+com.usebottles.bottles
+io.github.quodlibet.QuodLibet
+it.mijorus.gearlever
+md.obsidian.Obsidian
+org.freecad.FreeCAD
+org.kicad.KiCad
+org.librecad.librecad
+org.localsend.localsend_app
+org.onlyoffice.desktopeditors

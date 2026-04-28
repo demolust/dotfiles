@@ -1,5 +1,4 @@
 # packages.yml
-# New Structure includes a 'repository' block for distro-specific repo actions.
 ---
 - name: Bootstrap Dotfiles Package Setup
   hosts: localhost
@@ -27,7 +26,6 @@
               - luarocks
               - dracut-config-rescue
               - lshw
-              #- cloud-utils
               - nmap
               - ndctl
               - ibus
@@ -82,8 +80,6 @@
             name:
               - https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm
               - https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
-              # - https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-{{ ansible_distribution_major_version }}.noarch.rpm
-              # - https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-{{ ansible_distribution_major_version }}.noarch.rpm"
             state: present
             prerequisite: true
         - name: Add necessary extra repositories
@@ -396,7 +392,7 @@
               - nwg-look
               - pyprland
               - satty
-              #- swww
+              - awww
               - cliphist
               - xcur2png
               - hyprlang-devel

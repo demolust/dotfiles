@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+# This script expects the corresponding `wgusers` group and
+# the corresponding wireguard interface has been configured correctly
+IFACE="wg0"
+# Check if the interface exists (true/false)
+is_up=$(ip link show "$IFACE" >/dev/null 2>&1 && echo true || echo false)
+
+# Output JSON directly
+jq --unbuffered --compact-output -n --arg iface "$IFACE" --argjson up "$is_up" \
+  '{"text": (if $up then "On" else "Off" end), "tooltip": "VPN (\($iface)): \(if $up then "Connected" else "Disconnected" end)", "class": "vpn", "percentage": (if $up then 100 else 0 end)}'
+

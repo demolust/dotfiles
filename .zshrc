@@ -539,6 +539,10 @@ function lazygp {
 ### Section that overrides some plugin settings
 unalias mkdir
 alias mkdir='mkdir -p'
+if [ "$(command -v prettyping)" ]; then
+  unalias ping
+  alias ping=prettyping
+fi
 
 ################################### GET SECRETS ###################################
 source "$XDG_DATA_HOME"/secrets/secrets.zsh

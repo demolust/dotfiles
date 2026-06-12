@@ -6,13 +6,16 @@
   "height": 26,
   "modules-left": [
     "custom/wm",
-    "hyprland/workspaces"
+    "hyprland/workspaces",
+    "niri/workspaces",
+    "niri/window"
   ],
   "modules-center": [
+    "custom/weather",
     "clock",
+    "custom/vpn",
     "custom/update",
-    "custom/screenrecording-indicator",
-    "custom/vpn"
+    "custom/screenrecording-indicator"
   ],
   "modules-right": [
     "group/tray-expander",
@@ -25,6 +28,47 @@
     "battery",
     "custom/exit"
   ],
+  "niri/workspaces": {
+    "on-click": "activate",
+    "on-click-right": "niri msg action open-overview",
+    "disable-scroll": false,
+    "on-scroll-up": "niri msg action focus-workspace-up",
+    "on-scroll-down": "niri msg action focus-workspace-down",
+    "format": "{icon}",
+    "format-icons": {
+      // Named workspaces
+      "browser": "",
+      "discord": "",
+      "chat": "<b></b>",
+
+      // Icons by state
+      "active": "",
+      "default": ""
+    }
+  },
+  "niri/window": {
+    "format": "{title}",
+    "max-length": 50,
+    "rewrite": {
+      // --- Browsers ---
+      "(.*)( — Mozilla Firefox.*)": "󰈹 $1",
+      "(.*)(.*Mozilla Firefox.*)": "󰈹 $1",
+      "(.*)( - Brave.*)": "󰊯 $1",
+      "(.*)( - Google Chrome.*)": " $1",
+      // --- Mail ---
+      "(.*)(- Mozilla Thunderbird.*)": " $1",
+      // --- Tmux Specific ---
+      //"(.*:[\\d]+:)(vim|vim|nvim)( - .*)": " [ $2]",
+      //"(.*:[\\d]+:)(zsh|bash|fish)( - .*)": " [ $2]",
+      //"(.*:[\\d]+:)(cmus)( - .*)": " [ $2]",
+      // --- Tmux Generic ---
+      //"(.*:[\\d]+:)(?!(vim|vi|nvim|cmus|zsh|bash|fish|tmux))([^ ]+)(.*)": " [ $3]",
+      // --- Tmux Catch all ---
+      "(.*:[\\d]+:)(.*)( -.*)": " [ $2]",
+      // --- Fallback for empty titles ---
+      "^$": " Linux"
+    }
+  },
   "hyprland/workspaces": {
     "on-click": "activate",
     "disable-scroll": false,
@@ -52,6 +96,15 @@
       "5": []
     }
   },
+  "custom/weather": {
+    "format": "{}",
+    "tooltip": true,
+    "interval": 1800,
+    "signal": 5,
+    "on-click": "pkill -RTMIN+5 waybar",
+    "exec": "script-get-weather",
+    "return-type": "json"
+  },
   "custom/wm": {
     "format": "",
     "on-click": "script-menu",
@@ -61,7 +114,7 @@
   "custom/update": {
     "format": "",
     "exec": "script-update-available",
-    "on-click": "script-launch-floating-terminal-with-presentation launch_tmux_update.sh",
+    "on-click": "script-launch-floating-terminal-with-presentation script-launch-tmux-update",
     "tooltip-format": "Update available",
     "signal": 7,
     "interval": 21600
@@ -73,12 +126,12 @@
   },
   "memory": {
     "interval": 10,
-    "format": "  {percentage}% ",
+    "format": "  {percentage}%",
     "on-click": "script-launch-stats"
   },
   "disk": {
     "interval": 30,
-    "format": "󰋊 {percentage_used}% ",
+    "format": "󰋊 {percentage_used}%",
     "path": "/",
     "on-click": "script-launch-stats"
   },
@@ -86,7 +139,7 @@
     "interval": 10,
     "hwmon-path": "/sys/class/hwmon/hwmon7/temp1_input",
     "critical-threshold": 80,
-    "format": " {temperatureC}°C ",
+    "format": " {temperatureC}°C",
     "on-click": "script-launch-stats"
   },
   "group/hardware": {
@@ -104,8 +157,8 @@
     ]
   },
   "clock": {
-    "format": "{:L%A %H:%M}",
-    "format-alt": "{:L%d %B W%V %Y}",
+    "format": " {:L%A %H:%M}",
+    "format-alt": " {:L%d %B W%V %Y}",
     "tooltip": true,
     "tooltip-format": "<tt><small>{calendar}</small></tt>",
     "on-click-right": "script-launch-calendar",
@@ -122,14 +175,13 @@
   "network": {
     "format-icons": ["󰤯", "󰤟", "󰤢", "󰤥", "󰤨"],
     "format": "{icon}",
-    "format-wifi": "{icon}",
+    "format-wifi": "{icon} ",
     "format-ethernet": "󰀂",
     "format-disconnected": "󰤮",
     "tooltip-format-wifi": "{essid} ({frequency} GHz)\n⇣{bandwidthDownBytes}  ⇡{bandwidthUpBytes} 󰹤 {signalStrength}%",
     "tooltip-format-ethernet": "⇣{bandwidthDownBytes}  ⇡{bandwidthUpBytes}",
     "tooltip-format-disconnected": "Disconnected",
     "interval": 10,
-    "spacing": 1,
     "on-click": "script-launch-wifi"
   },
   "battery": {
@@ -160,14 +212,17 @@
     "on-click-right": "blueman-manager"
   },
   "pulseaudio": {
-    "format": "{icon}",
+    "format": "{icon} ",
     "on-click": "script-launch-audiomix",
-    "on-click-right": "pamixer -t",
+    "on-click-right": "swayosd_monitor.sh --output-volume mute-toggle",
     "tooltip-format": "Playing at {volume}%",
+    "disable-scroll": false,
     "scroll-step": 5,
-    "format-muted": "",
+    "on-scroll-up": "swayosd_monitor.sh --output-volume raise",
+    "on-scroll-down": "swayosd_monitor.sh --output-volume lower",
+    "format-muted": " ",
     "format-icons": {
-      "default": ["", "", " "]
+      "default": ["", "", ""]
     }
   },
   "group/tray-expander": {
@@ -187,7 +242,7 @@
   },
   "custom/screenrecording-indicator": {
     "on-click": "script-cmd-screenrecord",
-    "exec": "$HOME/.config/waybar/indicators/screen-recording.sh",
+    "exec": "script-waybar-screen-recording-indicator",
     "signal": 8,
     "return-type": "json"
   },
@@ -200,29 +255,29 @@
     "numlock": false,
     "capslock": true,
     "format": {
-      "scrolllock": "S {icon}",
-      "numlock": "N {icon}",
-      "capslock": "C {icon}"
+      "scrolllock": "󱕑 {icon}",
+      "numlock": "󰕅 {icon}",
+      "capslock": "󰪛 {icon}"
     },
     "format-icons": {
-      "locked": " ",
-      "unlocked": " "
+      "locked": " ",
+      "unlocked": " "
     }
   },
   "custom/vpn": {
-    "exec" : "get_vpn_status.sh",
+    "exec" : "script-get-vpn-status",
     "return-type": "json",
     "tooltip": true,
     "interval": "once",
     "signal": 9,
     "on-click": "script-toggle-vpn",
-    "format": " {icon} {0}",
+    "format": "{icon} {text}",
     "format-icons": ["󰲝", "󰒄"]
   },
   "custom/notifications": {
     "tooltip": true,
     "on-click": "swaync-client -t -sw",
-    "on-click-right": "set_swaync_dnd.sh",
+    "on-click-right": "script-set-swaync-dnd",
     "escape": true,
     "return-type": "json",
     "exec-if": "which swaync-client",
@@ -238,10 +293,10 @@
       "dnd-inhibited-notification": "󰂛",
       "dnd-inhibited-none": "󰪑"
     },
-    "format": " {0} {icon} "
+    "format": "{text} {icon}"
   },
   "custom/exit": {
-    "format": "  ",
+    "format": "",
     "on-click": "wlogout -sb 4",
     "tooltip": false,
     "tooltip-format": "Powermenu"

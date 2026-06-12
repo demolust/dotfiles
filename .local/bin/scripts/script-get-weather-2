@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+# Fetching wttr.in with current location Weather
+WTR_HOST="wttr.in"
+# Format with | to allow parsing later
+FORMAT="?m&format=%c|%t|%l"
+raw_weather=$(curl -fSsL --connect-timeout 5 "$WTR_HOST/$FORMAT")
+
+if [[ $? -ne 0 ]] || [[ -z "$raw_weather" ]]; then
+  echo '{"text": "󰖪 Service Offline", "tooltip": "Weather Offline/Connection Error"}'
+else
+  display_weather=$(echo "$raw_weather" | awk -F'|' '{
+  icon = $1;
+  temp = $2;
+  # Take only the first part before the first comma (if any) as the city of the location
+  # Location expected format: City, State, Country
+  split($3, loc_arr, ",");
+  city = loc_arr[1];
+
+  # Trim city if longer than 10 chars
+  if (length(city) > 10) {
+    city = substr(city, 1, 7) "...";
+  }
+
+  # Print the formatted string with a separator, icon includes a space
+  #printf "%s%s %s", icon, temp, city
+  printf "%s%s", icon, temp
+}')
+  full_string=${raw_weather//|/ }
+  # Tooltip keeps the full string for details
+  echo "{\"text\": \"$display_weather\", \"tooltip\": \"$full_string\"}"
+fi

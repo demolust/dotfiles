@@ -38,7 +38,7 @@ discord_path="${base_dir_path}/Discord"
 discord_post_install_path="${discord_path}/postinst.sh"
 discord_icon_path="${discord_path}/discord.png"
 discord_desktop_path="${discord_path}/discord.desktop"
-discord_bin_path="${discord_path}/Discord"
+discord_bin_path="${discord_path}/discord"
 discord_final_bin_path="${bin_dir}/Discord"
 
 echo "Downloading latest tar from discord.com and storing it as ${discord_tar_path}"

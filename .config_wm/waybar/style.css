@@ -11,12 +11,8 @@
   font-size: 18px;
 }
 
-.modules-left {
-  margin-left: 8px;
-}
-
-.modules-right {
-  margin-right: 8px;
+tooltip {
+  padding: 2px;
 }
 
 #workspaces button {
@@ -25,65 +21,155 @@
   margin: 0 1.5px;
   min-width: 9px;
 }
-
 #workspaces button.empty {
   opacity: 0.5;
 }
 
+.modules-left {
+}
+#window,
+#workspaces,
+#custom-wm {
+  min-width: 12px;
+  margin: 0 0px;
+  margin-right: 4px;
+  padding: 0 10px;
+  border-left: 2px solid @foreground;
+  font-weight: bold;
+}
+
+#workspaces {
+  padding: 0 5px;
+}
+
+.modules-left > widget:first-child > #custom-wm {
+  border-left: 0;
+  margin-left: 0;
+}
+.modules-left > widget:last-child > #window {
+  border-right: 2px solid @foreground;
+  margin-right: 0;
+}
+
+
+/* Base style for ALL right modules to get the "Pill" background */
+/* Container Spacing */
+.modules-right {
+  margin-right: 4px;
+}
+
+#custom-exit {
+  min-width: 12px;
+  margin: 0 0px;
+  margin-right: 4px;
+  padding: 0 10px;
+  font-weight: bold;
+}
+
+#keyboard-state,
+#custom-notifications,
+#bluetooth,
+#network,
+#pulseaudio,
 #cpu,
+#battery {
+  background-color: rgba(255, 255, 255, 0.15);
+  border-radius: 15px;
+  padding: 0 8px;
+  min-height: 0;
+}
+
 #battery,
 #pulseaudio,
-#custom-wm,
-#custom-screenrecording-indicator,
-#custom-update {
+#bluetooth,
+#custom-notifications {
   min-width: 12px;
-  margin: 0 7.5px;
+  margin: 0 4px;
 }
 
-#tray {
-  margin-right: 16px;
+#keyboard-state label {
+  color: @foreground;
+  background: transparent; /* Force it to use the pill background */
+  padding: 0 2px;
 }
 
-#bluetooth {
-  margin-right: 17px;
+
+#group-hardware {
+  background: transparent; /* Remove the group background */
+}
+#cpu {
+  /* Matching the Memory/Temp pills exactly */
+  background-color: rgba(255, 255, 255, 0.15);
+  margin: 3px 4px; 
+  padding: 0 10px;
+  border-radius: 15px;
+}
+/* Style the rest of the HW modules (Mem/Temp/Disk) to be simpler pills */
+#memory, #temperature, #disk {
+  background-color: rgba(255, 255, 255, 0.08);
+  margin: 3px 2px;
+  padding: 0 8px;
+  border-radius: 15px;
+  font-size: 15px;
 }
 
-#network {
-  margin-right: 13px;
-}
 
 #custom-expand-icon {
-  margin-right: 20px;
+  margin-right: 15px;
+  padding: 0 2px;
+  background: transparent;
+}
+#tray {
+  background: transparent;
+  margin: 0 5px;
+}
+#tray > .passive {
+  -gtk-icon-effect: dim;
+}
+#tray > .needs-attention {
+  -gtk-icon-effect: highlight;
+  background-color: #ebcb8b;
 }
 
-tooltip {
-  padding: 2px;
+
+/* This applies the style every module in the center */
+.modules-center {
+  padding: 0 20px;
+}
+#custom-weather,
+#clock,
+#custom-update,
+#custom-screenrecording-indicator,
+#custom-vpn {
+  background-color: rgba(255, 255, 255, 0.1);
+  margin: 0 0px;
+  padding: 0 10px;
+  border-left: 2px solid @foreground;
+  font-weight: bold;
+}
+/* Targets the first module in the center list */
+.modules-center > widget:first-child > #custom-weather,
+.modules-center > widget:first-child > #clock {
+  border-left: 2px solid @foreground;
+  margin-left: 0;
+}
+/* Targets the last module in the center list */
+.modules-center > widget:last-child > #custom-vpn,
+.modules-center > widget:last-child > #custom-update,
+.modules-center > widget:last-child > #custom-screenrecording-indicator,
+.modules-center > widget:last-child > #clock {
+  border-right: 2px solid @foreground;
+  margin-right: 0;
 }
 
-#custom-update {
-  font-size: 10px;
-}
-
-#clock {
-  margin-left: 8.75px;
-}
-
-.hidden {
-  opacity: 0;
-}
-
+/* Specific overrides for modules that need to be smaller */
+#custom-update,
 #custom-screenrecording-indicator {
-  min-width: 12px;
-  margin-left: 8.75px;
   font-size: 10px;
 }
 
+/* Recording indicator to change color when active */
 #custom-screenrecording-indicator.active {
   color: #a55555;
-}
-
-#custom-notification {
-  min-width: 12px;
-  margin-left: 8.75px;
-  font-size: 10px;
+  background-color: rgba(165, 85, 85, 0.2); /* Subtle red glow */
 }

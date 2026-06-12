@@ -1,9 +1,6 @@
 #!/bin/bash
 
 VERSION=$(curl -sSL "https://go.dev/dl/?mode=json" | jq -r '.[0].version' | sed 's/go//')
-if ! [ -n "$VERSION" ]; then
-  VERSION=1.25.4
-fi
 INSTALL_DIR="$HOME/.local/installs"
 CDATE=$(date +'%Y_%m_%d_%H_%M_%S')
 BACKUP_DIR="${INSTALL_DIR}/go_${CDATE}"
@@ -12,9 +9,9 @@ TMP_DIR="$(mktemp -d)"
 ARCH="$(uname -m)"
 OS="$(uname -s | tr '[:upper:]' '[:lower:]')"
 if [[ "$ARCH" == "x86_64" ]]; then
-    ARCH2=amd64
+  ARCH2=amd64
 elif [[ "$ARCH" == "aarch64" ]]; then
-    ARCH2=arm64
+  ARCH2=arm64
 fi
 
 if ! echo "$PATH" | tr ':' '\n' | grep -q "$GO_PATH"; then
@@ -27,8 +24,8 @@ fi
 if [ -x "$(command -v go)" ]; then
   PRE_INSTALLED_VERSION=$(go version | awk '{print $3}')
   if [ "$PRE_INSTALLED_VERSION" == "go$VERSION" ]; then
-      echo "Go $VERSION is already installed no need to do anything"
-      exit 0
+    echo "Go $VERSION is already installed no need to do anything"
+    exit 0
   fi
 fi
 
@@ -46,14 +43,14 @@ echo "Extracting archive"
 tar -C "${INSTALL_DIR}" -xvzf "go${VERSION}.${OS}-${ARCH2}.tar.gz"
 
 if [ -x "$(command -v go)" ]; then
-    INSTALLED_VERSION=$(go version | awk '{print $3}')
-    if [ "$INSTALLED_VERSION" == "go$VERSION" ]; then
-        echo "Go $VERSION is installed successfully."
-    else
-        echo "Installed Go version ($INSTALLED_VERSION) doesn't match the expected version (go$VERSION)."
-    fi
+  INSTALLED_VERSION=$(go version | awk '{print $3}')
+  if [ "$INSTALLED_VERSION" == "go$VERSION" ]; then
+    echo "Go $VERSION is installed successfully."
+  else
+    echo "Installed Go version ($INSTALLED_VERSION) doesn't match the expected version (go$VERSION)."
+  fi
 else
-    echo "Go is not found in the PATH. Check install for errors"
+  echo "Go is not found in the PATH. Check install for errors"
 fi
 
 ## Clean up

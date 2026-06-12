@@ -38,6 +38,12 @@ M.setup = function()
         { get_lsp_client, icon = " ", color = { fg = "#ffffff", gui = "bold" } },
       },
       lualine_x = {
+      -- Search count component
+        {
+          "searchcount",
+          maxcount = 999,
+          timeout = 500
+        },
         -- Git diff status
         {
           "diff",

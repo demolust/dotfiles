@@ -2,7 +2,7 @@
 
 CONFIG_FILE="$XDG_CONFIG_HOME/aichat/config.yaml"
 SELECTED_MODEL=$(aichat --list-models | fzf --reverse --tmux=center,85%,50% \
-    --border rounded --header="Select Model: " --no-input --bind='k:up,j:down')
+    --border rounded --header="Select Model: ")
 
 if [[ -z "$SELECTED_MODEL" ]]; then
   echo "Using default model"

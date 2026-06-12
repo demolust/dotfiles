@@ -10,7 +10,7 @@ tput reset
 
 # Doesn't let you press Ctrl-C
 function ctrl_c() {
-	echo -e "\rEnter nil to drop to exit from this script"
+  echo -e "\rEnter nil to drop to exit from this script"
 }
 
 trap ctrl_c SIGINT
@@ -33,14 +33,14 @@ fi
 printf "Create a new session by entering a name for it: \n"
 read -r input
 if [[ $input == "" ]]; then
-	tmux new-session
+  tmux new-session
 elif [[ $input == 'nil' ]]; then
-	exit 1
+  exit 1
 elif [[ $input =~ ^[0-9]+$ ]] && [[ $input -le $no_of_terminals ]]; then
-	terminal_name="${output_names[input - 1]}"
-	tmux attach -t "$terminal_name"
+  terminal_name="${output_names[input - 1]}"
+  tmux attach -t "$terminal_name"
 else
-	tmux new-session -s "$input"
+  tmux new-session -s "$input"
 fi
 exit 0
 

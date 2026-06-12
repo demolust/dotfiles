@@ -5,18 +5,24 @@ local wezterm = require("wezterm")
 local config = wezterm.config_builder()
 local act = wezterm.action
 local mux = wezterm.mux
+local is_tiling_wm = os.getenv("XDG_CURRENT_DESKTOP") == "niri" 
+                  or os.getenv("XDG_CURRENT_DESKTOP") == "Hyprland"
 
 wezterm.on("gui-startup", function(cmd)
   local tab, pane, window = mux.spawn_window(cmd or {})
-  window:gui_window():maximize()
+  if not is_tiling_wm then
+    window:gui_window():maximize()
+  end
 end)
 
 wezterm.on('window-config-reloaded', function(window, pane)
-  window:maximize()
+  if not is_tiling_wm then
+    window:maximize()
+  end
 end)
 
 config.font = wezterm.font({ family = "LiterationMono Nerd Font", weight = "Regular" })
-config.font_size = 22
+config.font_size = 18
 
 config.quit_when_all_windows_are_closed = true
 config.window_close_confirmation = "NeverPrompt"

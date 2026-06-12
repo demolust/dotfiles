@@ -294,7 +294,7 @@ For other files
 
 These are the programs that should be installed on the system to be able to decompress a specific filetyp using `ark`, in addition to the default ones of a typical system installation such as `gzip`, `bzip2`, `zip`, etc
 
-- libarchive : Tar, DEB, RPM, ISO, AppImage, XAR and CAB format support	
+- libarchive : Tar, DEB, RPM, ISO, AppImage, XAR and CAB format support
 - p7zip : 7Z and Zip format support
 - unzip : Legacy Zip format support
 - unrar : RAR decompression support

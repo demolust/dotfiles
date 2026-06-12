@@ -320,6 +320,7 @@
               - mako
               - wireshark
               - brightnessctl
+              - v4l-utils
               - cava
               - loupe
               - qalculate-gtk

@@ -61,11 +61,67 @@ M.setup = function()
       },
     },
     lsp = {
+      signature = {
+        enabled = true,
+        -- Keep Noice's signature UI, but do not show it immediately when an
+        -- LSP trigger character such as `(` or `,` is typed.
+        auto_open = { enabled = false },
+      },
       override = {
         ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
         ["vim.lsp.util.stylize_markdown"] = true,
       },
     },
+  })
+
+  -- Noice has no configurable auto-open delay, so check for an LSP signature
+  -- trigger only after the user has been idle in Insert mode for 12 seconds.
+  -- This remains filetype-agnostic and uses the same UI as <leader>ls.
+  local signature_idle_ms = 12000
+  local signature_timer = vim.uv.new_timer()
+  local signature_group = vim.api.nvim_create_augroup("noice_signature_idle", { clear = true })
+
+  local function stop_signature_timer()
+    signature_timer:stop()
+  end
+
+  local function restart_signature_timer()
+    stop_signature_timer()
+
+    local bufnr = vim.api.nvim_get_current_buf()
+    local winid = vim.api.nvim_get_current_win()
+    signature_timer:start(signature_idle_ms, 0, vim.schedule_wrap(function()
+      if vim.api.nvim_get_mode().mode:sub(1, 1) ~= "i"
+        or not vim.api.nvim_buf_is_valid(bufnr)
+        or not vim.api.nvim_win_is_valid(winid)
+        or vim.api.nvim_get_current_buf() ~= bufnr
+        or vim.api.nvim_get_current_win() ~= winid
+      then
+        return
+      end
+
+      require("noice.lsp.signature").check()
+    end))
+  end
+
+  vim.api.nvim_create_autocmd({ "InsertEnter", "CursorMovedI", "TextChangedI" }, {
+    group = signature_group,
+    callback = restart_signature_timer,
+  })
+
+  vim.api.nvim_create_autocmd("InsertLeave", {
+    group = signature_group,
+    callback = stop_signature_timer,
+  })
+
+  vim.api.nvim_create_autocmd("VimLeavePre", {
+    group = signature_group,
+    callback = function()
+      stop_signature_timer()
+      if not signature_timer:is_closing() then
+        signature_timer:close()
+      end
+    end,
   })
 end
 

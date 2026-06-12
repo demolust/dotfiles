@@ -41,7 +41,13 @@ M.opts = {
     ghost_text = { enabled = false },
   },
 
-  signature = { enabled = true },
+  signature = {
+    enabled = true,
+    -- Signature help can be very large (especially for Python docstrings).  Do
+    -- not open it immediately for LSP trigger characters such as `(` and `,`.
+    -- Noice handles the delayed automatic popup; Blink still handles <C-k>.
+    trigger = { enabled = false },
+  },
 
   sources = {
     default = { "lsp", "path", "snippets", "buffer", "lazydev" },

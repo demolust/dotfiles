@@ -8,7 +8,7 @@ echo "Continue??[y/n]"
 read -r Continue
 response=$(echo "${Continue}" | tr '[:upper:]' '[:lower:]')
 if [[ ${response} == "n"* ]]; then
-	exit 1
+  exit 1
 fi
 
 ### To gather sudo privilages
@@ -16,9 +16,9 @@ sudo true
 
 echo "Stoping all possible running instances of Discord"
 if pgrep Discord ; then
-	sudo pkill Discord || echo finished
-	sleep 1
-	sudo pkill -9 Discord || echo finished
+  sudo pkill Discord || echo finished
+  sleep 1
+  sudo pkill -9 Discord || echo finished
 fi
 
 base_dir_path="/opt"
@@ -38,7 +38,7 @@ discord_path="${base_dir_path}/Discord"
 discord_post_install_path="${discord_path}/postinst.sh"
 discord_icon_path="${discord_path}/discord.png"
 discord_desktop_path="${discord_path}/discord.desktop"
-discord_bin_path="${discord_path}/Discord"
+discord_bin_path="${discord_path}/discord"
 discord_final_bin_path="${bin_dir}/Discord"
 
 echo "Downloading latest tar from discord.com and storing it as ${discord_tar_path}"
@@ -46,9 +46,9 @@ wget -nv "${discord_tar_url}" -O "${discord_tar_path}"
 
 if [ -d "${discord_path}" ]; then
   sudo find "${base_dir_path}" -name "Discord_*" -type d -mtime +1 -exec rm -rf {} \; || true
-	backup_dir="${discord_path}_${current_date}"
-	echo "Creating a backup of the previous install as ${backup_dir}"
-	sudo mv "${discord_path}" "${backup_dir}"
+  backup_dir="${discord_path}_${current_date}"
+  echo "Creating a backup of the previous install as ${backup_dir}"
+  sudo mv "${discord_path}" "${backup_dir}"
 fi
 
 echo "Decompresing tar file ${discord_tar_path} to ${base_dir_path}"

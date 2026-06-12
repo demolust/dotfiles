@@ -391,4 +391,8 @@ function lazygp {
 ################################# SETTINGS OVERRIDE #################################
 ### Section that overrides some plugin settings
 alias mkdir='mkdir -p'
+if [ "$(command -v prettyping)" ]; then
+  unalias ping
+  alias ping=prettyping
+fi
 

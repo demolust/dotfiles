@@ -5,7 +5,6 @@
 # linux - How to reset USB controllers? - Unix & Linux Stack Exchange
 # https://unix.stackexchange.com/questions/704341/how-to-reset-usb-controllers
 
-
 base="/sys/bus/pci/drivers"
 sleep_secs="1"
 
@@ -14,19 +13,16 @@ sleep_secs="1"
 # * 'ehci-pci' - USB 2.0
 # * 'xhci_hcd' - USB 3.0
 echo "Looking for USB standards ..."
-for usb_std in "$base/"?hci[-_]?c*
-do
-    echo "* USB standard '$usb_std' ..."
-    for dev_path in "$usb_std/"*:*
-    do
-        dev="$(basename "$dev_path")"
-        echo "  - Resetting device '$dev' ..."
-        printf '%s' "$dev" | sudo tee "$usb_std/unbind" > /dev/null
-        sleep "$sleep_secs"
-        printf '%s' "$dev" | sudo tee "$usb_std/bind" > /dev/null
-        echo "    done."
-    done
-    echo "  done."
+for usb_std in "$base/"?hci[-_]?c*; do
+  echo "USB standard '$usb_std'"
+  for dev_path in "$usb_std/"*:*; do
+    dev="$(basename "$dev_path")"
+    echo "Resetting device '$dev'"
+    printf '%s' "$dev" | sudo tee "$usb_std/unbind" > /dev/null
+    sleep "$sleep_secs"
+    printf '%s' "$dev" | sudo tee "$usb_std/bind" > /dev/null
+    echo "Done resetting device '$dev'"
+  done
+  echo "Done with USB standard '$usb_std'"
 done
-echo "done."
-
+echo "Done all"

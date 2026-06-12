@@ -48,6 +48,7 @@ declare -A tools=(
   [rg]='BurntSushi/ripgrep:rg:rg --version | awk '\''NR==1 {print $2}'\'':"ripgrep.*$ARCH.*$OS.*(gnu|musl).*(tar.gz|zip)"'
   [starship]='starship/starship:starship:starship --version | awk '\''NR==1 {print $2}'\'':"$bin.*$ARCH.*$OS.*(gnu|musl).*(tar.gz|zip)"'
   [podlet]='containers/podlet:podlet:podlet --version | awk '\''{print $2}'\'':"$bin.*$ARCH.*$OS.*(gnu|musl).*(tar.xz|zip)"'
+  [gh]='cli/cli:gh:gh --version | awk '\''NR==1 {print $3}'\'':"$bin.*$OS.*$ARCH2.*(tar.gz|zip)"'
 )
 
 download_and_install() {

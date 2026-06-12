@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+# This script expects the corresponding `wgusers` group and
+# the corresponding wireguard interface has been configured correctly
+interface_name="wg0"
+STATUS=$?
+
+jq -nc --arg in "$interface_name" --arg on "$STATUS" '
+  {
+    "text": (if $on then "On" else "Off" end),
+    "tooltip": "VPN on \($in) \(if $on then "On" else "Off" end)",
+    "class": "vpn",
+    "percentage": (if $on then 100 else 0 end)
+  }'
+

@@ -1,9 +1,15 @@
 [Unit]
-Description=Change wallpaper and background lock every 30 min
+Description=Refresh wallpaper every 30 minutes
+PartOf=graphical-session.target
+After=graphical-session.target
+Requisite=graphical-session.target
+ConditionEnvironment=WAYLAND_DISPLAY
 
 [Timer]
 OnCalendar=*-*-* *:00/30:00
 Persistent=true
+RandomizedDelaySec=2min
+Unit=wallpaper_change_reset.service
 
 [Install]
-WantedBy=timers.target graphical-session.target
+WantedBy=timers.target

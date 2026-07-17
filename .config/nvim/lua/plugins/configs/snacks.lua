@@ -92,6 +92,13 @@ M.opts = {
         hidden = true,
         ignored = true,
         directory_stats = true,
+        format = function(item, picker)
+          local root = require("snacks.explorer.tree"):node(picker:cwd())
+          if root and root.ignored then
+            item = vim.tbl_extend("force", {}, item, { ignored = true })
+          end
+          return require("snacks.picker.format").file(item, picker)
+        end,
         win = {
           list = {
             keys = {

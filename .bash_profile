@@ -1,8 +1,6 @@
-# .bash_profile
+# Bootstrap login Bash into the XDG configuration directory.
+export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
+export BASH_CONFIG_DIR="$XDG_CONFIG_HOME/bash"
 
-# Get the aliases and functions
-if [ -f ~/.bashrc ]; then
-  . ~/.bashrc
-fi
-
-# User specific environment and startup programs
+[[ -r "$BASH_CONFIG_DIR/.bash_profile" ]] &&
+  source "$BASH_CONFIG_DIR/.bash_profile"

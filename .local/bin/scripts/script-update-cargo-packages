@@ -20,6 +20,8 @@ declare -A PACKAGES_TO_UPDATE=(
     ["mdcat"]="mdcat"
     ["mdt"]="md-tui"
     ["impala"]="impala"
+    ["ripdrag"]="ripdrag"
+    ["wlr-which-key"]="wlr-which-key"
 )
 
 CARGO_BIN_PATH_XDG="$XDG_DATA_HOME/cargo/bin"

@@ -30,7 +30,9 @@ if [[ "$no_of_terminals" != "0" ]]; then
   echo
 fi
 
-printf "Create a new session by entering a name for it: \n"
+# Clear from cursor to end of screen to reset artifacts on resize
+tput ed
+printf "Create a new session by entering a name for it:\n"
 read -r input
 if [[ $input == "" ]]; then
   tmux new-session

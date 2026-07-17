@@ -1,4 +1,5 @@
 [Unit]
+Description=Change wallpaper and lock-screen image
 PartOf=graphical-session.target
 After=graphical-session.target
 Requisite=graphical-session.target
@@ -7,7 +8,9 @@ ConditionEnvironment=WAYLAND_DISPLAY
 [Service]
 Type=forking
 ExecStart=%h/.local/bin/scripts/random_background_from_topics.sh
+TimeoutStartSec=2min
 Restart=on-failure
+RestartSec=30s
 
 [Install]
 WantedBy=graphical-session.target

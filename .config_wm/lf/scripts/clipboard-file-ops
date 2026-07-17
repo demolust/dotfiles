@@ -1,0 +1,170 @@
+#!/usr/bin/env bash
+
+# Additional clipboard operations for lf.
+# lf stores the yank mode on the first line and absolute paths thereafter.
+
+set -u
+
+operation=${1:-}
+data_home=${LF_DATA_HOME:-${XDG_DATA_HOME:-"$HOME/.local/share"}}
+clipboard="$data_home/lf/files"
+lf_bin=${lf:-lf}
+
+remote_send() {
+	[[ ${LF_FILE_OP_NO_REMOTE:-0} == 1 || -z ${id:-} ]] && return 0
+	"$lf_bin" -remote "send $id $1" >/dev/null 2>&1 || true
+}
+
+remote_error() {
+	[[ ${LF_FILE_OP_NO_REMOTE:-0} == 1 || -z ${id:-} ]] && return 0
+	"$lf_bin" -remote "send $id echoerr '$1'" >/dev/null 2>&1 || true
+}
+
+load_clipboard() {
+	mode=
+	sources=()
+	[[ -r $clipboard ]] || return 1
+
+	{
+		IFS= read -r mode || true
+		while IFS= read -r source || [[ -n $source ]]; do
+			[[ -n $source ]] && sources+=("$source")
+		done
+	} < "$clipboard"
+
+	[[ $mode == copy || $mode == move ]] && ((${#sources[@]} > 0))
+}
+
+unique_destination() {
+	local source=$1 base counter=1
+	base=$(basename -- "$source")
+	destination="$PWD/$base"
+
+	while [[ -e $destination || -L $destination ]]; do
+		destination="$PWD/$base.~$counter~"
+		((counter += 1))
+	done
+}
+
+path_is_within() {
+	local parent child
+	parent=$(realpath -ms -- "$1") || return 1
+	child=$(realpath -ms -- "$2") || return 1
+	[[ $child == "$parent" || $child == "$parent/"* ]]
+}
+
+link_yanked() {
+	local kind=$1 source target
+	local failed=0
+
+	if [[ $mode != copy ]]; then
+		remote_error 'Links require copied files; press y before linking'
+		return 1
+	fi
+
+	for source in "${sources[@]}"; do
+		if [[ ! -e $source && ! -L $source ]]; then
+			failed=1
+			continue
+		fi
+
+		unique_destination "$source"
+		case $kind in
+			absolute)
+				target=$source
+				ln -s -- "$target" "$destination" || failed=1
+				;;
+			relative)
+				target=$(realpath -ms --relative-to="$PWD" -- "$source") || {
+					failed=1
+					continue
+				}
+				ln -s -- "$target" "$destination" || failed=1
+				;;
+			hard)
+				# Directories are recreated with hard-linked contents, like Yazi.
+				cp -al -- "$source" "$destination" || failed=1
+				;;
+		esac
+	done
+
+	remote_send load
+	if ((failed)); then
+		remote_error 'One or more links failed; the copy list was kept'
+		return 1
+	fi
+}
+
+force_copy() {
+	local source=$1 destination=$2
+
+	if [[ -d $source && ! -L $source && -d $destination && ! -L $destination ]]; then
+		cp -a --remove-destination -- "$source"/. "$destination"/
+	else
+		cp -aT --remove-destination -- "$source" "$destination"
+	fi
+}
+
+force_move() {
+	local source=$1 destination=$2
+
+	if [[ -d $source && ! -L $source && -d $destination && ! -L $destination ]]; then
+		# Merge existing directories, but remove the source only after a full copy.
+		cp -a --remove-destination -- "$source"/. "$destination"/ || return 1
+		rm -rf -- "$source"
+	else
+		mv -fT -- "$source" "$destination"
+	fi
+}
+
+force_paste() {
+	local source base destination
+	local failed=0
+
+	for source in "${sources[@]}"; do
+		if [[ ! -e $source && ! -L $source ]]; then
+			failed=1
+			continue
+		fi
+
+		base=$(basename -- "$source")
+		destination="$PWD/$base"
+
+		# Copying a directory into itself can recurse indefinitely; Yazi rejects it.
+		if [[ -d $source && ! -L $source ]] && path_is_within "$source" "$destination"; then
+			failed=1
+			continue
+		fi
+
+		if [[ $mode == copy ]]; then
+			force_copy "$source" "$destination" || failed=1
+		else
+			force_move "$source" "$destination" || failed=1
+		fi
+	done
+
+	if ((failed)); then
+		remote_error 'Force paste was incomplete; the copy or cut list was kept'
+	else
+		rm -f -- "$clipboard"
+		remote_send clear
+	fi
+	remote_send load
+	return "$failed"
+}
+
+if ! load_clipboard; then
+	remote_error 'The copy or cut list is empty'
+	exit 1
+fi
+
+case $operation in
+	link-absolute) link_yanked absolute ;;
+	link-relative) link_yanked relative ;;
+	hardlink)      link_yanked hard ;;
+	paste-force)   force_paste ;;
+	*)
+		remote_error 'Unknown lf file operation'
+		exit 2
+		;;
+esac

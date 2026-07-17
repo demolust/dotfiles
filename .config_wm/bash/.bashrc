@@ -1,0 +1,11 @@
+# Interactive Bash configuration.
+source "$BASH_CONFIG_DIR/env/xdg.bash"
+source "$BASH_CONFIG_DIR/env/paths.bash"
+source "$BASH_CONFIG_DIR/env/programs.bash"
+source "$BASH_CONFIG_DIR/env/desktop.bash"
+source "$BASH_CONFIG_DIR/defaults.bash"
+source "$BASH_CONFIG_DIR/prompt.bash"
+source "$BASH_CONFIG_DIR/aliases.bash"
+source "$BASH_CONFIG_DIR/integrations.bash"
+source "$BASH_CONFIG_DIR/functions.bash"
+source "$BASH_CONFIG_DIR/overrides.bash"

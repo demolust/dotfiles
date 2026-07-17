@@ -9,7 +9,7 @@ Description=swayosd-server
 Type=exec
 ExitType=cgroup
 Slice=app-graphical.slice
-ExecStart=swayosd-server
+ExecStart=/usr/bin/swayosd-server
 Restart=on-failure
 TimeoutStopFailureMode=terminate
 

@@ -9,9 +9,9 @@ set altformat_current= %F
 set altformat_playlist= %f%= %d %{?X!=0?%3X ?    }
 set altformat_title=%f
 set altformat_trackwin= %f%= %d 
-set auto_expand_albums_follow=true
-set auto_expand_albums_search=true
-set auto_expand_albums_selcur=true
+set auto_expand_albums_follow=false
+set auto_expand_albums_search=false
+set auto_expand_albums_selcur=false
 set auto_hide_playlists_panel=false
 set auto_reshuffle=true
 set block_key_paste=true
@@ -222,4 +222,42 @@ factivate
 #bind common } vol -0 -1%
 
 # Custom keybinds
-
+# Trailing spaces keep the query prompt ready after the short filter.
+bind -f common / push live-filter ~a 
+bind -f common ? push live-filter ~t 
+# Clear artist/title live filter: Ctrl+g
+bind -f common ^G live-filter
+# Redraw UI: Ctrl+l
+bind -f common ^L refresh
+bind -f common [ player-prev-album
+bind -f common ] player-next-album
+bind -f common { player-prev-album
+bind -f common } player-next-album
+unbind -f common C
+unbind -f common f
+unbind -f common D
+unbind -f common delete
+# Intentional remove: Alt+Shift+d
+bind -f common M-D win-remove
+# Create playlist prompt: Alt+Shift+p
+bind -f common M-P push pl-create 
+# Rename selected playlist prompt: Alt+Shift+r
+bind -f common M-R push pl-rename 
+# Export selected playlist prompt: Alt+Shift+e
+bind -f common M-E push pl-export 
+# Import playlist prompt: Alt+Shift+i
+bind -f common M-I push pl-import 
+unbind -f common e
+unbind -f common E
+unbind -f common s
+unbind -f common m
+unbind -f common o
+unbind -f common M
+unbind -f common ^R
+unbind -f common u
+bind -f common U win-update-cache
+unbind -f common -
+bind -f common _ vol -10%
+bind -f common + vol +10%
+bind -f common = vol 100% 100%
+bind -f common R source ~/.config/cmus/rc

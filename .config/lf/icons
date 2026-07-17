@@ -412,6 +412,7 @@ Vagrantfile             
 *.gitignore   
 *.gitmodules  
 *.git     
+*.github  
 *.config  
 *.log     
 *.txt     

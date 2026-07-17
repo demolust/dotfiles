@@ -51,15 +51,46 @@ set dircounts
 ### Clear mark from files after pasting
 map p :paste; clear
 
+# Match Yazi's link and force-paste operations. The helper reads LF's own
+# copy/cut list; links keep that list, while a successful P clears it.
+cmd clipboard-file-ops &{{
+  bash "$HOME/.config/lf/scripts/clipboard-file-ops" "$1"
+}}
+
+nmap - clipboard-file-ops link-absolute
+nmap _ clipboard-file-ops link-relative
+nmap <c--> clipboard-file-ops hardlink
+# Ctrl-minus is commonly reported as Ctrl-underscore by terminals.
+nmap <c-_> clipboard-file-ops hardlink
+nmap P clipboard-file-ops paste-force
+
+# Match Yazi's selection keys in Normal mode. Keep Visual-mode V available
+# for LF's native visual-accept action.
+cmd select-all :unselect; invert
+cmd cancel-state :setfilter; unselect
+nmap <c-a> select-all
+nmap v visual
+nmap V invert
+# Start a range with gv, then press gv again to remove that range.
+nmap gv visual
+vmap gv visual-unselect
+nmap <c-v> cancel-state
+vmap <c-v> visual-accept
+cmap <c-v> cmd-escape
+
+# Keep LF's native redraw and full-reload keys explicit, matching Yazi, and
+# allow them without first leaving Visual mode.
+map <c-l> redraw
+map <c-r> reload
+
 # Map esc to quit/command mode
 map <esc> quit
 
 # Use the `dim` attribute instead of underline for the cursor in the preview pane
 set cursorpreviewfmt "\033[7;2m"
 
-# Allows to view the result of execution of previous commands
-# Invokes a shell `true`, the I/O goes to terminal and finally waits for a key tobe pressed to continue, which brings back lf view
-map ` !true
+# Show previous command output, matching Yazi's task/output key.
+nmap W !true
 
 # mkdir command. See wiki if you want it to select created dir
 map n :push %touch<space>
@@ -117,12 +148,31 @@ cmd on-select &{{
 # Put lf into background
 map <c-z> $ kill -STOP $PPID
 
+# Match Yazi's directory-history keys. LF's jumplist is the closest native
+# equivalent to Yazi's back/forward history.
+nmap H jump-prev
+nmap L jump-next
+
+# Brackets are Yazi tab controls; leave them unused in LF, which has no tabs.
+nmap [
+nmap ]
+
 # Create a cmd to follow symlinks
 cmd follow_link %{{
   lf -remote "send ${id} select '$(readlink $f)'"
 }}
 
-map gL follow_link
+nmap gf follow_link
+nmap gl follow_link
+# LF's native high/middle/low visible-window motions, shared with Yazi.
+nmap gH high
+nmap gM middle
+nmap gL low
+nmap gh cd ~
+nmap gc cd ~/.config
+nmap gd cd ~/Downloads
+nmap g<space> :push :cd<space>
+nmap gm mark-save
 
 # Execute current file (must be executable)
 map b $$f
@@ -141,6 +191,16 @@ map K move-parent up
 cmd settings ${{
   env | grep ^lf_ | sort | $PAGER
 }}
+
+# LF has no spot panel, so show the same class of metadata in the terminal.
+cmd file-info !{{
+  file -Lb -- "$f"
+  printf '\n'
+  stat -- "$f"
+}}
+
+nmap <tab> file-info
+nmap ~ help
 
 ### Use custom a scope.sh script as defined in $XDG_CONFIG_HOME/lf/scope.sh for previews
 set previewer ~/.config/lf/scope-lf-wrapper.sh
@@ -175,16 +235,62 @@ cmd open-with ${{
 
 map o open-with
 map O open-with
+nmap <s-enter> open-with
 
-### Map c/C to clear always the selected files/dirs
+# Restore LF's native Visual-mode endpoint switch; map applies to both Normal
+# and Visual modes, so the explicit vmap must come after the open-with maps.
+vmap o visual-change
+
+# Lowercase c is the shared clear/cancel submenu. Ctrl-V remains the direct
+# cancel key, including while LF is in Visual or Command-line mode.
 cmd clear_unselect &{{
   rm ~/.local/share/lf/files 2>/dev/null
-  lf -remote "send clear"
-  lf -remote "send unselect"
+  lf -remote "send $id clear"
+  lf -remote "send $id unselect"
 }}
 
-map c clear_unselect
-map C clear_unselect
+map c
+map cc clear_unselect
+map cs :unselect; visual-discard
+map cz push <c-v>
+
+# Match Yazi's uppercase-C clipboard submenu. Combine LF's selected files and
+# active Visual range, then fall back to the file under the cursor.
+cmd clipboard-copy &{{
+  kind=$1
+  paths=$(printf '%s\n%s' "${fs:-}" "${fv:-}" | awk 'NF && !seen[$0]++')
+  if [ -z "$paths" ]; then paths=$f; fi
+
+  first=1
+  {
+    for item in $paths; do
+      case "$kind" in
+        path) value=$item ;;
+        dirname) value=$(dirname -- "$item") ;;
+        filename) value=$(basename -- "$item") ;;
+        stem)
+          value=$(basename -- "$item")
+          case "$value" in
+            .*|*.) ;;
+            *.*) value=${value%.*} ;;
+          esac
+          ;;
+      esac
+      if [ "$first" -eq 0 ]; then printf '\n'; fi
+      printf '%s' "$value"
+      first=0
+    done
+  } | wl-copy
+}}
+
+map Cc clipboard-copy path
+map Cd clipboard-copy dirname
+map Cf clipboard-copy filename
+map Cn clipboard-copy stem
+
+# Match Yazi's cut and unyank aliases.
+nmap D cut
+nmap Y clear
 
 ### Deleting files will put them under the XDG TRASH spec, if trash-cli is installed
 cmd trash &{{
@@ -197,7 +303,7 @@ cmd trash &{{
 }}
 
 map t trash
-map T trash
+# Uppercase T remains unused because LF has no tab layer.
 map <delete> trash
 
 # Decompress current file or selected files
@@ -314,8 +420,77 @@ cmd fzf_search ${{
   fi
 }}
 
+# Recursive filename jump used by Yazi's gs and gz bindings.
+cmd fzf_tree ${{
+  selection=$(fd --hidden --color=never | fzf \
+  --border=rounded\
+  --layout=reverse\
+  --prompt="Search files: "\
+  --tmux=center,80%,80%)
+  if [ -n "$selection" ]; then
+    if [ -d "$selection" ]; then
+      cmd="cd"
+    else
+      cmd="select"
+    fi
+    selection="$(printf '%s' "$selection" | sed 's/\\/\\\\/g;s/"/\\"/g')"
+    lf -remote "send $id $cmd \"$selection\""
+  fi
+}}
+
+cmd zoxide_jump ${{
+  selection=$(zoxide query -l | fzf \
+  --border=rounded\
+  --layout=reverse\
+  --prompt="Zoxide: "\
+  --tmux=center,80%,80%)
+  if [ -n "$selection" ]; then
+    selection="$(printf '%s' "$selection" | sed 's/\\/\\\\/g;s/"/\\"/g')"
+    lf -remote "send $id cd \"$selection\""
+  fi
+}}
+
+# LF cannot provide Yazi's live rg flat view, but it can select a matching file.
+cmd rg_search ${{
+  read "?Search file contents: " query
+  selection=$(rg --files-with-matches --smart-case --hidden \
+    --glob '!.git' -- "$query" . 2>/dev/null | fzf \
+    --border=rounded\
+    --layout=reverse\
+    --prompt="Content matches: "\
+    --tmux=center,80%,80%)
+  if [ -n "$selection" ]; then
+    selection="$(printf '%s' "$selection" | sed 's/\\/\\\\/g;s/"/\\"/g')"
+    lf -remote "send $id select \"$selection\""
+  fi
+}}
+
 map / :fzf_search
 map ? :fzf_jump
+map f filter
+map F
+
+# Full pattern search, matching Yazi's F submenu semantics.
+map Ff search
+map FF search-back
+map Fn search-next
+map FN search-prev
+
+# Preserve LF's faster character-find commands on unused F subkeys.
+map Fc find
+map FC find-back
+map F; find-next
+map F, find-prev
+map S rg_search
+nmap gs fzf_tree
+nmap gz fzf_tree
+nmap gZ zoxide_jump
+map ; shell
+
+# LF has no native counterpart for Yazi's gJ/gK preview seeking.
+
+# Yazi's sort prefix moved away from comma, and find-previous now lives at FN.
+map ,
 
 map m ${{ dragon -x -s 500 $fx }}
 map M ${{ dragon -a -x -s 500 $fx }}
@@ -323,10 +498,35 @@ map M ${{ dragon -a -x -s 500 $fx }}
 map u ${{ user_umount.sh }}
 map U ${{ user_mount.sh }}
 
-# Restore some of the default keybinds to the `s` map
-map sr :set reverse!
+# Match Yazi's sorting submenu. Uppercase variants use reverse order.
+map sm :set sortby time; set info time; set noreverse
+map sM :set sortby time; set info time; set reverse
+map sb :set sortby btime; set info btime; set noreverse
+map sB :set sortby btime; set info btime; set reverse
+map se :set sortby ext; set noreverse
+map sE :set sortby ext; set reverse
+map sa :set sortby name; set noreverse
+map sA :set sortby name; set reverse
+map sn :set sortby natural; set noreverse
+map sN :set sortby natural; set reverse
+map ss :set sortby size; set info size; set noreverse
+map sS :set sortby size; set info size; set reverse
+
+# Shared sorting and information controls.
+map sR set reverse!
 map sh set hidden!
-map sN set info
-map sS set info size
-map sT set info time
-map sA set info size:time
+map si set info
+map sz set info size
+map st set info time
+map sI set info size:time
+map sd set info btime
+map sp set info perm
+map so set info user:group
+
+# LF-only sort modes that Yazi does not provide.
+map su :set sortby atime; set info atime; set noreverse
+map sU :set sortby atime; set info atime; set reverse
+map sc :set sortby ctime; set info ctime; set noreverse
+map sC :set sortby ctime; set info ctime; set reverse
+
+# LF r41 has no native random sort, so sr intentionally remains unbound.

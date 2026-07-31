@@ -448,4 +448,125 @@
             name: sublime-text-4
             state: present
 
-# Still need to add blocks for debian, opensuse-leap, opensuse-tumbleweed
+    - name: Tumbleweed tasks
+      when: ansible_distribution_id == "opensuse-tumbleweed"
+      block:
+        - name: Install headless packages from standard repositories
+          package:
+            name:
+              - vim
+              - neovim
+              - zsh
+              - git
+              - tmux
+              - bc
+              - findutils
+              - gawk
+              - openssl
+              - wget2
+              - curl
+              - jq
+              - yq
+              - rpmconf
+              - ltrace
+              - strace
+              - util-linux
+              - ncdu
+              - gdu
+              - fastfetch
+              - htop
+              - btop
+              - inxi
+              - iotop-c
+              - fatrace
+              - iftop
+              - tcpdump
+              - nethogs
+              - sysstat
+              - nmap
+              - fuse
+              - squashfuse
+              - which
+              - acpi
+              - sensors
+              - irqbalance
+              - rsyslog
+              - nvme-cli
+              - powertop
+              - tuned
+              - tuned-ppd
+              - upower
+              - bluez
+              - clamav
+              - bat
+              - cbonsai
+              - cmatrix
+              - direnv
+              - eza
+              - fd
+              - git-delta
+              - ranger
+              - netcat-openbsd
+              - picocom
+              - tlrc
+              - trash-cli
+              - zoxide
+              - podman
+              - podlet
+              - automake
+              - bison
+              - cargo
+              - cmake
+              - golang
+              - make
+              - meson
+              - nodejs
+              - npm
+              - pkg-config
+              - rust
+              - sassc
+              - scdoc
+              - typescript
+              - java-25-openjdk-headless
+              - libopenssl-devel
+              - pam-devel
+              - python313-pip
+              - python313-requests
+              - python313-pyquery
+              - python313-virtualenv
+              - gzip
+              - arj
+              - atool
+              - discount
+              - elinks
+              - fdupes
+              - graphviz
+              - id3v2
+              - ImageMagick
+              - lynx
+              - lzop
+              - mediainfo
+              - mupdf
+              - ncurses
+              - odt2txt
+              - pandoc
+              - pdftk
+              - perl-Image-ExifTool
+              - exiftool
+              - poppler-tools
+              - 7zip
+              - unzip
+              - w3m
+              - xmlstarlet
+              - libreoffice
+              - libreoffice-base
+              - libreoffice-pyuno
+              - exiv2
+              - gmic
+              - GraphicsMagick
+              - ffmpeg-8
+              - ffmpegthumbnailer
+              - mkvtoolnix
+            state: present
+
+# Still need to add blocks for debian, opensuse-leap

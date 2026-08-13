@@ -59,6 +59,22 @@ M.setup = function()
       },
       filetypes = { "bibtex", "gitcommit", "org", "tex", "latex", "markdown", "text" },
     })
+
+    -- terraformls currently enables code lenses through an API introduced
+    -- after Neovim 0.11. Guard it so the server can still attach on 0.11.
+    vim.lsp.config("terraformls", {
+      init_options = {
+        ignoreSingleFileWarning = true,
+      },
+      on_attach = {
+        on_attach,
+        function(_, bufnr)
+          if vim.lsp.codelens.enable then
+            vim.lsp.codelens.enable(true, { bufnr = bufnr })
+          end
+        end,
+      },
+    })
   end
 
   -- List of standard servers to enable (those without special config)

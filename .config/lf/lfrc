@@ -121,7 +121,6 @@ cmd on-init &{{
     lf -remote "send $id redraw"
   fi
   set -u
-  lf -remote "send $id set statfmt \"$(eza -ld --color=always $(basename "$f") | sed 's/\\/\\\\/g;s/"/\\"/g')\""
   # Warn about nested instances
   if [ $LF_LEVEL -gt 1 ]; then lf -remote "send $id echoerr 'Warning: Running in a nested lf instance!'"; fi
 }}
@@ -142,7 +141,6 @@ cmd on-select &{{
     lf -remote "send $id redraw"
   fi
   set -u
-  lf -remote "send $id set statfmt \"$(eza -ld --color=always $(basename "$f") | sed 's/\\/\\\\/g;s/"/\\"/g')\""
 }}
 
 # Put lf into background

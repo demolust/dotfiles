@@ -65,6 +65,10 @@ if wezterm.target_triple == "x86_64-pc-windows-msvc" then
     args = { "wsl.exe", "~", "-d", "posh_tmux" },
   })
   table.insert(launch_menu, {
+    label = "WSL (Default)",
+    args = { "wsl.exe", "~"},
+  })
+  table.insert(launch_menu, {
     label = "lf",
     args = { "lf" },
   })

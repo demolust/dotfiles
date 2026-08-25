@@ -85,7 +85,7 @@
         - name: Add necessary extra repositories
           repository:
             repo_list:
-              - https://download.opensuse.org/repositories/home:justkidding/Fedora_42/home:justkidding.repo
+              - https://download.opensuse.org/repositories/home:justkidding/Fedora_$(rpm -E %fedora)/home:justkidding.repo
             state: present
         - name: Add copr repositories
           repository:
@@ -391,8 +391,6 @@
               - hyprutils
               - qt6ct
               - nwg-look
-              - pyprland
-              - satty
               - awww
               - cliphist
               - xcur2png

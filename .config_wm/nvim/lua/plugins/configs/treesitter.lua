@@ -15,7 +15,8 @@ M.opts = {
     "go", "gomod", "gosum", "gowork",
     "c_sharp",
     -- Shells
-    "bash", "tmux",
+    "bash",
+    --"tmux",
     -- Data, config & docs
     "sql", "html", "xml", "yaml", "json",
     "regex", "ini", "csv", "toml", "doxygen",

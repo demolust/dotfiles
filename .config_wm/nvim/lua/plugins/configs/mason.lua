@@ -34,14 +34,14 @@ M.setup = function()
         "python-lsp-server", "black", "pyment",
         "gopls", "goimports", "golines", "gotests", "gofumpt",
         "omnisharp",
-        "csharpier",
+        --"csharpier",
         "clang-format", "cmake-language-server", "cmakelang",
         "clangd",
         --"asm-lsp",
         -- Shell LSP's & formatters
         "bash-language-server", "powershell-editor-services",
         "shfmt",
-        "awk-language-server",
+        --"awk-language-server",
         -- General LSP's (SQL, JSON, YAML, XML, HTML) & formatters
         "sqlls", "sql-formatter", "taplo",
         "html-lsp", "json-lsp", "yaml-language-server",

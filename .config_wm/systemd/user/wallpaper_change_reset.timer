@@ -2,8 +2,6 @@
 Description=Refresh wallpaper every 30 minutes
 PartOf=graphical-session.target
 After=graphical-session.target
-Requisite=graphical-session.target
-ConditionEnvironment=WAYLAND_DISPLAY
 
 [Timer]
 OnCalendar=*-*-* *:00/30:00
@@ -12,4 +10,4 @@ RandomizedDelaySec=2min
 Unit=wallpaper_change_reset.service
 
 [Install]
-WantedBy=timers.target
+WantedBy=graphical-session.target

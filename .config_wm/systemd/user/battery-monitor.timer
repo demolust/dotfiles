@@ -1,6 +1,7 @@
 [Unit]
 Description=Battery Monitor Timer
 Requires=battery-monitor.service
+PartOf=graphical-session.target
 
 [Timer]
 OnBootSec=1min
@@ -8,4 +9,4 @@ OnUnitActiveSec=30sec
 AccuracySec=10sec
 
 [Install]
-WantedBy=timers.target
+WantedBy=graphical-session.target

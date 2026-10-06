@@ -7,30 +7,49 @@ PATH="$HOME/.local/bin:$HOME/.local/bin/scripts:$HOME/bin:$PATH"
 DESKTOP_SESSION_NAME=${DESKTOP_SESSION,,}
 XDG_CURRENT_DESKTOP_NAME=${XDG_CURRENT_DESKTOP,,}
 
-TOPICS=(
-  "forest" "desert" "hills" "NASA" "universe" "planets" "landscape"
-  "nature" "city" "skyline" "medieval" "medieval city" "castle" "sky"
-  "software" "computers" "computer hardware" "mechanical keyboard"
-  "engineering" "electronic hardware" "transistor" "circuits" "architecture"
-  "old architecture" "modern architecture" "street photography" "street art"
-  "steampunk" "cyberpunk" "mechanical" "sculpture" "traditional art"
-  "digital art" "photo manipulation" "pixel art" "wallpaper" "fractal"
-  "fantasy art" "space art" "night sky" "mountains" "ocean" "waterfall"
-  "alpine lake" "autumn forest" "bamboo forest" "beach" "canyon" "coastline"
-  "coral reef" "field of flowers" "glacier" "island" "jungle" "lake"
-  "misty forest" "moon" "northern lights" "rainforest" "river" "sand dunes"
+NATURE=(
+  "forest" "desert" "hills" "landscape" "sky" "mountains"
+  "ocean" "waterfall" "alpine lake" "autumn forest" "bamboo forest"
+  "canyon" "coastline" "coral reef" "field of flowers" "glacier" "island"
+  "jungle" "lake" "misty forest" "rainforest" "river" "sand dunes"
   "sunrise" "sunset" "volcano" "winter landscape" "wildlife" "cloudscape"
-  "aerial landscape" "national park" "botanical garden" "Japanese garden"
-  "ancient ruins" "cathedral" "library interior" "lighthouse" "bridge"
-  "skyscraper" "urban night" "historic building" "art deco architecture"
-  "brutalist architecture" "gothic architecture" "modern city" "village"
-  "astronomy" "galaxy" "nebula" "star cluster" "solar eclipse" "Milky Way"
-  "satellite" "spacecraft" "rocket launch" "planetary surface" "Earth from space"
-  "microscope" "laboratory" "mathematics" "physics" "chemistry" "crystal"
-  "robotics" "circuit board" "server room" "data center" "retro computer"
-  "synthesizer" "vintage camera" "typewriter" "industrial design" "train"
-  "aircraft" "sailing ship" "motorcycle" "bicycle" "abstract art" "geometric art"
-  "oil painting" "watercolor" "illustration" "woodcut" "stained glass" "mosaic"
+  "aerial landscape"
+)
+
+CITIES=(
+  "city" "skyline" "bridge" "architecture" "skyscraper" "modern architecture" "modern city"
+  "medieval" "medieval city" "castle" "cathedral" "ancient ruins" "gothic architecture"
+  "old architecture" "historic building" "brutalist architecture" "lighthouse"
+)
+
+COMPUTERS=(
+  "computers" "computer hardware" "retro computer"
+  "server room" "data center" "software"
+)
+
+HARDWARE_AND_TECH=(
+  "electronic hardware" "circuits" "circuit board" "robotics"
+  "industrial design" "aircraft" "motorcycle"
+)
+
+SCI_FI_AND_GEAR=(
+  "steampunk" "cyberpunk" "mechanical" "synthesizer"
+)
+
+SPACE_AND_UNIVERSE=(
+  "NASA" "universe" "planets" "space art" "night sky" "moon"
+  "northern lights" "astronomy" "galaxy" "nebula" "star cluster"
+  "Milky Way" "satellite" "spacecraft" "rocket launch"
+  "planetary surface" "Earth from space"
+)
+
+TOPICS=(
+  "${NATURE[@]}"
+  "${CITIES[@]}"
+  "${COMPUTERS[@]}"
+  "${HARDWARE_AND_TECH[@]}"
+  "${SCI_FI_AND_GEAR[@]}"
+  "${SPACE_AND_UNIVERSE[@]}"
 )
 
 min=1

@@ -225,6 +225,8 @@ factivate
 # Trailing spaces keep the query prompt ready after the short filter.
 bind -f common / push live-filter ~a 
 bind -f common ? push live-filter ~t 
+# Native search, useful in browser view: Alt+/
+bind -f common M-/ search-start
 # Clear artist/title live filter: Ctrl+g
 bind -f common ^G live-filter
 # Redraw UI: Ctrl+l
@@ -239,6 +241,8 @@ unbind -f common D
 unbind -f common delete
 # Intentional remove: Alt+Shift+d
 bind -f common M-D win-remove
+# Intentional remove: Shift+Delete
+bind -f common S-delete win-remove
 # Create playlist prompt: Alt+Shift+p
 bind -f common M-P push pl-create 
 # Rename selected playlist prompt: Alt+Shift+r

@@ -8,7 +8,6 @@ com.simulide.simulide
 com.usebottles.bottles
 io.github.quodlibet.QuodLibet
 it.mijorus.gearlever
-md.obsidian.Obsidian
 org.freecad.FreeCAD
 org.kicad.KiCad
 org.librecad.librecad

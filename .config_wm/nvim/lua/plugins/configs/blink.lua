@@ -78,7 +78,10 @@ M.setup = function(_, opts)
   -- Handle 'compat' sources (The LazyVim Logic)
   -- This allows to use old nvim-cmp sources by just adding them to opts.sources.compat
   local enabled = opts.sources.default
-  for _, source in ipairs(opts.sources.compat or {}) do
+  local compat = opts.sources.compat or {}
+  opts.sources.compat = nil
+
+  for _, source in ipairs(compat) do
     opts.sources.providers[source] = vim.tbl_deep_extend(
       "force",
       { name = source, module = "blink.compat.source" },

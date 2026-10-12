@@ -6,7 +6,7 @@ if ! [[ "$(command -v fzf)" ]]; then
 fi
 
 header_msg="Select device to unmount: "
-selection=$(lsblk -J -nA -o PATH,MOUNTPOINT | jq -r --arg user "$USER" '.blockdevices | map(select((.path | test("/dev/sd[a-z][0-9]|/dev/nvme[0-9]n[0-9]p[0-9]")) and (.mountpoint != null and .mountpoint != "[SWAP]") and (.mountpoint | contains($user)))) | .[] | "\(.path) \(.mountpoint)"' | fzf --reverse --tmux=center,85%,50% --border rounded --header="${header_msg}" --no-input --bind='k:up' --bind='j:down')
+selection=$(lsblk -J -nA -o PATH,MOUNTPOINT | jq -r --arg user "$USER" '.blockdevices | map(select((.path | test("/dev/sd[a-z][0-9]|/dev/nvme[0-9]n[0-9]p[0-9]|/dev/mmcblk[0-9]p[0-9]")) and (.mountpoint != null and .mountpoint != "[SWAP]") and (.mountpoint | contains($user)))) | .[] | "\(.path) \(.mountpoint)"' | fzf --reverse --tmux=center,85%,50% --border rounded --header="${header_msg}" --no-input --bind='k:up' --bind='j:down')
 
 if [ -z "$selection" ]; then
   echo "No device selection made exit"

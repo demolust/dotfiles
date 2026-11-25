@@ -201,6 +201,7 @@
               - dconf
               - gsettings
               - gnome-keyring
+              - gnome-keyring-pam
               - gnome-tweaks
               - gnome-system-monitor
               - qt5ct

@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-
-for x in *; do
-  mv $x `echo $x | sed 's/omarchy/script/g'`
-done

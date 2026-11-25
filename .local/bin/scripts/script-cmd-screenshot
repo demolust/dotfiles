@@ -68,12 +68,8 @@ esac
 
 if [[ $PROCESSING == "slurp" ]]; then
 grim -g "$SELECTION" - |
-  satty --filename - \
-    --output-filename "$OUTPUT_DIR/screenshot-$(date +'%Y-%m-%d_%H-%M-%S').png" \
-    --early-exit \
-    --actions-on-enter save-to-clipboard \
-    --save-after-copy \
-    --copy-command 'wl-copy'
+  swappy -f - \
+    -o "$OUTPUT_DIR/screenshot-$(date +'%Y-%m-%d_%H-%M-%S').png"
 else
   grim -g "$SELECTION" - | wl-copy
 fi
